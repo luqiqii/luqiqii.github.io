@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="思科模拟器一、思科模拟器 Cisco Packet Tracer 7.31、软件获取 下载地址：https:&#x2F;&#x2F;www.packettracernetwork.com&#x2F;download&#x2F;download-packet-tracer.html，目前已经发布到了 8.0 版本，但需要注册思科账户进行登录  这里给大家提供的是 7.3 版本，区别不大（里面包含了 32 、64 位两个版本和一个汉化语言包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网工基础-思科模拟器">
+<meta property="og:url" content="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-%E6%80%9D%E7%A7%91%E6%A8%A1%E6%8B%9F%E5%99%A8/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="思科模拟器一、思科模拟器 Cisco Packet Tracer 7.31、软件获取 下载地址：https:&#x2F;&#x2F;www.packettracernetwork.com&#x2F;download&#x2F;download-packet-tracer.html，目前已经发布到了 8.0 版本，但需要注册思科账户进行登录  这里给大家提供的是 7.3 版本，区别不大（里面包含了 32 、64 位两个版本和一个汉化语言包">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622164858.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816105232.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816105520.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622170552.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622171406.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622171731.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622172208.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210623103752.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816163948.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816113444.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816114209.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816164955.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816165719.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816170230.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816170755.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816170924.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816171109.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816171416.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816171533.png">
+<meta property="article:published_time" content="2023-10-22T13:28:47.000Z">
+<meta property="article:modified_time" content="2023-10-22T13:35:10.576Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622164858.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-%E6%80%9D%E7%A7%91%E6%A8%A1%E6%8B%9F%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>网工基础-思科模拟器 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-%E6%80%9D%E7%A7%91%E6%A8%A1%E6%8B%9F%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网工基础-思科模拟器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 21:28:47 / 修改时间：21:35:10" itemprop="dateCreated datePublished" datetime="2023-10-22T21:28:47+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="思科模拟器"><a href="#思科模拟器" class="headerlink" title="思科模拟器"></a>思科模拟器</h1><h4 id="一、思科模拟器-Cisco-Packet-Tracer-7-3"><a href="#一、思科模拟器-Cisco-Packet-Tracer-7-3" class="headerlink" title="一、思科模拟器 Cisco Packet Tracer 7.3"></a>一、思科模拟器 Cisco Packet Tracer 7.3</h4><h5 id="1、软件获取"><a href="#1、软件获取" class="headerlink" title="1、软件获取"></a>1、软件获取</h5><ul>
+<li><p>下载地址：<a target="_blank" rel="noopener" href="https://www.packettracernetwork.com/download/download-packet-tracer.html%EF%BC%8C%E7%9B%AE%E5%89%8D%E5%B7%B2%E7%BB%8F%E5%8F%91%E5%B8%83%E5%88%B0%E4%BA%86">https://www.packettracernetwork.com/download/download-packet-tracer.html，目前已经发布到了</a> 8.0 版本，但需要注册思科账户进行登录</p>
+</li>
+<li><p>这里给大家提供的是 7.3 版本，区别不大（里面包含了 32 、64 位两个版本和一个汉化语言包）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622164858.png" alt="image-20210622164858164"></p>
+</li>
+</ul>
+<h5 id="2、安装"><a href="#2、安装" class="headerlink" title="2、安装"></a>2、安装</h5><ul>
+<li><p>双击点开安装包，选择同意协议，单击 Next，选择安装路径，默认C盘，不需要更改，此软件占空间不大，单击 Next</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816105232.png" alt="image-20210816105232333"></p>
+</li>
+<li><p>选择在桌面创建快捷方式，单击 Next，单击 Install，安装完成后默认会自动打开软件，打开软件后需要注册登录后方可使用，对于英文不是特别好的同学，可以选择语言（简体中文）然后进行注册，注册完成后，进行登录（这里如果有账号，直接进行登录）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816105520.png" alt="image-20210816105520149"></p>
+</li>
+<li><p>登录时需勾选 Keep me logged in（保持登录状态）从而确保下次打开自动登录</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622170552.png" alt="image-20210622170552194"></p>
+</li>
+</ul>
+<h5 id="3、汉化"><a href="#3、汉化" class="headerlink" title="3、汉化"></a>3、汉化</h5><ul>
+<li><p>找到软件的安装目录并定位到 languages 文件夹</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622171406.png" alt="image-20210622171406605"></p>
+</li>
+<li><p>将汉化文件复制入 languages 文件夹中</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622171731.png" alt="image-20210622171731904"></p>
+</li>
+<li><p>重新打开软件进行汉化配置（选择Options→Preferences）选中 Chinese.ptl，然后单击 change language 应用</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210622172208.png" alt="image-20210622172208649"></p>
+</li>
+<li><p>弹出对话框，单击 OK 后重启软件，完成汉化，软件配置完成，最终软件界面如下图所示：</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210623103752.png" alt="image-20210623103752718"></p>
+</li>
+</ul>
+<h4 id="二、思科模拟器-GNS3"><a href="#二、思科模拟器-GNS3" class="headerlink" title="二、思科模拟器 GNS3"></a>二、思科模拟器 GNS3</h4><h5 id="1、软件获取-1"><a href="#1、软件获取-1" class="headerlink" title="1、软件获取"></a>1、软件获取</h5><ul>
+<li>下载连接：<a target="_blank" rel="noopener" href="https://www.gns3.com/software/download%EF%BC%8C%E7%9B%AE%E5%89%8D%E5%8F%91%E5%B8%83%E7%89%88%E6%9C%AC%E4%B8%BA">https://www.gns3.com/software/download，目前发布版本为</a> 2.2.23，下载需要注册 GNS3 社区账号，登录后可免费下载，这里提供的是1.3.1版本</li>
+<li>GNS3是一款具有图形化界面可以运行在多平台（包括Windows, Linux, and MacOS等）的网络虚拟软件。Cisco网络设备管理员或是想要通过CCNA，CCNP，CCIE等Cisco认证考试的相关人士可以通过它来完成相关的实验模拟操作。同时它也可以用于虚拟体验Cisco网际操作系统IOS或者是检验将要在真实的路由器上部署实施的相关配置</li>
+</ul>
+<h5 id="2、安装-1"><a href="#2、安装-1" class="headerlink" title="2、安装"></a>2、安装</h5><ul>
+<li><p>在安装 GNS3 之前需要提前安装其依赖软件，WinPcap与Wireshark</p>
+<ul>
+<li>WinPcap用于检测设备网络接口，软件下载连接：<a target="_blank" rel="noopener" href="https://www.winpcap.org/install/default.htm">https://www.winpcap.org/install/default.htm</a></li>
+<li>Wireshark用于流量抓取，在后面学习流量分析时会进行详细学习：软件下载连接：<a target="_blank" rel="noopener" href="https://www.wireshark.org/#download">https://www.wireshark.org/#download</a></li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816163948.png" alt="image-20210816163941305"></p>
+</li>
+<li><p>安装 WinPcap</p>
+<ul>
+<li>打开安装包后，直接下一步，同意协议，安装完成</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816113444.png" alt="image-20210816113444651"></p>
+</li>
+<li><p>安装 Wireshark</p>
+<ul>
+<li>打开安装包，直接下一步，添加桌面快捷方式图标，选择一下安装路径后直接下一步进行安装完成就 OK，在安装过程中默认会安装NPcap</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816114209.png" alt="image-20210816114209142"></p>
+</li>
+<li><p>安装 GNS3</p>
+<ul>
+<li><p>打开安装包，直接下一步，后面全部采用默认就 OK</p>
+<blockquote>
+<p>在安装过程中，会进行选择需要安装的组件，WinPCAP 和 Wireshark 在前面已经进行安装，这里就不需要</p>
+</blockquote>
+</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816164955.png" alt="image-20210816164955671"></p>
+<ul>
+<li><p>根据选择的组件，会自动下载 SolarWinds 网络安全管理软件产品软件，并填写自己的 E-mail 地址进行安装</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816165719.png" alt="image-20210816165719419"></p>
+</li>
+<li><p>最后对于 SolarWinds 标准工具许可获取选择否，安装完成 GNS3 后会自动打开软件</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816170230.png" alt="image-20210816170230361"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="3、配置-GNS3"><a href="#3、配置-GNS3" class="headerlink" title="3、配置 GNS3"></a>3、配置 GNS3</h5><ul>
+<li><p>装载思科路由器镜像文件，这里提供的是思科 C3640 镜像文件，将文件放入到电脑中</p>
+<blockquote>
+<p>切记不要放入到中文目录中，防止后期因为中文目录问题，镜像读取报错，我这里放在 D 盘下的 Cisco ISO 文件夹下</p>
+</blockquote>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816170755.png" alt="image-20210816170755590"></p>
+</li>
+<li><p>打开 GNS3 软件，打开首选项</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816170924.png" alt="image-20210816170924896"></p>
+</li>
+<li><p>选择 ISO routers，添加新的路由器镜像</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816171109.png" alt="image-20210816171108958"></p>
+</li>
+<li><p>配置 router 参数，这里接口先不进行配置，后期在使用路由器时在进行配置，然后进行计算 Idle-PC 值</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816171416.png" alt="image-20210816171416552"></p>
+</li>
+<li><p>最后单击 OK 完成配置，配置完成后，就可以开始使用思科路由器</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210816171533.png" alt="image-20210816171533875"></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/26/java%E6%BC%8F%E6%B4%9E-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="prev" title="java漏洞-反序列化">
+      <i class="fa fa-chevron-left"></i> java漏洞-反序列化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-%E5%8D%8E%E4%B8%BA%E6%A8%A1%E6%8B%9F%E5%99%A8/" rel="next" title="网工基础-华为模拟器">
+      网工基础-华为模拟器 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%9D%E7%A7%91%E6%A8%A1%E6%8B%9F%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">思科模拟器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%80%9D%E7%A7%91%E6%A8%A1%E6%8B%9F%E5%99%A8-Cisco-Packet-Tracer-7-3"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">一、思科模拟器 Cisco Packet Tracer 7.3</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E8%BD%AF%E4%BB%B6%E8%8E%B7%E5%8F%96"><span class="nav-number">1.0.0.1.1.</span> <span class="nav-text">1、软件获取</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%AE%89%E8%A3%85"><span class="nav-number">1.0.0.1.2.</span> <span class="nav-text">2、安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%B1%89%E5%8C%96"><span class="nav-number">1.0.0.1.3.</span> <span class="nav-text">3、汉化</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%80%9D%E7%A7%91%E6%A8%A1%E6%8B%9F%E5%99%A8-GNS3"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">二、思科模拟器 GNS3</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E8%BD%AF%E4%BB%B6%E8%8E%B7%E5%8F%96-1"><span class="nav-number">1.0.0.2.1.</span> <span class="nav-text">1、软件获取</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%AE%89%E8%A3%85-1"><span class="nav-number">1.0.0.2.2.</span> <span class="nav-text">2、安装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E9%85%8D%E7%BD%AE-GNS3"><span class="nav-number">1.0.0.2.3.</span> <span class="nav-text">3、配置 GNS3</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、域组策略1、组策略介绍 一组策略的集合，用于统一修改系统、设置程序  2、组策略优点 减小管理成本、减小用户单独配置错误的可能性、可以针对特定对象设置特定的策略  3、组策略对象GPO 存储组策略的所有配置信息，是AD中的一种特殊对象 默认GPO 默认域策略:影响域中所有的用户和计算机 默认域控制器策略:影响组织单位“Domain Controllers”中所有的用户和计算机   GPO链接应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windiws操作-进阶版（windows 域-域策略应用）">
+<meta property="og:url" content="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88windows-%E5%9F%9F-%E5%9F%9F%E7%AD%96%E7%95%A5%E5%BA%94%E7%94%A8%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、域组策略1、组策略介绍 一组策略的集合，用于统一修改系统、设置程序  2、组策略优点 减小管理成本、减小用户单独配置错误的可能性、可以针对特定对象设置特定的策略  3、组策略对象GPO 存储组策略的所有配置信息，是AD中的一种特殊对象 默认GPO 默认域策略:影响域中所有的用户和计算机 默认域控制器策略:影响组织单位“Domain Controllers”中所有的用户和计算机   GPO链接应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250203063.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250203001.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250207244.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250209508.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250212714.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250213332.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250213319.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250213368.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250213388.png">
+<meta property="article:published_time" content="2023-10-22T14:07:18.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:23:27.805Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250203063.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88windows-%E5%9F%9F-%E5%9F%9F%E7%AD%96%E7%95%A5%E5%BA%94%E7%94%A8%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>windiws操作-进阶版（windows 域-域策略应用） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88windows-%E5%9F%9F-%E5%9F%9F%E7%AD%96%E7%95%A5%E5%BA%94%E7%94%A8%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          windiws操作-进阶版（windows 域-域策略应用）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:07:18 / 修改时间：22:23:27" itemprop="dateCreated datePublished" datetime="2023-10-22T22:07:18+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、域组策略"><a href="#一、域组策略" class="headerlink" title="一、域组策略"></a>一、域组策略</h4><h5 id="1、组策略介绍"><a href="#1、组策略介绍" class="headerlink" title="1、组策略介绍"></a>1、组策略介绍</h5><ul>
+<li>一组策略的集合，用于统一修改系统、设置程序</li>
+</ul>
+<h5 id="2、组策略优点"><a href="#2、组策略优点" class="headerlink" title="2、组策略优点"></a>2、组策略优点</h5><ul>
+<li>减小管理成本、减小用户单独配置错误的可能性、可以针对特定对象设置特定的策略</li>
+</ul>
+<h5 id="3、组策略对象GPO"><a href="#3、组策略对象GPO" class="headerlink" title="3、组策略对象GPO"></a>3、组策略对象GPO</h5><ul>
+<li>存储组策略的所有配置信息，是AD中的一种特殊对象</li>
+<li>默认GPO<ul>
+<li>默认域策略:影响域中所有的用户和计算机</li>
+<li>默认域控制器策略:影响组织单位“Domain Controllers”中所有的用户和计算机</li>
+</ul>
+</li>
+<li>GPO链接应用：只能链接到站点、域、OU（组织单位）上</li>
+</ul>
+<h4 id="二、域组策略应用案例"><a href="#二、域组策略应用案例" class="headerlink" title="二、域组策略应用案例"></a>二、域组策略应用案例</h4><h5 id="1、域组策略基本操作"><a href="#1、域组策略基本操作" class="headerlink" title="1、域组策略基本操作"></a>1、域组策略基本操作</h5><ul>
+<li><p>打开域控制器上的组策略管理</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250203063.png" alt="image-20220325020256969"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250203001.png" alt="image-20220325020358951"></p>
+</li>
+<li><p>在站点或者域或者OU上创建GPO对象</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250207244.png" alt="image-20220325020746197"></p>
+</li>
+<li><p>通过编辑GPO对象，进入到组策略管理编辑器</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250209508.png" alt="image-20220325020946458"></p>
+</li>
+<li><p>编辑完成后刷新组策略</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250212714.png" alt="image-20220325021228683"></p>
+</li>
+</ul>
+<h5 id="2、案例一（计算机配置）"><a href="#2、案例一（计算机配置）" class="headerlink" title="2、案例一（计算机配置）"></a>2、案例一（计算机配置）</h5><ul>
+<li>实验环境：已部署Windows Server 2016域，财务部员工用户位于OU“财务部”中</li>
+<li>实验需求：财务部的所有计算机都要自动下载并安装系统补丁</li>
+</ul>
+<h5 id="3、案例二（用户配置）"><a href="#3、案例二（用户配置）" class="headerlink" title="3、案例二（用户配置）"></a>3、案例二（用户配置）</h5><ul>
+<li>实验环境：已部署Windows Server 2016域，销售部员工用户位于OU“销售部”中</li>
+<li>实验需求：销售部员工使用统一的桌面背景，禁止更改桌面背景</li>
+</ul>
+<h5 id="4、案例三（软件分发）"><a href="#4、案例三（软件分发）" class="headerlink" title="4、案例三（软件分发）"></a>4、案例三（软件分发）</h5><ul>
+<li>实验环境：已部署Windows Server 2016域，销售部员工用户位于OU“销售部”中</li>
+<li>实验需求：将软件MBSA统一分发给销售部所有员工，用户可以选择是否进行安装</li>
+<li>注意<ul>
+<li>只能针对 “.msi” 格式文件进行分发（可以使用VERITAS Discover和Advanced Installer等第三方软件将.exe格式文件转换为.msi格式文件）</li>
+<li>分发是分配和发布（分配：将程序分配到用户或计算机、发布：将程序发布给用户，用户可选择是否安装；分配比发布更具有强制性）</li>
+<li>软件分发点是服务器上的共享文件夹，应采用 “\服务器名或IP地址\共享名” 方式访问</li>
+</ul>
+</li>
+</ul>
+<h5 id="5、案例四"><a href="#5、案例四" class="headerlink" title="5、案例四"></a>5、案例四</h5><ul>
+<li>实验环境：已部署Windows Server 2016域，“销售部”组中包含销售部员工用户账户UserA、UserB，“财务部”组中包含财务部员工用户账户UserC</li>
+<li>实验需求：销售部的所有员工设置密码长度为9，并且每个月都要修改一次密码；财务部的员工设置密码的长度为20，允许登陆尝试次数为3次，一旦账户被锁定，必须由管理员手动解锁该账户</li>
+</ul>
+<h4 id="三、组策略应用规则"><a href="#三、组策略应用规则" class="headerlink" title="三、组策略应用规则"></a>三、组策略应用规则</h4><h5 id="1、策略继承与阻止"><a href="#1、策略继承与阻止" class="headerlink" title="1、策略继承与阻止"></a>1、策略继承与阻止</h5><ul>
+<li><p>下级容器默认会继承来自上级容器的GPO</p>
+</li>
+<li><p>子容器可以阻止继承上级容器的GPO</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250213332.png" alt="image-20210730172447975"></p>
+</li>
+</ul>
+<h5 id="2、策略强制生效和筛选"><a href="#2、策略强制生效和筛选" class="headerlink" title="2、策略强制生效和筛选"></a>2、策略强制生效和筛选</h5><ul>
+<li><p>强制生效</p>
+<ul>
+<li><p>上级容器强制下级容器执行其GPO设置</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250213319.png" alt="image-20210730172403826"></p>
+</li>
+<li><p>“强制生效”会覆盖“阻止继承”设置</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250213368.png" alt="image-20210730173206977"></p>
+</li>
+</ul>
+</li>
+<li><p>筛选</p>
+<ul>
+<li><p>可阻止一个GPO应用于容器内的特定计算机或用户</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203250213388.png" alt="image-20210730172604885"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="3、组策略应用顺序"><a href="#3、组策略应用顺序" class="headerlink" title="3、组策略应用顺序"></a>3、组策略应用顺序</h5><ul>
+<li>LSDOU（本地、站点、域、组织单位）<ul>
+<li>首先应用本地组策略</li>
+<li>如果有站点组策略，则应用</li>
+<li>接着应用域策略</li>
+<li>最后应用OU上的策略</li>
+<li>如果同一个OU上链接了多个GPO，则按照链接顺序从高到低逐个应用</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88windows-%E5%9F%9F-%E5%9F%9F%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6%EF%BC%89/" rel="prev" title="windiws操作-进阶版（windows 域-域认证机制）">
+      <i class="fa fa-chevron-left"></i> windiws操作-进阶版（windows 域-域认证机制）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E5%91%BD%E4%BB%A4%EF%BC%89/" rel="next" title="windiws操作-进阶版（powershell命令）">
+      windiws操作-进阶版（powershell命令） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%9F%9F%E7%BB%84%E7%AD%96%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">一、域组策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%BB%84%E7%AD%96%E7%95%A5%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">1、组策略介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%BB%84%E7%AD%96%E7%95%A5%E4%BC%98%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">2、组策略优点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E7%BB%84%E7%AD%96%E7%95%A5%E5%AF%B9%E8%B1%A1GPO"><span class="nav-number">1.3.</span> <span class="nav-text">3、组策略对象GPO</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9F%9F%E7%BB%84%E7%AD%96%E7%95%A5%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">二、域组策略应用案例</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%9F%9F%E7%BB%84%E7%AD%96%E7%95%A5%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.</span> <span class="nav-text">1、域组策略基本操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%A1%88%E4%BE%8B%E4%B8%80%EF%BC%88%E8%AE%A1%E7%AE%97%E6%9C%BA%E9%85%8D%E7%BD%AE%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">2、案例一（计算机配置）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%A1%88%E4%BE%8B%E4%BA%8C%EF%BC%88%E7%94%A8%E6%88%B7%E9%85%8D%E7%BD%AE%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">3、案例二（用户配置）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E6%A1%88%E4%BE%8B%E4%B8%89%EF%BC%88%E8%BD%AF%E4%BB%B6%E5%88%86%E5%8F%91%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">4、案例三（软件分发）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E6%A1%88%E4%BE%8B%E5%9B%9B"><span class="nav-number">2.5.</span> <span class="nav-text">5、案例四</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%BB%84%E7%AD%96%E7%95%A5%E5%BA%94%E7%94%A8%E8%A7%84%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">三、组策略应用规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%AD%96%E7%95%A5%E7%BB%A7%E6%89%BF%E4%B8%8E%E9%98%BB%E6%AD%A2"><span class="nav-number">3.1.</span> <span class="nav-text">1、策略继承与阻止</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%AD%96%E7%95%A5%E5%BC%BA%E5%88%B6%E7%94%9F%E6%95%88%E5%92%8C%E7%AD%9B%E9%80%89"><span class="nav-number">3.2.</span> <span class="nav-text">2、策略强制生效和筛选</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E7%BB%84%E7%AD%96%E7%95%A5%E5%BA%94%E7%94%A8%E9%A1%BA%E5%BA%8F"><span class="nav-number">3.3.</span> <span class="nav-text">3、组策略应用顺序</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

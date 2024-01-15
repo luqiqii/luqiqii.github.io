@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、启明星辰入侵检测IDS1、介绍 天阗入侵检测与管理系统（IDS）是启明星辰自主原创并拥有完全自主知识产权的威胁检测、分析与管理产品，该产品对于病毒、蠕虫、木马、DDoS、扫描、SQL注入、XSS、缓冲区溢出、欺骗劫持等攻击行为以及网络资源滥用行为（如P2P上传&#x2F;下载、网络游戏、视频&#x2F;音频、网络炒股）等威胁具有高精度的检测能力，同时，该产品中的流量模块对于网络流量的异常情况具">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安全设备基础-入侵检测设备介绍">
+<meta property="og:url" content="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、启明星辰入侵检测IDS1、介绍 天阗入侵检测与管理系统（IDS）是启明星辰自主原创并拥有完全自主知识产权的威胁检测、分析与管理产品，该产品对于病毒、蠕虫、木马、DDoS、扫描、SQL注入、XSS、缓冲区溢出、欺骗劫持等攻击行为以及网络资源滥用行为（如P2P上传&#x2F;下载、网络游戏、视频&#x2F;音频、网络炒股）等威胁具有高精度的检测能力，同时，该产品中的流量模块对于网络流量的异常情况具">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T14:12:51.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:16:22.496Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>安全设备基础-入侵检测设备介绍 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          安全设备基础-入侵检测设备介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:12:51 / 修改时间：22:16:22" itemprop="dateCreated datePublished" datetime="2023-10-22T22:12:51+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、启明星辰入侵检测IDS"><a href="#一、启明星辰入侵检测IDS" class="headerlink" title="一、启明星辰入侵检测IDS"></a>一、启明星辰入侵检测IDS</h4><h5 id="1、介绍"><a href="#1、介绍" class="headerlink" title="1、介绍"></a>1、介绍</h5><ul>
+<li>天阗入侵检测与管理系统（IDS）是启明星辰自主原创并拥有完全自主知识产权的威胁检测、分析与管理产品，该产品对于病毒、蠕虫、木马、DDoS、扫描、SQL注入、XSS、缓冲区溢出、欺骗劫持等攻击行为以及网络资源滥用行为（如P2P上传&#x2F;下载、网络游戏、视频&#x2F;音频、网络炒股）等威胁具有高精度的检测能力，同时，该产品中的流量模块对于网络流量的异常情况具有非常准确、有效的发现能力。</li>
+<li>该产品在精确检测的基础上强调对威胁的可管理性（如：威胁分析、威胁处理），尤其是对可能产生的大量事件进行了智能过滤，仅向使用者展示真正需要关注的威胁，在减轻使用者工作量的同时，保障威胁处理的及时性。</li>
+</ul>
+<h5 id="2、功能特点"><a href="#2、功能特点" class="headerlink" title="2、功能特点"></a>2、功能特点</h5><ul>
+<li>组织化威胁管理</li>
+<li>威胁分析与处理帮助</li>
+<li>面向安全结论的报表</li>
+<li>智能报警分析与过滤</li>
+<li>全面用户上网行为监控</li>
+<li>具备智能流量分析能力</li>
+<li>精确的Web威胁检测</li>
+<li>全面精确的威胁发现</li>
+</ul>
+<h5 id="3、技术优势"><a href="#3、技术优势" class="headerlink" title="3、技术优势"></a>3、技术优势</h5><ul>
+<li>事件日志与策略自动优化：根据用户的安全态势及发生频率识别垃圾事件，并进行策略优化处理。</li>
+<li>简单威胁管理：采用去技术化的向导对威胁进行分析和处理，降低了使用者的维护工作量。</li>
+<li>智能威胁分析：能够对上报的事件进行关联分析，识别出重要报警，提醒用户关注。</li>
+<li>全面威胁检测：对常见的网络威胁、异常流量等攻击行为能够准确高效的检测。</li>
+</ul>
+<h5 id="4、用户价值"><a href="#4、用户价值" class="headerlink" title="4、用户价值"></a>4、用户价值</h5><ul>
+<li>天阗入侵检测与管理系统（IDS）是一款智能化的入侵检测系统，用智能算法，快速过滤掉海量的低质量报警事件；用资产关联算法，使系统展示出来的事件数量大幅减少；用代码优化技术，提升检测处理性能等等，旨在帮助用户，快速定位网络威胁、聚焦重点事件、降低管理难度。运用可视化技术手段、独有的智能算法，把复杂的网络威胁检测的问题变得更加直观有效。通过准确的日报、周报、月报，实现每一条结论都有据可查。从定量分析到定性分析为用户提供准确的、客观的网络安全建设建议。</li>
+</ul>
+<h4 id="二、安恒明御入侵检测系统"><a href="#二、安恒明御入侵检测系统" class="headerlink" title="二、安恒明御入侵检测系统"></a>二、安恒明御入侵检测系统</h4><h5 id="1、介绍-1"><a href="#1、介绍-1" class="headerlink" title="1、介绍"></a>1、介绍</h5><ul>
+<li>明御入侵检测系统（DAS-NTA）以全面深入的流量解析为基础，通过智能语义分析、精准全面的检测规则、多角度分析模型、流量异常识别等技术，提供“可信、精准”的网络攻击和威胁事件发现、攻击源与攻击目标定位、攻击行为关联分析能力，还原入侵检测事件，多维视角实时呈现全网安全态势，为用户网络安全保障工作提供有力支持。</li>
+</ul>
+<h5 id="2、产品特点"><a href="#2、产品特点" class="headerlink" title="2、产品特点"></a>2、产品特点</h5><ul>
+<li>信创型号，引领国产化潮流：NTA信创型号采用中国自主知识产权的处理器，解决了芯片设计上存在的安全隐患操作系统采用中国自主研发的操作系统，该系统具备强大的抗攻击能力，解决自身进程及文件被非法算改和破坏;应用模块采用安恒信息自主研发的应用模块，真正实现硬件到软件、系统到芯片的完全自主，真正意义上的全国产化安全产品</li>
+<li>精准识别威胁：NTA基于被动的流量分析引|入检测模型和验证机制，增强系统检测能力和范围，如安全漏洞检测和网页篡改检测等</li>
+<li>线性扩展的大流量处理能力：NTA采用设备堆叠分流处理技术，单点处理能力达10G的超大流量检测</li>
+<li>全流量分析：NTA可建立全流量安全分析与取证平台，以旁路模式进行实时全流量分析，洞察黑客攻击，能同步监测分析系统潜在弱点</li>
+<li>层次化的分布式大规模检测网络：NTA通过设备级联和分散部署，构建统-的大规模监测网络，实现安全威胁态势全局感知</li>
+<li>灵活扩展的安全威胁检测种类和范围：NTA采用了多级分析处理引擎和模块化插件架构，可及时、灵活扩充不同安全威胁事件和威胁检测种类</li>
+<li>完整的测评效果动态评估机制：NTA通过针对每次测评过程和整改前后的安全问题进行持续有效跟踪，进-步建立完整的测评效果动态评估机制，可利用人工扫描、渗透、代码分析等定期服务，快速发现评估安全风险</li>
+</ul>
+<h5 id="3、用户价值"><a href="#3、用户价值" class="headerlink" title="3、用户价值"></a>3、用户价值</h5><ul>
+<li>预警重要信息系统发生的安全事件：产品采用被动流量分析技术，能实时发现网络流量中的各类威胁事件，及时产生风险告警，从多维度视角直观展示用户网络中的安全事件。</li>
+<li>完善核心系统安全防护能力：产品可发现各种隐蔽威胁，分析当前安全防护的弱点并输出完善防护的策略建议，同时本地离线威胁情报与云端联动，协同保障用户网络安全。</li>
+<li>细粒度控制策略：产品对IDS规则的管理颗粒度细致，可以单独对每条规则进行紧急程度设置、添加多维度组合白名单，方便用户研判、处理风险事件。用户可根据网络场景对检测的广度和深度对IDS规则进行灵活管理。</li>
+</ul>
+<h4 id="三、奇安信入侵检测系统"><a href="#三、奇安信入侵检测系统" class="headerlink" title="三、奇安信入侵检测系统"></a>三、奇安信入侵检测系统</h4><h5 id="1、介绍-2"><a href="#1、介绍-2" class="headerlink" title="1、介绍"></a>1、介绍</h5><ul>
+<li>入侵检测系统是面向政府、金融、教育、企业等用户推出的，能够及时发现网络攻击企图、攻击行为和攻击结果的威胁检测产品，可通过网络数据监听及多样的告警机制帮助用户及时发现安全威胁时间的发生并采取相应措施。该产品采用先进的协议分析和入侵检测引擎，通过硬件架构优化，能够快速处理网络数据，精准检出网络攻击行为。</li>
+</ul>
+<h5 id="2、产品功能"><a href="#2、产品功能" class="headerlink" title="2、产品功能"></a>2、产品功能</h5><ul>
+<li>威胁事件检测告警<ul>
+<li>系统内置超过4000条的攻击事件特征库，可对端口扫描、木马后门、蠕虫、拒绝服务、缓冲溢出、邮件服务器攻击、SQL注入、CG l访问攻击、 IIS服务器等网络攻击，及P2P 、 l M、网络游珑等异常违规行为进行实时检 测和告警。</li>
+</ul>
+</li>
+<li>支持灵活的部署模式<ul>
+<li>系统的每一个实体接口均可配置为不同的规则集，每一个规则集都可依据源、目的IP等条件进行对应的检测。同时，规则集支持定义有效的运行时间，方便网络管理人员依据业务系统的规范要求进行规划和部署。</li>
+</ul>
+</li>
+<li>检测策略自定义<ul>
+<li>系统提供详尽全面的自定义检测功能，可以通过检测策略参数的灵活设定，筛选重点关注的网络流量及攻 击行为进行深度检测。</li>
+</ul>
+</li>
+</ul>
+<h5 id="3、产品优势"><a href="#3、产品优势" class="headerlink" title="3、产品优势"></a>3、产品优势</h5><ul>
+<li>高性能多核处理架构<ul>
+<li>基于先进的多核硬件处理芯片、多接并行处理、一体化检测引擎等技术的适用，并通过高效的报文分流算法和混合有限状态机的模式匹配算法，确保了网络流量的处理性能及攻击签名的匹配效率，相较同类产品具有明显的性能优势。</li>
+</ul>
+</li>
+<li>精准的威胁检出能力<ul>
+<li>基于奇安信深厚的攻防能力储备，并得益于TCP&#x2F;IP数据重组、应用程序识别、应用层状态追踪、应用层协议分析及多项抗逃逸技术的运用，能够提供更高的威胁检出率，并有效避免漏报、误报发生。</li>
+</ul>
+</li>
+<li>深度的数据可视分析<ul>
+<li>采用深度数据分析技术，通过多样化的数据查询和关联分析，可以从大量的事件告警中快速准确的定位风险，帮助管理者摆脱“入工挖掘、单位分析”的困境，大幅降低针对威胁的平均检测时间(MTTD)</li>
+</ul>
+</li>
+</ul>
+<h5 id="4、用户价值-1"><a href="#4、用户价值-1" class="headerlink" title="4、用户价值"></a>4、用户价值</h5><ul>
+<li>实时检测网络威胁<ul>
+<li>系统内置全面的攻击事件特征库和多维度事件分析技术，实时检测各种网络入侵及违规行为，并可通过邮件、 Sys log等多种响应方式及时告誓，帮助用户实时、全面检测网络攻击。</li>
+</ul>
+</li>
+<li>洞察安全事件全貌<ul>
+<li>依靠系统提供的多维度事件分析技术及安全可视化交互设计，可帮助用户深入分析并全面掌握网络攻击的方式、经过及影响，便于及时调整安全策略或借助其他措施予以处置。</li>
+</ul>
+</li>
+<li>满足合规监管要求<ul>
+<li>产品通过了监管机构的测评认证，基于全面的威胁检测和事件告警功能，可充分满足等级保护、分级保护等相关政策、法规和监管要求，帮助用户加强合规建设、满足监管要求。</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E6%8D%B7%E6%99%AEwaf%E5%BA%94%E7%94%A8/" rel="prev" title="安全设备基础-捷普waf应用">
+      <i class="fa fa-chevron-left"></i> 安全设备基础-捷普waf应用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%A0%A1%E5%9E%92%E6%9C%BA%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/" rel="next" title="安全设备基础-堡垒机设备介绍">
+      安全设备基础-堡垒机设备介绍 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%90%AF%E6%98%8E%E6%98%9F%E8%BE%B0%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8BIDS"><span class="nav-number">1.</span> <span class="nav-text">一、启明星辰入侵检测IDS</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">1、介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%8A%9F%E8%83%BD%E7%89%B9%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">2、功能特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%8A%80%E6%9C%AF%E4%BC%98%E5%8A%BF"><span class="nav-number">1.3.</span> <span class="nav-text">3、技术优势</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E7%94%A8%E6%88%B7%E4%BB%B7%E5%80%BC"><span class="nav-number">1.4.</span> <span class="nav-text">4、用户价值</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E6%81%92%E6%98%8E%E5%BE%A1%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.</span> <span class="nav-text">二、安恒明御入侵检测系统</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BB%8B%E7%BB%8D-1"><span class="nav-number">2.1.</span> <span class="nav-text">1、介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%BA%A7%E5%93%81%E7%89%B9%E7%82%B9"><span class="nav-number">2.2.</span> <span class="nav-text">2、产品特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E7%94%A8%E6%88%B7%E4%BB%B7%E5%80%BC"><span class="nav-number">2.3.</span> <span class="nav-text">3、用户价值</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%A5%87%E5%AE%89%E4%BF%A1%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text">三、奇安信入侵检测系统</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BB%8B%E7%BB%8D-2"><span class="nav-number">3.1.</span> <span class="nav-text">1、介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%BA%A7%E5%93%81%E5%8A%9F%E8%83%BD"><span class="nav-number">3.2.</span> <span class="nav-text">2、产品功能</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E4%BA%A7%E5%93%81%E4%BC%98%E5%8A%BF"><span class="nav-number">3.3.</span> <span class="nav-text">3、产品优势</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E7%94%A8%E6%88%B7%E4%BB%B7%E5%80%BC-1"><span class="nav-number">3.4.</span> <span class="nav-text">4、用户价值</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

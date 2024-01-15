@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、sed 工具1、介绍 sed（Stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换、添加、移动等），最后输出所有行或者仅输出处理的某些行。sed 也可以在无交互的情况下实现相当复杂的文本处理操作，被广泛应用于 Shell 脚本中，用以完成各种自动化处理任务。  2、工作流程 读取：sed 从输入流（文件、管道、标准输入）中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shell脚本基础-sed修改文档操作">
+<meta property="og:url" content="http://example.com/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-sed%E4%BF%AE%E6%94%B9%E6%96%87%E6%A1%A3%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、sed 工具1、介绍 sed（Stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换、添加、移动等），最后输出所有行或者仅输出处理的某些行。sed 也可以在无交互的情况下实现相当复杂的文本处理操作，被广泛应用于 Shell 脚本中，用以完成各种自动化处理任务。  2、工作流程 读取：sed 从输入流（文件、管道、标准输入）中">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T14:38:32.000Z">
+<meta property="article:modified_time" content="2023-10-22T15:26:06.072Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-sed%E4%BF%AE%E6%94%B9%E6%96%87%E6%A1%A3%E6%93%8D%E4%BD%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>shell脚本基础-sed修改文档操作 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-sed%E4%BF%AE%E6%94%B9%E6%96%87%E6%A1%A3%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          shell脚本基础-sed修改文档操作
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:38:32 / 修改时间：23:26:06" itemprop="dateCreated datePublished" datetime="2023-10-22T22:38:32+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、sed-工具"><a href="#一、sed-工具" class="headerlink" title="一、sed 工具"></a>一、sed 工具</h4><h5 id="1、介绍"><a href="#1、介绍" class="headerlink" title="1、介绍"></a>1、介绍</h5><ul>
+<li>sed（Stream EDitor）是一个强大而简单的文本解析转换工具，可以读取文本，并根据指定的条件对文本内容进行编辑（删除、替换、添加、移动等），最后输出所有行或者仅输出处理的某些行。sed 也可以在无交互的情况下实现相当复杂的文本处理操作，被广泛应用于 Shell 脚本中，用以完成各种自动化处理任务。</li>
+</ul>
+<h5 id="2、工作流程"><a href="#2、工作流程" class="headerlink" title="2、工作流程"></a>2、工作流程</h5><ul>
+<li>读取：sed 从输入流（文件、管道、标准输入）中读取一行内容并存储到临时的缓冲区中（又称模式空间，pattern space）。</li>
+<li>执行：默认情况下，所有的 sed 命令都在模式空间中顺序地执行，除非指定了行的地址，否则 sed 命令将会在所有的行上依次执行。</li>
+<li>显示：发送修改后的内容到输出流。再发送数据后，模式空间将会被清空。</li>
+</ul>
+<p><strong>在所有的文件内容都被处理完成之前，上述过程将重复执行，直至所有内容被处理完。</strong></p>
+<blockquote>
+<p>注意：默认情况下,所有的 sed 命令都是在模式空间内执行的，因此输入的文件并不会发生任何变化，除非是用重定向存储输出。</p>
+</blockquote>
+<h4 id="二、sed-使用"><a href="#二、sed-使用" class="headerlink" title="二、sed 使用"></a>二、sed 使用</h4><h5 id="1、sed-命令常见用法"><a href="#1、sed-命令常见用法" class="headerlink" title="1、sed 命令常见用法"></a>1、sed 命令常见用法</h5><ul>
+<li><p>通常情况下调用 sed 命令有两种格式，如下所示。其中，“参数”是指操作的目标文件，当存在多个操作对象时用，文件之间用逗号“，”分隔；而 scriptfile 表示脚本文件，需要用“-f”选项指定，当脚本文件出现在目标文件之前时，表示通过指定的脚本文件来处理输入的目标文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed[选项] &#x27;操作&#x27; 参数 sed [选项] -f scriptfile 参数</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#常见选项-e 或--expression=：表示用指定命令或者脚本来处理输入的文本文件。-f 或--file=：表示用指定的脚本文件来处理输入的文本文件。-h 或--help：显示帮助。-n、--quiet 或 silent：表示仅显示处理后的结果。-i：直接编辑文本文件。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#常见操作a：增加，在当前行下面增加一行指定内容。c：替换，将选定行替换为指定内容。d：删除，删除选定的行。i：插入，在选定行上面插入一行指定内容。p：打印，如果同时指定行，表示打印指定行；如果不指定行，则表示打印所有内容；如果有非打印字符，则以 ASCII 码输出。其通常与“-n”选项一起使用。s：替换，替换指定字符。y：字符转换。</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、用法示例"><a href="#2、用法示例" class="headerlink" title="2、用法示例"></a>2、用法示例</h5><ul>
+<li><p>输出符合条件的文本（p 表示正常输出）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -n &#x27;p&#x27; test.txt            #输出所有内容,等同于 cat test.txtsed -n &#x27;3p&#x27; test.txt         #输出第 3 行sed -n &#x27;3,5p&#x27; test.txt        #输出 3~5 行sed -n &#x27;p;n&#x27; test.txt        #输出所有奇数行,n 表示读入下一行资料sed -n &#x27;n;p&#x27; test.txt        #输出所有偶数行,n 表示读入下一行资料sed -n &#x27;1,5&#123;p;n&#125;&#x27; test.txt    #输出第 1~5 行之间的奇数行(第 1、3、5 行)sed -n &#x27;10,$&#123;n;p&#125;&#x27; test.txt        #输出第 10 行至文件尾之间的偶数行sed -n &#x27;/the/p&#x27; test.txt        #输出包含 the 的行sed -n &#x27;4,/the/p&#x27; test.txt        #输出从第 4 行至第一个包含 the 的行sed -n &#x27;/the/=&#x27; test.txt        #输出包含 the 的行所在的行号,等号(=)用来输出行号sed -n &#x27;/^PI/p&#x27; test.txt         #输出以 PI 开头的行sed -n &#x27;/\&lt;wood\&gt;/p&#x27; test.txt    #输出包含单词 wood 的行,\&lt;、\&gt;代表单词边界</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除符合条件的文本（d）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#为了方面查看效果，使用 nl 来计算行数nl test.txt | sed &#x27;3d&#x27;                 #删除第 3 行nl test.txt | sed &#x27;3,5d&#x27;             #删除第 3~5 行nl test.txt |sed &#x27;/cross/d&#x27;            #删除包含 cross 的行,原本的第 8 行被删除，删除不包含 cross 的行,用!符号表示取反操作,如&#x27;/cross/！d&#x27;sed &#x27;/^[a-z]/d&#x27; test.txt             #删除以小写字母开头的行sed &#x27;/\.$/d&#x27; test.txt                 #删除以&quot;.&quot;结尾的行sed &#x27;/^$/d&#x27; test.txt                 #删除所有空行</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>替换符合条件的文本（在使用 sed 命令进行替换操作时需要用到 s（字符串替换）、c（整行&#x2F;整块替换）、y（字符转换）命令选项）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &#x27;s/the/THE/&#x27; test.txt             #将每行中的第一个 the 替换为 THEsed &#x27;s/l/L/2&#x27; test.txt                 #将每行中的第 3 个 l 替换为 Lsed &#x27;s/the/THE/g&#x27; test.txt             #将文件中的所有 the 替换为 THEsed &#x27;s/o//g&#x27; test.txt                 #将文件中的所有 o 删除(替换为空串)sed &#x27;s/^/#/&#x27; test.txt                 #在每行行首插入#号sed &#x27;/the/s/^/#/&#x27; test.txt             #在包含 the 的每行行首插入#号sed &#x27;s/$/EOF/&#x27; test.txt             #在每行行尾插入字符串 EOFsed &#x27;3,5s/the/THE/g&#x27; test.txt         #将第 3~5 行中的所有 the 替换为 THEsed &#x27;/the/s/o/O/g&#x27; test.txt         #将包含 the 的所有行中的 o 都替换为 O</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>迁移符合条件的文本（其中，H，复制到剪贴板；g、G，将剪贴板中的数据覆盖&#x2F;追加至指定行；w，保存为文件；r，读取指定文件；a，追加指定内容）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &#x27;/the/&#123;H;d&#125;;$G&#x27; test.txt         #将包含the 的行迁移至文件末尾,&#123;;&#125;用于多个操作sed &#x27;1,5&#123;H;d&#125;;17G&#x27; test.txt         #将第 1~5 行内容转移至第 17 行后sed &#x27;/the/w out.file&#x27; test.txt         #将包含 the 的行另存为文件 out.filesed &#x27;/the/r /etc/hostname&#x27; test.txt #将文件/etc/hostname 的内容添加到包含 the 的每行以后sed &#x27;3aNew&#x27; test.txt                 #在第 3 行后插入一个新行,内容为 Newsed &#x27;/the/aNew&#x27; test.txt             #在包含 the 的每行后插入一个新行,内容为 Newsed &#x27;3aNew1\nNew2&#x27; test.txt         #在第 3 行后插入多行内容,中间的\n 表示换行</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用脚本编辑文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &#x27;1,5&#123;H;d&#125;;17G&#x27; test.txt         #将第 1~5 行内容转移至第 17 行后#修改为下面操作vi opt.list    1,5H    1,5d    17Gsed -f opt.list test.txt</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>3、实战案例</p>
+<ul>
+<li><p>调整 vsftpd 服务配置：禁止匿名用户，但允许本地用户（也允许写入）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim local_only_ftp.sh#!/bin/bash# 指定样本文件路径、配置文件路径SAMPLE=&quot;/usr/share/doc/vsftpd-3.0.2/EXAMPLE/INTERNET_SITE/vsftpd.conf &quot;CONFIG=&quot;/etc/vsftpd/vsftpd.conf&quot;# 备份原来的配置文件,检测文件名为/etc/vsftpd/vsftpd.conf.bak 备份文件是否存在,若不存在则使用 cp 命令进行文件备份[ ! -e &quot;$CONFIG.bak&quot; ] &amp;&amp; cp $CONFIG $CONFIG.bak# 基于样本配置进行调整,覆盖现有文件sed -e &#x27;/^anonymous_enable/s/YES/NO/g&#x27; $SAMPLE &gt; $CONFIGsed -i -e &#x27;/^local_enable/s/NO/YES/g&#x27; -e &#x27;/^write_enable/s/NO/YES/g&#x27; $CONFIGgrep &quot;listen&quot; $CONFIG || sed -i &#x27;$alisten=YES&#x27; $CONFIG# 启动 vsftpd 服务,并设为开机后自动运行systemctl restart vsftpdsystemctl enable vsftpd[root@localhost ~]# chmod +x local_only_ftp.sh</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-shell%E6%95%B0%E7%BB%84%E4%B8%8E%E5%87%BD%E6%95%B0/" rel="prev" title="shell脚本基础-shell数组与函数">
+      <i class="fa fa-chevron-left"></i> shell脚本基础-shell数组与函数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-awk%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA/" rel="next" title="shell脚本基础-awk格式化输出">
+      shell脚本基础-awk格式化输出 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81sed-%E5%B7%A5%E5%85%B7"><span class="nav-number">1.</span> <span class="nav-text">一、sed 工具</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">1、介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">2、工作流程</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81sed-%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">二、sed 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81sed-%E5%91%BD%E4%BB%A4%E5%B8%B8%E8%A7%81%E7%94%A8%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">1、sed 命令常见用法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.2.</span> <span class="nav-text">2、用法示例</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

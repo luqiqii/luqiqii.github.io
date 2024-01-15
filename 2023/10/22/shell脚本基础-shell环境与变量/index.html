@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、shell基础1、shell的作用 Linux 系统中的 Shell 脚本是一个特殊的应用程序，它介于操作系统内核与用户之间，充当了一个“命令解释器”的角色，负责接收用户输入的操作指令（命令）并进行解释，将需要执行的操作传递给内核执行，并输出执行结果。  常见的 Shell 解释器程序有很多种，使用不同的 Shell 脚本时，其内部指令、命令行提示等方面会存在一些区别。通过&#x2F;etc&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shell脚本基础-shell环境与变量">
+<meta property="og:url" content="http://example.com/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-shell%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%8F%98%E9%87%8F/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、shell基础1、shell的作用 Linux 系统中的 Shell 脚本是一个特殊的应用程序，它介于操作系统内核与用户之间，充当了一个“命令解释器”的角色，负责接收用户输入的操作指令（命令）并进行解释，将需要执行的操作传递给内核执行，并输出执行结果。  常见的 Shell 解释器程序有很多种，使用不同的 Shell 脚本时，其内部指令、命令行提示等方面会存在一些区别。通过&#x2F;etc&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T14:37:56.000Z">
+<meta property="article:modified_time" content="2023-10-22T15:24:53.314Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-shell%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%8F%98%E9%87%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>shell脚本基础-shell环境与变量 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-shell%E7%8E%AF%E5%A2%83%E4%B8%8E%E5%8F%98%E9%87%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          shell脚本基础-shell环境与变量
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:37:56 / 修改时间：23:24:53" itemprop="dateCreated datePublished" datetime="2023-10-22T22:37:56+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、shell基础"><a href="#一、shell基础" class="headerlink" title="一、shell基础"></a>一、shell基础</h4><h5 id="1、shell的作用"><a href="#1、shell的作用" class="headerlink" title="1、shell的作用"></a>1、shell的作用</h5><ul>
+<li><p>Linux 系统中的 Shell 脚本是一个特殊的应用程序，它介于操作系统内核与用户之间，充当了一个“命令解释器”的角色，负责接收用户输入的操作指令（命令）并进行解释，将需要执行的操作传递给内核执行，并输出执行结果。</p>
+</li>
+<li><p>常见的 Shell 解释器程序有很多种，使用不同的 Shell 脚本时，其内部指令、命令行提示等方面会存在一些区别。通过&#x2F;etc&#x2F;shells 文件可以了解当前系统所支持的 Shell 脚本种类。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#列出系统中所有的Shell[root@localhost ~]# cat /etc/shells/bin/sh/bin/bash/usr/bin/sh/usr/bin/bash</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看当前环境变量$SHELL的值[root@localhost ~]# echo $SHELL/bin/bash</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、Shell的类型"><a href="#2、Shell的类型" class="headerlink" title="2、Shell的类型"></a>2、Shell的类型</h5><table>
+<thead>
+<tr>
+<th align="left">命令</th>
+<th align="left">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Bourne Shell</td>
+<td align="left">是贝尔实验室开发的，Unix普遍使用的Shell，在编程方面比较优秀，但在用户交互方面没有其他Shell优秀。</td>
+</tr>
+<tr>
+<td align="left">Korn Shell</td>
+<td align="left">是对Bourne Shell 的发展，在大部分内容上与Bourne Shell兼容，集成了C Shell和Bourne shell优点。</td>
+</tr>
+<tr>
+<td align="left">BASH</td>
+<td align="left">是GNU的Bourne Again Shell，是GNU操作系统上默认的Shell，在Bourne Shell基础上增强了很多特性，如命令补全，命令历史表</td>
+</tr>
+<tr>
+<td align="left">C Shell</td>
+<td align="left">是SUN公司Shell的BSD版本，语法与c语言相似，比bourne shell 更适合编程</td>
+</tr>
+</tbody></table>
+<h5 id="3、第一个shell脚本"><a href="#3、第一个shell脚本" class="headerlink" title="3、第一个shell脚本"></a>3、第一个shell脚本</h5><ul>
+<li><p>新建shell文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim first.sh    cd /boot    pwd    ls -lh vml*</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加执行权限</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# chmod +x first.sh [root@localhost ~]# ls -ld first.sh -rwxr-xr-x. 1 root root 25 12月 26 23:46 first.sh</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行shell脚本（3种执行方式）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#使用 ./ 执行需要添加执行权限[root@localhost ~]# ./first.sh /boot-rwxr-xr-x. 1 root root 6.5M 12月 20 04:36 vmlinuz-0-rescue-5255c7d84d8048d6b0bce26a490ad173-rwxr-xr-x. 1 root root 6.5M 8月   8 2019 vmlinuz-3.10.0-1062.el7.x86_64</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用 <code>sh</code> 、 <code>.</code> 、 <code>source</code> 来执行就不需要添加执行权限</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# sh first.sh /boot-rwxr-xr-x. 1 root root 6.5M 12月 20 04:36 vmlinuz-0-rescue-5255c7d84d8048d6b0bce26a490ad173-rwxr-xr-x. 1 root root 6.5M 8月   8 2019 vmlinuz-3.10.0-1062.el7.x86_64</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#以下两种方式相等[root@localhost ~]# . first.sh[root@localhost ~]# source first.sh/boot-rwxr-xr-x. 1 root root 6.5M 12月 20 04:36 vmlinuz-0-rescue-5255c7d84d8048d6b0bce26a490ad173-rwxr-xr-x. 1 root root 6.5M 8月   8 2019 vmlinuz-3.10.0-1062.el7.x86_64</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>完善脚本（<code>#!/bin/bash</code>这是一个特殊声明，<code>echo</code>用于输出字符串）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim first.sh     #!/bin/bash    # 这是我的第一个shell脚本。    cd /boot    echo &quot;当前的目录位于:&quot;    pwd    echo &quot;其中以 vml 开头的文件包括:&quot;    ls -lh vml*[root@localhost ~]# sh first.sh 当前的目录位于:/boot其中以 vml 开头的文件包括:-rwxr-xr-x. 1 root root 6.5M 12月 20 04:36 vmlinuz-0-rescue-5255c7d84d8048d6b0bce26a490ad173-rwxr-xr-x. 1 root root 6.5M 8月   8 2019 vmlinuz-3.10.0-1062.el7.x86_64</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="二、重定向与管道操作"><a href="#二、重定向与管道操作" class="headerlink" title="二、重定向与管道操作"></a>二、重定向与管道操作</h4><h5 id="1、重定向操作"><a href="#1、重定向操作" class="headerlink" title="1、重定向操作"></a>1、重定向操作</h5><ul>
+<li><p>标准输入（STDIN）：默认的设备是键盘，文件编号为 0，命令将从标准输入文件中读取在执行过程中需要的输入数据，使用 <code>&lt;</code> 操作符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim pass.txt    123456[root@localhost ~]# passwd --stdin zhangsan &lt; pass.txt             #需要关闭seLinux更改用户 zhangsan 的密码 。passwd：所有的身份验证令牌已经成功更新。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>标准输出（STDOUT）：默认的设备是显示器，文件编号为 1，命令将执行后的输出结果发送到标准输出文件。</p>
+<ul>
+<li>重定向输出使用 <code>&gt;</code> 或 <code>&gt;&gt;</code> 操作符号，分别用于覆盖或追加文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# uname -p &gt; kernel.txt[root@localhost ~]# cat kernel.txtx86_64</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# uname -r &gt;&gt; kernel.txt[root@localhost ~]# cat kernel.txtx86_643.10.0-514.el7.x86_64</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>标准错误（STDERR）：默认的设备是显示器，文件编号为 2，命令将执行期间的各种错误信息发送到标准错误文件。</p>
+<ul>
+<li>错误重定向使用“2&gt;”操作符，其中“2”是指错误文件的编号（在使用标准输出、标准输入重定向时，实际上省略了 1、0 编号）。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# tar jcf /nonedir/etc.tgz /etc/ 2&gt; error.log[root@localhost ~]# cat error.log tar: 从成员名中删除开头的“/”tar (child): /nonedir/etc.tgz：无法 open: 没有那个文件或目录tar (child): Error is not recoverable: exiting now</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用 <code>2&gt;</code> 操作符时，会像使用 <code>&gt;</code> 操作符一样覆盖目标文件的内容，若要追加内容而不是覆盖文件，则应改用 <code>2&gt;&gt;</code> 操作符</li>
+</ul>
+</li>
+<li><p>当命令输出的结果可能既包括标准输出（正常执行）信息，又包括错误输出信息时，可以使用操作符 <code>&gt;</code> <code>2&gt;</code> 将两类输出信息分别保存到不同的文件，也可以使用 <code>&amp;&gt;</code> 操作符将两类输出信息保存到同一个文件</p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>类型</strong></th>
+<th align="left"><strong>操作符</strong></th>
+<th align="left"><strong>用途</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">重定向输入</td>
+<td align="left">&lt;</td>
+<td align="left">从指定的文件读取数据，而不是从键盘输入</td>
+</tr>
+<tr>
+<td align="left">重定向输出</td>
+<td align="left">&gt; &gt;&gt;</td>
+<td align="left">将输出结果保存到指定的文件（覆盖原有内容） 将输出结果追加到指定的文件</td>
+</tr>
+<tr>
+<td align="left">标准错误输出</td>
+<td align="left">2&gt; 2&gt;&gt;</td>
+<td align="left">将错误信息保存到指定的文件（覆盖原有内容） 将错误信息追加到指定的文件中</td>
+</tr>
+<tr>
+<td align="left">混合输出</td>
+<td align="left">&amp;&gt;</td>
+<td align="left">将标准输出、标准错误的内容保存到同一个文件中</td>
+</tr>
+</tbody></table>
+<h5 id="2、管道操作"><a href="#2、管道操作" class="headerlink" title="2、管道操作"></a>2、管道操作</h5><ul>
+<li><p>管道（pipe）操作为不同命令之间的协同工作提供了一种机制，位于管道符号“|”左侧的命令输出的结果，将作为右侧命令的输入（处理对象），同一行命令中可以使用多个管道。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#过滤前[root@localhost ~]# grep &quot;/bin/bash$&quot; /etc/passwd        root0root:/root:/bin/bashzhangsan1000:/home/zhangsan:/bin/bash#使用 awk 做进一步过滤（-F指定分隔符，print打印字段1和字段7）[root@localhost ~]# grep &quot;/bin/bash$&quot; /etc/passwd | awk -F: &#x27;&#123;print $1,$7&#125;&#x27;root /bin/bashzhangsan /bin/bash</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# df -hT文件系统                类型      容量  已用  可用 已用% 挂载点devtmpfs                devtmpfs  475M     0  475M    0% /devtmpfs                   tmpfs     487M     0  487M    0% /dev/shmtmpfs                   tmpfs     487M  7.7M  479M    2% /runtmpfs                   tmpfs     487M     0  487M    0% /sys/fs/cgroup/dev/mapper/centos-root xfs        50G  1.4G   49G    3% //dev/sda1               xfs      1014M  137M  878M   14% /boot/dev/mapper/centos-home xfs        47G   33M   47G    1% /hometmpfs                   tmpfs      98M     0   98M    0% /run/user/0[root@localhost ~]# df -hT | grep &quot;/$&quot; | awk &#x27;&#123;print $6&#125;&#x27;3%</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="3、实验操作"><a href="#3、实验操作" class="headerlink" title="3、实验操作"></a>3、实验操作</h5><ul>
+<li><p>使用shell脚本编写一个自动编译安装httpd服务器的脚本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- 下载源码包- 安装编译环境（gcc、gcc-c++、make）- 安装httpd依赖软件- 解包- 配置- 编译- 安装- 修改配置文件（使用sed命令 sed -i &#x27;3i ServerName 192.168.1.1:80&#x27; httpd.conf   直接修改原文件在第三行插入内容）- 启动服务器</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="三、shell变量"><a href="#三、shell变量" class="headerlink" title="三、shell变量"></a>三、shell变量</h4><h5 id="1、自定义变量"><a href="#1、自定义变量" class="headerlink" title="1、自定义变量"></a>1、自定义变量</h5><ul>
+<li><p>由用户自己定义、修改和使用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">变量名=变量值echo $变量名</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# school=woniuxy[root@localhost ~]# echo $school woniuxy</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>&#123;&#125;</code> 括号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# classes=wangan[root@localhost ~]# echo $classes7.5.5[root@localhost ~]# echo $&#123;classes&#125;7.5wangan7.5</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>赋值时使用引号</p>
+<ul>
+<li><p>双引号<code>&quot; &quot;</code>（允许通过$符号引用其他变量值，变量值中出现空格时使用）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# classes=&quot;wangan 7.5&quot;[root@localhost ~]# echo $classeswangan 7.5</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# classes=wangan[root@localhost ~]# version=7.5[root@localhost ~]# wnwa=&quot;$classes $version&quot;[root@localhost ~]# echo $wnwawangan 7.5</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>单引号<code>&#39; &#39;</code>（禁止引用其他变量值，$视为普通字符）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# wnwa=&#x27;$classes $version&#x27;[root@localhost ~]# echo $wnwa$classes $version</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>反撇号&#96;&#96;&#96; <code>，当出现嵌套命令替换时改用 </code>$()&#96; （命令替换，提取命令执行后的输出结果）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# ls -lh `which useradd`-rwxr-xr-x. 1 root root 135K 8月   9 2019 /usr/sbin/useradd</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# rpm -qc $(rpm -qf $(which useradd))/etc/default/useradd/etc/login.defs</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>使用<code>read</code> 命令（从键盘输入内容为变量赋值，使用<code>-p</code>选项来设置提示信息）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# read -p &quot;请输入学校：&quot; school请输入学校：蜗牛学苑[root@localhost ~]# echo $school蜗牛学苑</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>变量的作用范围</p>
+<ul>
+<li><p>默认情况下定义的变量为局部变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# school=&quot;蜗牛学苑&quot;[root@localhost ~]# echo $school蜗牛学苑[root@localhost ~]# bash[root@localhost ~]# echo $school</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以使用内部命令<code>export</code>将指定的变量导出为全局变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# school=&quot;蜗牛学苑&quot;[root@localhost ~]# classes=&quot;网安10期&quot;[root@localhost ~]# export school classes[root@localhost ~]# bash[root@localhost ~]# echo $school $classes蜗牛学苑 网安10期</span><br></pre></td></tr></table></figure></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# export FQDN=&quot;www.woniuxy.com&quot;[root@localhost ~]# echo $FQDNwww.woniuxy.com[root@localhost ~]# bash[root@localhost ~]# echo $FQDNwww.woniuxy.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>变量的运算</p>
+<ul>
+<li>在 Bash Shell 环境中，只能进行简单的整数运算，不支持小数运算。整数值的运算主要通过内部命令 <code>expr</code> 进行，运算符与变量之间必须有至少一个空格</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">运算符</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>+</code></td>
+<td align="left">加法运算</td>
+</tr>
+<tr>
+<td align="left"><code>-</code></td>
+<td align="left">减法运算</td>
+</tr>
+<tr>
+<td align="left"><code>\*</code></td>
+<td align="left">乘法运算，注意不能仅使用“*”符号，否则将被当成文件通配符</td>
+</tr>
+<tr>
+<td align="left"><code>/</code></td>
+<td align="left">除法运算</td>
+</tr>
+<tr>
+<td align="left"><code>%</code></td>
+<td align="left">求模运算，又称为取余运算，用来计算数值相除后的余数</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# X=35[root@localhost ~]# Y=16[root@localhost ~]# expr $X + $Y51[root@localhost ~]# expr $X - $Y19[root@localhost ~]# expr $X \* $Y560[root@localhost ~]# expr $X / $Y2[root@localhost ~]# expr $X % $Y3[root@localhost ~]# Ycube=`expr $Y \* $Y \* $Y` [root@localhost ~]# echo $Ycube 4096</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、环境变量"><a href="#2、环境变量" class="headerlink" title="2、环境变量"></a>2、环境变量</h5><ul>
+<li><p>由系统维护，用于设置用户的工作环境，包括用户宿主目录、命令查找路径、用户当前目录、登录终端等</p>
+</li>
+<li><p>使用 env 命令可以查看到当前工作环境下的环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# envXDG_SESSION_ID=4HOSTNAME=localhost.localdomainTERM=xtermSHELL=/bin/bashHISTSIZE=1000SSH_CLIENT=192.168.1.60 63171 22SSH_TTY=/dev/pts/0USER=rootLS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=01;05;37;41:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=01;36:*.au=01;36:*.flac=01;36:*.mid=01;36:*.midi=01;36:*.mka=01;36:*.mp3=01;36:*.mpc=01;36:*.ogg=01;36:*.ra=01;36:*.wav=01;36:*.axa=01;36:*.oga=01;36:*.spx=01;36:*.xspf=01;36:MAIL=/var/spool/mail/rootPATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin            #搜索路径PWD=/rootLANG=en_US.UTF-8HISTCONTROL=ignoredupsSHLVL=1HOME=/rootLOGNAME=rootSSH_CONNECTION=192.168.1.60 63171 192.168.1.10 22LESSOPEN=||/usr/bin/lesspipe.sh %sXDG_RUNTIME_DIR=/run/user/0_=/usr/bin/env</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>搜索路径（PATH变量）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# first.sh-bash: first.sh: command not found[root@localhost ~]# echo $PATH/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin[root@localhost ~]# PATH=&quot;$PATH:/root&quot;[root@localhost ~]# first.sh当前的目录位于:/boot其中以 vml 开头的文件包括:-rwxr-xr-x. 1 root root 6.5M May 25  2021 vmlinuz-0-rescue-8baa18618aee48cd8dbf18aa34733c14-rwxr-xr-x. 1 root root 6.5M Aug  8  2019 vmlinuz-3.10.0-1062.el7.x86_64</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>环境变量的全局配置文件为<code>/etc/profile</code> ,除此之外，每个用户还有自己的独立配置文件（<code>～/.bash_profile</code>）,修改用户的配置文件只会对用户生效</p>
+</li>
+</ul>
+<h5 id="3、位置变量"><a href="#3、位置变量" class="headerlink" title="3、位置变量"></a>3、位置变量</h5><ul>
+<li><p>通过命令行给脚本程序传递参数</p>
+</li>
+<li><p>位置变量也称为位置参数，使用$1、$2、$3、·····、$9、${10}、${11}、········· 表示。例如，当执行命令行“ls -lh &#x2F;boot&#x2F;”时，其中第 1 个位置变量为“-lh”，以“$1”表示；第 2 个位置变量为“&#x2F;boot&#x2F;”，以“$2”表示。命令或脚本本身的名称使用“$0”表示，虽然$0 与位置变量的格式相同，但是$0 属于预定义变量而不是位置变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim sum.sh    #!/bin/bash    sum=`expr $1 + $2`    echo &quot;$1 + $2 = $sum&quot;[root@localhost ~]# sh sum.sh 12 3412 + 34 = 46</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>4、预定义变量</p>
+<ul>
+<li><p>Bash中内置的一类变量，不能直接修改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$#：表示命令行中位置参数的个数。$*：表示所有位置参数的内容。$?：表示前一条命令执行后的返回状态，返回值为 0 表示执行正确，返回任何非 0值均表示执行出现异常$0：表示当前执行的脚本或程序的名称。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>来打包命令行指定的多个文件或目录，并输出相关信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vim mybak.sh    #!/bin/bash    backfile=&quot;backup-`date +%s`.tgz&quot;    tar zcf $backfile $* &amp;&gt; /dev/null    echo &quot;已执行 $0 脚本&quot;    echo &quot;共完成 $# 个对象的备份&quot;    echo &quot;具体内容包括：$*&quot;#date +%s 获取秒刻时间（从1970年1月1日开始计算）</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80-firewalld%E5%AE%9E%E6%88%98/" rel="prev" title="linux防火墙基础-firewalld实战">
+      <i class="fa fa-chevron-left"></i> linux防火墙基础-firewalld实战
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/shell%E8%84%9A%E6%9C%AC%E5%9F%BA%E7%A1%80-shell%E7%BB%93%E6%9E%84%E8%AF%AD%E5%8F%A5/" rel="next" title="shell脚本基础-shell结构语句">
+      shell脚本基础-shell结构语句 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81shell%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">一、shell基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81shell%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.1.</span> <span class="nav-text">1、shell的作用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81Shell%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">2、Shell的类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E7%AC%AC%E4%B8%80%E4%B8%AAshell%E8%84%9A%E6%9C%AC"><span class="nav-number">1.3.</span> <span class="nav-text">3、第一个shell脚本</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%87%8D%E5%AE%9A%E5%90%91%E4%B8%8E%E7%AE%A1%E9%81%93%E6%93%8D%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">二、重定向与管道操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E9%87%8D%E5%AE%9A%E5%90%91%E6%93%8D%E4%BD%9C"><span class="nav-number">2.1.</span> <span class="nav-text">1、重定向操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%AE%A1%E9%81%93%E6%93%8D%E4%BD%9C"><span class="nav-number">2.2.</span> <span class="nav-text">2、管道操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E5%AE%9E%E9%AA%8C%E6%93%8D%E4%BD%9C"><span class="nav-number">2.3.</span> <span class="nav-text">3、实验操作</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81shell%E5%8F%98%E9%87%8F"><span class="nav-number">3.</span> <span class="nav-text">三、shell变量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">3.1.</span> <span class="nav-text">1、自定义变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">3.2.</span> <span class="nav-text">2、环境变量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E4%BD%8D%E7%BD%AE%E5%8F%98%E9%87%8F"><span class="nav-number">3.3.</span> <span class="nav-text">3、位置变量</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

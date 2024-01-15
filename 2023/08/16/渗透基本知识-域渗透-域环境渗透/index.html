@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="域内渗透，横向移动">
+<meta property="og:type" content="article">
+<meta property="og:title" content="渗透基本知识-域渗透-域环境渗透">
+<meta property="og:url" content="http://example.com/2023/08/16/%E6%B8%97%E9%80%8F%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86-%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%9F%9F%E7%8E%AF%E5%A2%83%E6%B8%97%E9%80%8F/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="域内渗透，横向移动">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281422656.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281516778.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281520591.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281552369.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281601287.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281620273.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281625432.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281627659.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281629348.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281635996.png">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1964477/202204/1964477-20220419131130280-1348643754.jpg">
+<meta property="og:image" content="https://img2022.cnblogs.com/blog/1964477/202204/1964477-20220419131129863-350299903.jpg">
+<meta property="og:image" content="https://md.byr.moe/uploads/upload_d1eabe14b2343ed60a6f6585f36483a3.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302171533509.png">
+<meta property="article:published_time" content="2023-08-16T04:12:56.000Z">
+<meta property="article:modified_time" content="2023-08-18T09:20:22.987Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281422656.png">
+
+<link rel="canonical" href="http://example.com/2023/08/16/%E6%B8%97%E9%80%8F%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86-%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%9F%9F%E7%8E%AF%E5%A2%83%E6%B8%97%E9%80%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>渗透基本知识-域渗透-域环境渗透 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/16/%E6%B8%97%E9%80%8F%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86-%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%9F%9F%E7%8E%AF%E5%A2%83%E6%B8%97%E9%80%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          渗透基本知识-域渗透-域环境渗透
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-08-16 12:12:56" itemprop="dateCreated datePublished" datetime="2023-08-16T12:12:56+08:00">2023-08-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-08-18 17:20:22" itemprop="dateModified" datetime="2023-08-18T17:20:22+08:00">2023-08-18</time>
+              </span>
+
+          
+            <div class="post-description">域内渗透，横向移动</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="域环境渗透"><a href="#域环境渗透" class="headerlink" title="域环境渗透"></a>域环境渗透</h1><h2 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h2><p>当进入内网后，我们首先需要对当前环境进行判断，要考虑如下两个问题：1.我是谁？（确定当前机器的角色）2.位于何处？（当前机器所处的环境）</p>
+<p><code>常用域内信息收集命令：</code></p>
+<p>1.<code>判断当前所在域：</code></p>
+<p>ipconfig &#x2F;all  # 查看网卡配置信息，本机IP段，所在域</p>
+<p>net config workstation  # 查看计算机名、全名、用户名、系统版本、工作站、域、登录域</p>
+<p>net view &#x2F;domain</p>
+<p>net time &#x2F;domain</p>
+<p>net user 用户名 密码 &#x2F;add &#x2F;domain    # 添加域用户</p>
+<p>net group “domain admins” 用户名 &#x2F;add &#x2F;domain  # 将该用户添加至管理员组中</p>
+<p><code>2.信息收集：</code></p>
+<p> 2.1 本机信息</p>
+<ol>
+<li>whoami &#x2F;fqdn # 查看当前用户的 FQDN （可分辨名称）</li>
+<li>whoami &#x2F;priv # 查看当前用户拥有的安全特权</li>
+<li>whoami &#x2F;user #显示当前用户的信息以及安全标识符 (SID)。</li>
+<li>whoami &#x2F;all #显示当前用户名、属于的组以及安全标识符(SID) 和当前用户访问令牌的特权</li>
+<li>域中常见的用户身份（用户组）：<ul>
+<li>Domain Admins ：域管理员，拥有对域内的其他成员完全控制的权限。</li>
+<li>Domain Controllers ：域控制器</li>
+<li>Domain Users ： 域用户</li>
+<li>Domain Computers ：域内机器</li>
+<li>Domain Guests ： 域内来宾用户组，低权限</li>
+</ul>
+</li>
+</ol>
+<p>2.1.2 用户列表信息</p>
+<ol>
+<li>net user             # 查看本机用户</li>
+<li>net user &#x2F;domain    # 查看域内用户</li>
+</ol>
+<p>2.1.3 主机信息收集</p>
+<p>通过主机信息判断拿到权限的主机是普通计算器，还是服务器。我们可以通过主机的计算机名称、计算机上的文件和端口开放情况来进行判别。</p>
+<ul>
+<li>若主机上有 “C:\inetpub ”，说明其可能安装有 iis 服务，是一台 Web 服务器。</li>
+<li>通过开放的端口进行确认，使用命令 netstat 查看主机网络连接状态，若本机监听80、443端口，则可能为Web服务器；若监听53端口，则可能为DNS服务器。</li>
+<li>通过主机的计算机名称、计算机描述等信息，例如 dc.woniuxy.com，说明此计算机可能为该域的 DC。</li>
+<li></li>
+</ul>
+<p>2.1.4 进程列表信息</p>
+<p>查看进程列表信息，我们可以知道机器上运行者什么程序软件，有无杀毒软件、安全防护软件、VPN、FTP等服务或软件。方便后续利用，如免杀木马制作、提权等。</p>
+<p>​	使用系统命令 tasklist。</p>
+<p>​    使用第三方软件，如 D 盾。</p>
+<p>2.1.5 系统信息</p>
+<p>收集系统信息，如系统版本、补丁信息等。</p>
+<p>使用系统命令 systeminfo 。</p>
+<p>wmic qfe list full  查看全部补丁信息</p>
+<p>2.2 域信息收集</p>
+<p> 我们在域中一般收集域用户信息，域控制器信息，域用户登录日志信息，域内所有用户名、全名和备注等信息，域内工作组信息，域管理员账号信息，域内网段划分信息与域内组织单位信息等。</p>
+<p> 而我们进入一个域环境，刚开始大概率获取的是域内普通用户权限，所以在前期要收集的信息多以域控的地址、域用户或者系统等信息为主。我们可以使用Windows 系统自带的命令收集域基础信息，以下列举一些信息收集的方法。</p>
+<p>2.2.1 查找当前域</p>
+<p> 确定当前环境存在几个域，域的大致结构。常用命令如下：</p>
+<ol>
+<li>net view &#x2F;domain  # 查看当前存在几个域</li>
+<li>net view &#x2F;domain:域名称 #查看当前域中的所有计算机、</li>
+</ol>
+<p>2.2.2 查找域控</p>
+<ol>
+<li><p><code> set logonserver # 查看客户端登陆到哪台域控制器，简写为 set log</code></p>
+<p>SRV 记录是域名系统 (DNS) 资源记录。 它用于标识托管特定服务的计算机。 SRV 资源记录用于查找 Active Directory 的域控制器。 常用 nslookup 命令来进行查询，如下：</p>
+<ol>
+<li>nslookup -type&#x3D;SRV _ldap._tcp.woniuxy.com  # 查找域控制器的轻型目录访问协议 (LDAP) SRV 记录</li>
+</ol>
+</li>
+<li><p>使用 nltest 命令查询工作站与域控间的信任关系。</p>
+<ol>
+<li><code> nltest /dclist:woniuxy.com # 查找dc列表</code></li>
+</ol>
+</li>
+</ol>
+<p>2.2.3 查找域管理员</p>
+<ol>
+<li><code>net group &quot;domain admin&quot;  /domain # 查找域中的域管理员组成员</code></li>
+</ol>
+<p>2.3 主机发现</p>
+<p> 通过主机发现了解当前网络中设备的分布情况，查看内网有没有其他机器等，在域内进行横向渗透的时候也需要收集主机端口和ip信息。</p>
+<p> 2.3.1 查看路由表</p>
+<p>​	<code>route print   # 打印当前Windows主机上的路由表</code></p>
+<p>2.3.2 查看 ARP 缓存</p>
+<p>​	<code>arp -a  # 查看当前设备上的 arp 缓存记录</code></p>
+<p>2.3.3 使用 ping 探测</p>
+<p>​	<code>for /l %i in (1,1,255) do @ping 192.168.12.%i -w 1 -n 1|find /i &quot;ttl=&quot;</code></p>
+<h4 id="三、信息收集工具"><a href="#三、信息收集工具" class="headerlink" title="三、信息收集工具"></a>三、信息收集工具</h4><h5 id="3-1-使用-MSF-框架进行信息收集"><a href="#3-1-使用-MSF-框架进行信息收集" class="headerlink" title="3.1 使用 MSF 框架进行信息收集"></a>3.1 使用 MSF 框架进行信息收集</h5><p> 此处用 msfvenom 制作exe类型的反弹shell木马后直接上传至域用户zhangsan的主机中运行，并用msf监听。</p>
+<p>以下展示 meterpreter 模块中使用对应工具进行信息收集：</p>
+<ol>
+<li><p>枚举域信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/enum_domain</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281422656.png" alt="image-20230228142229473"></p>
+</li>
+<li><p>展示补丁信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/enum_patches</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281516778.png" alt="image-20230228151631718"></p>
+</li>
+<li><p>查看用户最近打开文档</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">run post/windows/gather/dumplinks</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281520591.png" alt="image-20230228152016557"></p>
+</li>
+</ol>
+<p>以下 msf 的模块工具需要在中使用，但因为内网一般不和 kali 在一个网段，我们可以使用 MSF 框架中自带的一个路由转发功能，在已经获取 shell 的 meterpreter 的 session 会话中添加一条去往内网的路由，此路由的下一跳转发，即网关，指向这个 session。通过添加路由功能，可以直接使用 MSF 去访问原本不能直接访问的内网资源。</p>
+<ol>
+<li><p>主机存活探测</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auxiliary/scanner/discovery/arp_sweep ARP     # 通过arp扫描 auxiliary/scanner/discovery/udp_sweep UDP     # 通过udp扫描 auxiliary/scanner/netbios/nbname NETBIOS # 通过NetBIOS扫描 auxiliary/scanner/snmp/snmp_enum SNMP         # 通过SNMP扫描</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281552369.png" alt="image-20230228155249329"></p>
+</li>
+<li><p>端口扫描</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auxiliary/scanner/portscan/syn # 通过 SYN 进行端口扫描 auxiliary/scanner/portscan/tcp # 通过 TCP 进行端口扫描 auxiliary/scanner/portscan/ack # 通过 ACK 进行端口扫描</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281601287.png" alt="image-20230228160153251"></p>
+</li>
+</ol>
+<h5 id="3-2-其他域信息收集工具"><a href="#3-2-其他域信息收集工具" class="headerlink" title="3.2 其他域信息收集工具"></a>3.2 其他域信息收集工具</h5><h6 id="3-2-1-AdFind"><a href="#3-2-1-AdFind" class="headerlink" title="3.2.1 AdFind"></a>3.2.1 AdFind</h6><ul>
+<li><p>列出域控制器名称：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AdFind.exe -sc dclist</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281620273.png" alt="image-20230228162038235"></p>
+</li>
+<li><p>查看域控版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AdFind.exe -schema -s base objectversion</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281625432.png" alt="image-20230228162533384"></p>
+</li>
+<li><p>查看所有在线计算机</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AdFind.exe -sc computers_active</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281627659.png" alt="image-20230228162725615"></p>
+</li>
+<li><p>查看当前域内所有用户、用户组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AdFind.exe -users name</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281629348.png" alt="image-20230228162942307"></p>
+</li>
+<li><p>查看域管账户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AdFind.exe -default -f &quot;(&amp;(|(&amp;(objectCategory=person)(objectClass=user))(objectCategory=group))(adminCount=1))&quot; -dn</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302281635996.png" alt="image-20230228163536950"></p>
+</li>
+<li><p>其他命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># 查看指定域（luckysec.cn）内非约束委派主机  AdFind.exe -b &quot;DC=luckysec,DC=cn&quot; -f &quot;(&amp;(samAccountType=805306369)(userAccountControl:1.2.840.113556.1.4.803:=524288))&quot;  cn  # 查询指定域（luckysec.cn）内的非约束委派用户  AdFind.exe -b &quot;DC=luckysec,DC=cn&quot; -f &quot;(&amp;(samAccountType=805306368)(userAccountControl:1.2.840.113556.1.4.803:=524288))&quot; cn distinguishedName</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="PTA哈希传递攻击"><a href="#PTA哈希传递攻击" class="headerlink" title="PTA哈希传递攻击"></a>PTA哈希传递攻击</h2><p>​	一、PTH简介</p>
+<h5 id="1、攻击原理"><a href="#1、攻击原理" class="headerlink" title="1、攻击原理"></a>1、攻击原理</h5><p> 在使用 NTLM 身份验证的系统或服务上，用户密码永远不会以明文形式通过网络发送。 Windows 上的应用程序要求用户提供明文密码，然后调用 LsaLogonUser 类的 API，将该密码转换为一个或两个哈希值（LM或NTLM hash），然后将其发送到远程服务器进行 NTLM 身份验证。由于这种机制，我们只需要哈希值即可成功完成网络身份验证，而不需要明文密码。于是当我们获取到任意用户的 Hash 值就可以针对远程系统进行身份验证并模拟该用户，从而获取用户权限。PTH全称为：Pass The Hash，哈希传递攻击。</p>
+<h5 id="2、使用原因"><a href="#2、使用原因" class="headerlink" title="2、使用原因"></a>2、使用原因</h5><ul>
+<li>在Windows Server 2012 R2及之后版本的操作系统中，默认在内存中不会记录明文密码，只保存用户的 Hash。所以无法抓取到 lsass.exe 进程中的明文密码。</li>
+<li>随着信息安全意识的提高，大家都使用强密码，很多时候即使能拿到 hash 却无法解开。</li>
+</ul>
+<h5 id="3、LM-Hash-与-NTLM-Hash"><a href="#3、LM-Hash-与-NTLM-Hash" class="headerlink" title="3、LM Hash 与 NTLM Hash"></a>3、LM Hash 与 NTLM Hash</h5><p>1.3.1 LM Hash</p>
+<p>（1）LM Hash（LAN Manager Hash）：微软为了提高Windows操作系统的安全性而采用的散列加密算法。</p>
+<p>存在的问题——易被破解：LM Hash明文密码被限制在14位以内，其本质上采用的是 DES 加密算法，所以 LM Hash 存在较容易被破解的问题。于是从 Windows Vista 和Windows Server 2008开始的 Windows 系统默认禁用了 LM Hash 。这里只是禁用，主要是为了保证系统的兼容性。如果LM Hash被禁用了，攻击者使用工具抓取的 LM Hash 通常为”aad3b435b51404eeaad3b435b51404ee”。</p>
+<h5 id="（2）NTLM-Hash"><a href="#（2）NTLM-Hash" class="headerlink" title="（2）NTLM Hash"></a>（2）NTLM Hash</h5><p>NTLM Hash（NT LAN Manager）：为了在提高安全性的同时保证兼容性，微软提出了 Windows NT 挑战&#x2F;响应验证机制，称之为 NTLM 。个人版 Windows 从Windwos Vista 以后，服务器版本系统从 Windows server2003 以后，其认证方式均为 NTLM Hash。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pth攻击（pass the hash） 基于ntml认证你的一种攻击方式，哈希传递攻击的利用前提是我们获得了某个用户的密码哈希值，但是解不开明文。这时我们可以利用NTLM认证的一种缺陷，利用用户的密码哈希值来进行NTLM认证。在域环境中，大量计算机在安装时会使用相同的本地管理员账号和密码。因此，如果计算机的本地管理员账号密码相同，攻击者就能使用哈希传递攻击登录内网中的其他机器。</span><br><span class="line"></span><br><span class="line">传递的意思其实就是，我用了你的hash值。如果不存在上述情况，mimikatz工具得到的是内存中存在的用户的ntml hash</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">攻击流程中：（补充）</span><br><span class="line">1.mimikatz工具</span><br><span class="line">2.如果用mimiketz进行攻击，那么会弹框中拥有访问域控主机的权限（用到了谁的hash，那么这个框有谁的权限）</span><br><span class="line">3.可以用copy命令写入木马</span><br><span class="line">4.怎么执行木马？可以用psexec工具执行，定时任务执行，写入自启动目录</span><br><span class="line">5.还可以用psexec执行命令，反弹一个窗口给我（psexec命令需要加上/accepteula /s  意思是，直接用当前这个权限去登录）。之后我可以创建账户，这些其实就是权限维持要做的事情</span><br><span class="line">-----------------以上在远程桌面，图形化可以操作</span><br><span class="line">在msf上</span><br><span class="line">1.mimikatz可以用kiwi模块代替，其实是同一个模块</span><br><span class="line">2.同样有psexec模块也可以使用</span><br><span class="line"></span><br><span class="line">cs上操作：</span><br><span class="line">1.cs上有内置的mimikatz 也有pecex---很多功能可以使用</span><br><span class="line">2.附加：在CS中利用进程注入获得域控权限。</span><br><span class="line">（1）只要是域管理员登录到Windows7主机上（无论是本地登录，或是远程桌面登录），则在Windows7中就存在域管理权限的进程，可以利用该进程提权到域管理员权限。</span><br><span class="line"></span><br><span class="line">（2）浏览Windows7 的进程，并选择一个属于Woniuxy\Administrator用户的进程，进行Inject注入，再选择一个木马，即可以域管理员权限上线该木马。</span><br><span class="line">有查看pid的命令，如果管理员登录了我们拿下的主机，我们可以利用进行注入--（如果说pyh攻击，更多的情况是域内用户的密码大部分相同的时候，可以去利用）这种进程注入的手段，其实更加不实用，条件更加苛刻</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">PsExec工具、</span><br><span class="line"> PsExec 是 windows 官方发布的，所以不会存在查杀问题，其属于 pstools 。利用 PsExec 可以在远程计算机上执行命令，其基本原理是通过管道在远程目标主机上创建一个psexec 服务，并在本地磁盘中生成一个名为 PSEXESVC 的二进制文件，然后通过psexec 服务运行命令，运行结束后删除服务。</span><br><span class="line"> 当知道域用户名密码可以使用 PsExec.exe 与对应主机建立启动交互式命令，如下，在win7 上执行成功连接至dc。</span><br><span class="line"> PsExec.exe /accepteula /s \\192.168.219.144 -u Administrator -p p-0p-0p-0 cmd    # 单独使用psexec时需要指定密码，不加用户密码，默认是使用当前的用户和密码状态登录</span><br><span class="line">  还可以使用 impacket 工具包的 psexec.py 脚本进行利用</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">使用 wmic 进行横向移动</span><br><span class="line"> WMIC 扩展了 WMI （ Windows Management Instrumentation ， Windows 管理工具），提供了从命令行接口和批处理脚本执行系统管理的支持。Windows 98 以后的操作系统都支持 WMI。由于 Windows 默认不会将 WMI 的操作记录在日志里，同时现在越来越多的杀软将 PsExec 加入了黑名单，因此 WMIC 比 PsExec 隐蔽性要更好一些。</span><br><span class="line"> 这个win自带的工具，需要输入密码。py版本可以利用hash登录。</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"> 上面两款工具可以称之为，远程执行命令的gong&#x27;ju</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="PTT票据传递攻击"><a href="#PTT票据传递攻击" class="headerlink" title="PTT票据传递攻击"></a>PTT票据传递攻击</h2><p>直接绕过as这一步，伪造krbtgt用户的黄金票据。自己申请st</p>
+<h2 id="域委派攻击"><a href="#域委派攻击" class="headerlink" title="域委派攻击"></a>域委派攻击</h2><p>域委派是指将域内用户的权限委派给服务账号，使得服务账号能以用户权限访问域内的其他服务。<strong>简言之：当A访问服务B时，服务B拿着A用户的凭证去访问服务C，这个过程称为委派。</strong></p>
+<p>例如：域用户 yokan\justtest 以 kerberos 身份验证访问 Web 服务器，请求下载文件。但是真正的文件在后台的文件服务器上。于是，Web服务器的服务账号websrv模拟域用户yokan\justtest，以kerberos协议继续认证到后台文件服务器。后台文件服务器将文件返回给Web服务器，Web服务器将文件返回给域用户yokan\justtest。这样，就完成了一个委派的流程。<img src="https://img2022.cnblogs.com/blog/1964477/202204/1964477-20220419131130280-1348643754.jpg" alt="img"></p>
+<h3 id="委派的分类"><a href="#委派的分类" class="headerlink" title="委派的分类"></a>委派的分类</h3><p>非约束性委派(Unconstrained Delegation )</p>
+<p>约束性委派( Constrained Delegation)</p>
+<p>基于资源的约束性委派(RBCD: Resource Based Constrained Delegation)</p>
+<h3 id="委派的前提"><a href="#委派的前提" class="headerlink" title="委派的前提"></a>委派的前提</h3><p><strong>在域内只有主机账号和服务账号才有委派属性</strong>。主机账号：活动目录中的computers组内的计算机，也被称为机器账号。服务账号：域内用户的一种类型，是服务器运行服务时所用的账号，将服务运行起来加入域内，比如：SQLServer,MYSQL等；域用户通过注册SPN也能成为服务账号。</p>
+<p>委派的前提：被委派的用户不能被设置为不能被委派属性。</p>
+<h4 id="非约束性委派-Unconstrained-Delegation"><a href="#非约束性委派-Unconstrained-Delegation" class="headerlink" title="非约束性委派(Unconstrained Delegation )"></a>非约束性委派(Unconstrained Delegation )</h4><p><strong>服务账号可以获取被委派用户的TGT，并将TGT缓存到LSASS进程中，从而服务账号可使用该TGT， 模拟该用户访问任意服务</strong>。非约束委派的设置需要SeEnableDelegation 特权，该特权通常仅授予域管理员</p>
+<h6 id="非约束性委派大致流程"><a href="#非约束性委派大致流程" class="headerlink" title="非约束性委派大致流程"></a>非约束性委派<em>大致</em>流程</h6><p>user访serverA，于是向DC发起认证，DC会检查serverA的机器账号的属性，<strong>如果是非约束委派的话，会把用户的TGT放在ST票据中并一起发送给serverA</strong>，这样serverA在验证ST票据的同时也获取到了用户的TGT，并<strong>把TGT储存在自己的lsass进程中以备下次重用，从而serverA就可以使用这个TGT，来模拟这个user访问任何服务</strong>。</p>
+<p><strong>如果攻击者拿到了一台配置了非约束委派的机器权限，可以诱导管理员来访问该机器，然后可以得到管理员的TGT，从而模拟管理员访问任意服务，相当于拿下了整个域环境</strong>。</p>
+<p>非约束委派有两种：</p>
+<p>设置主机账户（某一台主机）为非约束委派，通过域管理账户对该主机账户进行访问，留下票据在该主机账户下，然后拿该票据去写入内存，从而可以利用域管理的TGT去访问域控。<br>设置服务账号（开启服务的账户）为非约束委派，通过域管理账户对该服务进行访问，留下票据在该主机账户下，然后拿该票据去写入内存，从而可以利用域管理的TGT去访问域控。</p>
+<p><img src="https://img2022.cnblogs.com/blog/1964477/202204/1964477-20220419131129863-350299903.jpg" alt="img"></p>
+<p>实验：1.假设我们拿到的是被委派的某台主机</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.环境准备：域控主机打开了域内一台机器作为被委派的主机（win7）</span><br><span class="line">2.域控管理员远程访问以下被委派的主机，此时域控管理员的TGT会被存在lsass进程中</span><br><span class="line">3.我们拿下了这台被委派的主机win7，导出票据。发现管理员的票据</span><br><span class="line">4.利用工具导入票据，就可以发现win7已经可以直接访问域控了（还可以利用mimkatz的lsadump功能，导出管理员的hash）（还可以利用 impacket 的 wmiexec.py 登录dc）</span><br></pre></td></tr></table></figure>
+
+
+
+<p>​		   2.假设我们拿到的是被委派的某个服务用户</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1.环境：与上面不同的是，我们创建了某个被委派的服务用户</span><br><span class="line">2.域控管理员访问的是这个服务用户，开启的服务</span><br><span class="line">3.之后流程同上</span><br></pre></td></tr></table></figure>
+
+<h4 id="约束性委派"><a href="#约束性委派" class="headerlink" title="约束性委派"></a>约束性委派</h4><p><strong>由于非约束委派的不安全性</strong>，微软在windows2003中发布了约束委派的功能，如下所示</p>
+<p>在约束委派中的kerberos中，用户同样还是会将TGT发送给相关受委派的服务，但是由于S4U2proxy的影响，对发送给受委派的服务去访问其他服务做了限制，<strong>不允许受委派的服务代表用户使用这个TGT去访问任意服务，而是只能访问指定的服务。</strong></p>
+<p>引入了两个新的概念<code>S4U</code> (S4U2Self &#x2F; S4U2proxy), 运行服务代表用户向 KDC 请求票据。</p>
+<ul>
+<li><code>S4U2self</code> (Service for User to S4U2Self) 可以代表自身请求针对其自身的 Kerberos 服务票据(ST)；如果一个<strong>服务账户</strong>的 userAccountControl 标志为 <code>TRUSTED_TO_AUTH_FOR_DELEGATION</code>, 则其可以<strong>代表任何其他用户</strong>获取自身服务的 TGS&#x2F;ST。</li>
+<li><code>S4U2proxy</code>(Service for User to Proxy) 可以以用户的名义请求其它服务的 ST，限制了 S4U2proxy 扩展的范围。服务帐户可以<strong>代表任何用户</strong>获取在 <code>msDS-AllowedToDelegateTo</code> 中设置的服务的 TGS&#x2F;ST，首先需要从该用户到其本身的 TGS&#x2F;ST，但它可以在请求另一个 TGS 之前使用 S4U2self 获得此 TGS&#x2F;ST。</li>
+</ul>
+<p>不同于允许委派所有服务的非约束委派，约束委派的目的是在模拟用户的同时，限制委派机器&#x2F;帐户对特定服务的访问。</p>
+<p>简单来说S4u2self协议使用用户的 TGT 向 KDC 请求用户的可转发的服务票据 ST1，而后 S4U2proxy 协议用这张 ST1 去发起请求用于访问服务器的服务票据 ST2 。<img src="https://md.byr.moe/uploads/upload_d1eabe14b2343ed60a6f6585f36483a3.png" alt="img"></p>
+<h5 id="流程描述："><a href="#流程描述：" class="headerlink" title="流程描述："></a>流程描述：</h5><p>\1. 用户向service1发出请求。用户已通过身份验证，但service1没有用户的授权数据。通常，这是由于身份验证是通过Kerberos以外的其他方式验证的。</p>
+<ol>
+<li><p>通过S4U2self扩展以用户的名义向KDC请求用于访问service1的ST1。</p>
+</li>
+<li><p>KDC返回给Service1一个用于用户验证Service1的ST1，该ST1可能包含用户的授权数据。</p>
+</li>
+<li><p>service1可以使用ST中的授权数据来满足用户的请求，然后响应用户。</p>
+<blockquote>
+<p>注：尽管S4U2self向service1提供有关用户的信息，但S4U2self不允许service1代表用户发出其他服务的请求，这时候就轮到S4U2proxy发挥作用了</p>
+</blockquote>
+</li>
+<li><p>用户向service1发出请求，service1需要以用户身份访问service2上的资源。</p>
+</li>
+<li><p>service1以用户的名义向KDC请求用户访问service2的ST2</p>
+</li>
+<li><p>如果请求中包含PAC，则KDC通过检查PAC的签名数据来验证PAC ，如果PAC有效或不存在，则KDC返回ST2给service1，但存储在ST2的cname和crealm字段中的客户端身份是用户的身份，而不是service1的身份。</p>
+</li>
+<li><p>service1使用ST2以用户的名义向service2发送请求，并判定用户已由KDC进行身份验证。</p>
+</li>
+<li><p>service2响应步骤8的请求。</p>
+</li>
+<li><p>service1响应用户对步骤5中的请求。</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">我的理解大概是：用户去访问设置了限制委派的服务器，这台服务器会去向kdc申请可以转发的服务票据st1.之后第二个协议，可以用这个票据去发起请求，其他的任意服务</span><br><span class="line">在约束委派中的kerberos中，用户同样还是会将TGT发送给相关受委派的服务，但是由于S4U2proxy的影响，对发送给受委派的服务去访问其他服务做了限制，不允许受委派的服务代表用户使用这个TGT去访问任意服务，而是只能访问指定的服务。</span><br><span class="line">约束委派是限制了S4U2proxy扩展的范围。</span><br></pre></td></tr></table></figure>
+
+<h5 id="攻击原理"><a href="#攻击原理" class="headerlink" title="攻击原理"></a>攻击原理</h5><p> 约束性委派攻击的关键就是获得可转发的服务票据 ST，获取根据约束性委派的执行过程可知，只要控制配置约束性委派服务的机器，并获得了机器账户的密码或Hash等凭证，那么就可以劫持这台主机的kerberos 请求过程，最终获得任意用户权限的 ticket。</p>
+<p>如果我们可以控制服务主机，那么我们就可通过控制这个服务主机去访问相应的dc</p>
+<p>实验步骤</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">1.实验前提：我们获取一台主机的普通管理员用户，并且发现这台主机被设置了约束性服务委派</span><br><span class="line"></span><br><span class="line">​	2.实验1，我们可以利用mimikatz获取本服务主机的票据（这个主机被设置了约束性服务委派，所以它拥有访问另一个服务的主机的权限-如果此时刚好是域控主机对这台主机进行了约束性委派，那么我们就可以访问域控了）</span><br><span class="line"></span><br><span class="line">​	3.获取了票据之后，我们可以利用kekeo工具伪造一个域控管理员通过，服务主机，去访问域控的票据。（S4U2Proxy协议本身就是，被设定了约定行委派的主机，可以代替任意用户，去访问特定的服务（这里配置了访问域控的cifs服务，那么我们现在伪造域控用户利用这台被设定了约定委派的主机，去访问域控的票据））</span><br><span class="line"></span><br><span class="line">​	4.实验2.我们上面利用的机器账户的票据导出操作的。现在我们利用服务主机的hash去操作（ntlm）</span><br><span class="line"></span><br><span class="line">​	5.获取到对应的ntlm之后，利用工具可以生成域控管理员访问域控的票据</span><br><span class="line"></span><br><span class="line">​	6.通过票据，可以在kail上进行域控远程登录</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="CVE-2022–26923提权"><a href="#CVE-2022–26923提权" class="headerlink" title="CVE-2022–26923提权"></a><strong>CVE-2022–26923提权</strong></h2><h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>微软发布补丁修复了一个域权限提升漏洞（CVE-2022–26923）。该漏洞是由于在申请证书时 AD CS 服务器对 AD 域中的计算机账户身份审核不够严格，攻击者能够操控他们拥有或管理的计算机帐户（低权限用户）的属性，假冒 DC 从 AD CS 服务器获取 DC 证书，从而使得普通用户将权限提升至域管理员权限</p>
+<p><strong>利用条件</strong>：</p>
+<ul>
+<li>AD 域内拥有 AD CS 服务器并能够提供对应服务。</li>
+<li>攻击者获取到普通域用户凭据或计算机账户凭据。</li>
+<li>域计算机用户可以申请 Machine 模板证书。<ul>
+<li>注：默认情况下，域用户可以注册 User 证书模板，域计算机可以注册 Machine 证书模板。两个证书模板都允许客户端身份验证。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-1-Active-Directory-证书服务（AD-CS）"><a href="#2-1-Active-Directory-证书服务（AD-CS）" class="headerlink" title="2.1 Active Directory 证书服务（AD CS）"></a>2.1 Active Directory 证书服务（AD CS）</h4><p> Active Directory 证书服务（Active Directory Certificate Services，AD CS），是微软对 PKI（公钥基础设施）的实现，它与现有的 AD 域集成，并提供从加密文件系统到数字签名，再到客户端身份验证（CVE-2022–26923就是利用此功能）等功能。默认情况下 Active Directory 环境没有安装 AD CS服务需要用户自行安装，但现如今该服务已被各大企业和组织广泛使用。</p>
+<h4 id="2-2-Active-Directory-证书申请流程"><a href="#2-2-Active-Directory-证书申请流程" class="headerlink" title="2.2 Active Directory 证书申请流程"></a>2.2 Active Directory 证书申请流程</h4><p> AD 证书申请流程大致流程如下图所示：</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/zhengyu/202302171533509.png" alt="image-20230217153339438"></p>
+<h3 id="实验流程"><a href="#实验流程" class="headerlink" title="实验流程"></a>实验流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1.域控上安装AD DS</span><br><span class="line">2.上线一个普通的域用户权限</span><br><span class="line">3.收集信息-发现域控</span><br><span class="line">4.li&#x27;yong</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/08/16/%E6%B8%97%E9%80%8F%E5%9F%BA%E6%9C%AC%E7%9F%A5%E8%AF%86-%E5%9F%9F%E6%B8%97%E9%80%8F-%E5%9F%9F%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6/" rel="prev" title="渗透基本知识-域渗透-域认证机制">
+      <i class="fa fa-chevron-left"></i> 渗透基本知识-域渗透-域认证机制
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/08/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96-%E7%9F%A5%E8%AF%86/" rel="next" title="PHP反序列化-知识">
+      PHP反序列化-知识 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%9F%E7%8E%AF%E5%A2%83%E6%B8%97%E9%80%8F"><span class="nav-number">1.</span> <span class="nav-text">域环境渗透</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E5%B7%A5%E5%85%B7"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">三、信息收集工具</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-%E4%BD%BF%E7%94%A8-MSF-%E6%A1%86%E6%9E%B6%E8%BF%9B%E8%A1%8C%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86"><span class="nav-number">1.1.0.1.1.</span> <span class="nav-text">3.1 使用 MSF 框架进行信息收集</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-%E5%85%B6%E4%BB%96%E5%9F%9F%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86%E5%B7%A5%E5%85%B7"><span class="nav-number">1.1.0.1.2.</span> <span class="nav-text">3.2 其他域信息收集工具</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#3-2-1-AdFind"><span class="nav-number">1.1.0.1.2.1.</span> <span class="nav-text">3.2.1 AdFind</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PTA%E5%93%88%E5%B8%8C%E4%BC%A0%E9%80%92%E6%94%BB%E5%87%BB"><span class="nav-number">1.2.</span> <span class="nav-text">PTA哈希传递攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.0.0.1.</span> <span class="nav-text">1、攻击原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%BD%BF%E7%94%A8%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.2.0.0.2.</span> <span class="nav-text">2、使用原因</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81LM-Hash-%E4%B8%8E-NTLM-Hash"><span class="nav-number">1.2.0.0.3.</span> <span class="nav-text">3、LM Hash 与 NTLM Hash</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%EF%BC%882%EF%BC%89NTLM-Hash"><span class="nav-number">1.2.0.0.4.</span> <span class="nav-text">（2）NTLM Hash</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PTT%E7%A5%A8%E6%8D%AE%E4%BC%A0%E9%80%92%E6%94%BB%E5%87%BB"><span class="nav-number">1.3.</span> <span class="nav-text">PTT票据传递攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%9F%E5%A7%94%E6%B4%BE%E6%94%BB%E5%87%BB"><span class="nav-number">1.4.</span> <span class="nav-text">域委派攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A7%94%E6%B4%BE%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.4.1.</span> <span class="nav-text">委派的分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A7%94%E6%B4%BE%E7%9A%84%E5%89%8D%E6%8F%90"><span class="nav-number">1.4.2.</span> <span class="nav-text">委派的前提</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%9E%E7%BA%A6%E6%9D%9F%E6%80%A7%E5%A7%94%E6%B4%BE-Unconstrained-Delegation"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">非约束性委派(Unconstrained Delegation )</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%9D%9E%E7%BA%A6%E6%9D%9F%E6%80%A7%E5%A7%94%E6%B4%BE%E5%A4%A7%E8%87%B4%E6%B5%81%E7%A8%8B"><span class="nav-number">1.4.2.1.0.1.</span> <span class="nav-text">非约束性委派大致流程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%A6%E6%9D%9F%E6%80%A7%E5%A7%94%E6%B4%BE"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">约束性委派</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E6%8F%8F%E8%BF%B0%EF%BC%9A"><span class="nav-number">1.4.2.2.1.</span> <span class="nav-text">流程描述：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="nav-number">1.4.2.2.2.</span> <span class="nav-text">攻击原理</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CVE-2022%E2%80%9326923%E6%8F%90%E6%9D%83"><span class="nav-number">1.5.</span> <span class="nav-text">CVE-2022–26923提权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.5.1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-Active-Directory-%E8%AF%81%E4%B9%A6%E6%9C%8D%E5%8A%A1%EF%BC%88AD-CS%EF%BC%89"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">2.1 Active Directory 证书服务（AD CS）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-Active-Directory-%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7%E6%B5%81%E7%A8%8B"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">2.2 Active Directory 证书申请流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.5.2.</span> <span class="nav-text">实验流程</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

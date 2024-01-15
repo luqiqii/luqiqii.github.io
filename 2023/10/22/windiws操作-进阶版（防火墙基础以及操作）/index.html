@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、防火墙介绍  1、概述 防火墙技术是通过有机结合各类用于安全管理与筛选的软件和硬件设备，帮助计算机网络于其内、外网之间构建一道相对隔绝的保护屏障，以保护用户资料与信息安全性的一种技术。 在实际应用中，由于公网地址的不足，我们多数是在企业网中使用局部私网也就是局域网，所以整个局域网的安全最重要的就是在私网和公网交界的地方，也就是网络出口出的设备上。因此我们一般在网络出口安放防火墙来保护整个局域">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windiws操作-进阶版（防火墙基础以及操作）">
+<meta property="og:url" content="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80%E4%BB%A5%E5%8F%8A%E6%93%8D%E4%BD%9C%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、防火墙介绍  1、概述 防火墙技术是通过有机结合各类用于安全管理与筛选的软件和硬件设备，帮助计算机网络于其内、外网之间构建一道相对隔绝的保护屏障，以保护用户资料与信息安全性的一种技术。 在实际应用中，由于公网地址的不足，我们多数是在企业网中使用局部私网也就是局域网，所以整个局域网的安全最重要的就是在私网和公网交界的地方，也就是网络出口出的设备上。因此我们一般在网络出口安放防火墙来保护整个局域">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080733063.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080712341.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080713612.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080714950.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080716800.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080717751.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080718572.png">
+<meta property="article:published_time" content="2023-10-22T14:06:22.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:18:28.218Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080733063.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80%E4%BB%A5%E5%8F%8A%E6%93%8D%E4%BD%9C%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>windiws操作-进阶版（防火墙基础以及操作） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80%E4%BB%A5%E5%8F%8A%E6%93%8D%E4%BD%9C%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          windiws操作-进阶版（防火墙基础以及操作）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:06:22 / 修改时间：22:18:28" itemprop="dateCreated datePublished" datetime="2023-10-22T22:06:22+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ol>
+<li><h4 id="一、防火墙介绍"><a href="#一、防火墙介绍" class="headerlink" title="一、防火墙介绍"></a>一、防火墙介绍</h4></li>
+</ol>
+<h5 id="1、概述"><a href="#1、概述" class="headerlink" title="1、概述"></a>1、概述</h5><ul>
+<li>防火墙技术是通过有机结合各类用于安全管理与筛选的软件和硬件设备，帮助计算机网络于其内、外网之间构建一道相对隔绝的保护屏障，以保护用户资料与信息安全性的一种技术。</li>
+<li>在实际应用中，由于公网地址的不足，我们多数是在企业网中使用局部私网也就是局域网，所以整个局域网的安全最重要的就是在私网和公网交界的地方，也就是网络出口出的设备上。因此我们一般在网络出口安放防火墙来保护整个局域网的边界安全。</li>
+<li>防火墙，顾名思义，阻挡的是火，此词起源于建筑领域，正是用来隔离火灾，阻止火势从一个区域蔓延到另一个区域。</li>
+<li>引入到通信领域，防火墙也正是形象化地体现了这一特点：防火墙这一具体设备，通常用于两个网络之间的隔离。当然，这种隔离是高明的，隔离的是“火”的蔓延，而又保证“人”的穿墙而过。这里的“火”是指网络中的各种攻击，而“人”是指正常的通信报文。</li>
+<li>那么，用通信语言来定义，防火墙主要用于保护一个网络区域免受来自另一个网络区域的网络攻击和网络入侵行为。因其隔离、防守的属性，灵活应用于网络边界、子网隔离等位置，具体如企业网络出口、大型网络内部子网隔离、数据中心边界等等。</li>
+</ul>
+<h5 id="2、分类"><a href="#2、分类" class="headerlink" title="2、分类"></a>2、分类</h5><ul>
+<li>物理特性划分<ul>
+<li>软件防火墙（Windows Defender、Linux iptables、Linux firewalld等等）</li>
+<li>硬件防火墙（Cisco ASA、深信服AF、天清汉马T系列防火墙（启明星辰）、明御安全网关（安恒）等等）</li>
+</ul>
+</li>
+<li>性能划分：百兆级、千兆级、万兆级等等</li>
+<li>结构划分：单一主机防火墙、路由集成防火墙、分布式防火墙等等</li>
+<li>技术划分：包过滤、应用代理、状态检测等等</li>
+</ul>
+<h5 id="3、防火墙功能（常见功能）"><a href="#3、防火墙功能（常见功能）" class="headerlink" title="3、防火墙功能（常见功能）"></a>3、防火墙功能（常见功能）</h5><ul>
+<li>访问控制（防火墙是一种高级的访问控制设备）</li>
+<li>地址转换（都会部署在内外网之间，尤其是互联网出口，因此会涉及到地址转换问题）</li>
+<li>网络环境支持（2层或3层之间的内部连接，DHCP环境、动态路由环境、VLAN环境、ADSL拨号环境、SNMP网络管理环境）</li>
+<li>带宽管理QOS（可以根据业务进行不同的流量分配，以保证重要业务的应用）</li>
+<li>入侵检测和攻击防御</li>
+<li>用户认证 （多种用户认证方式）</li>
+<li>高可用性 （双机、多机&#x2F;冷备、热备）</li>
+</ul>
+<h5 id="4、防火墙策略"><a href="#4、防火墙策略" class="headerlink" title="4、防火墙策略"></a>4、防火墙策略</h5><p><strong>防火墙的本质是控制和防护，防火墙的工作原理是通过设置安全策略，来进行安全防护</strong></p>
+<ul>
+<li><p>定义：安全策略是按一定规则，控制设备对流量转发以及对流量进行内容安全一体化检测的策略。规则的本质是包过滤</p>
+</li>
+<li><p>应用：对跨防火墙的网络互访进行控制，对设备本身的访问进行控制</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080733063.png" alt="image-20211208073325012"></p>
+</li>
+</ul>
+<h4 id="二、防火墙发展"><a href="#二、防火墙发展" class="headerlink" title="二、防火墙发展"></a>二、防火墙发展</h4><h5 id="1、包过滤防火墙"><a href="#1、包过滤防火墙" class="headerlink" title="1、包过滤防火墙"></a>1、包过滤防火墙</h5><ul>
+<li><p>判断信息：数据包的源IP地址、目的IP地址、协议类型、源端口、目的端口（五元组）</p>
+</li>
+<li><p>工作范围：网络层、传输层（3-4层）</p>
+</li>
+<li><p>和路由器的区别：普通的路由器只检查数据包的目标地址，并选择一个达到目的地址的最佳路径。防火墙除了要决定目的路径以外还需要根据已经设定的规则进行判断“是与否”。</p>
+</li>
+<li><p>技术应用：包过滤技术</p>
+</li>
+<li><p>优势：对于小型站点容易实现，处理速度快，价格便宜</p>
+</li>
+<li><p>劣势：规则表很快会变得庞大复杂难运维，只能基于五元组</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080712341.png" alt="image-20211208071212773"></p>
+</li>
+</ul>
+<h5 id="2、应用代理防火墙"><a href="#2、应用代理防火墙" class="headerlink" title="2、应用代理防火墙"></a>2、应用代理防火墙</h5><ul>
+<li><p>判断信息：所有应用层的信息包</p>
+</li>
+<li><p>工作范围：应用层（7层）</p>
+</li>
+<li><p>和包过滤防火墙的区别：包过滤防火墙工作基于3-4层，通过检验报头进行规则表匹配。应用代理防火墙工作7层，检查所有的应用层信息包，每个应用需要添加对应的代理服务。</p>
+</li>
+<li><p>技术应用：应用代理技术</p>
+</li>
+<li><p>优势：检查了应用层的数据</p>
+</li>
+<li><p>劣势：检测效率低，配置运维难度极高，可伸缩性差</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080713612.png" alt="image-20211208071345408"></p>
+</li>
+</ul>
+<h5 id="3、状态检测防火墙"><a href="#3、状态检测防火墙" class="headerlink" title="3、状态检测防火墙"></a>3、状态检测防火墙</h5><ul>
+<li><p>判断信息：IP地址、端口号、TCP标记</p>
+</li>
+<li><p>工作范围：数据链路层、网络层、传输层（2-4层）</p>
+</li>
+<li><p>和包过滤防火墙的区别：包过滤防火墙工作基于3-4层，通过检验报头进行规则表匹配。是包过滤防火墙的升级版，一次检查建立会话表，后期直接按会话表放行。</p>
+</li>
+<li><p>技术应用：状态检测技术</p>
+</li>
+<li><p>优势：主要检查3-4层能够保证效率，对TCP防御较好</p>
+</li>
+<li><p>劣势：应用层控制较弱，不检查数据区</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080714950.png" alt="image-20211208071433802"></p>
+</li>
+</ul>
+<h5 id="4、Web应用防火墙（WAF）"><a href="#4、Web应用防火墙（WAF）" class="headerlink" title="4、Web应用防火墙（WAF）"></a>4、Web应用防火墙（WAF）</h5><ul>
+<li><p>判断信息：http协议数据的request和response</p>
+</li>
+<li><p>工作范围：应用层（7层）</p>
+</li>
+<li><p>目的：防止基于应用层的攻击影响Web应用系统</p>
+</li>
+<li><p>主要技术原理：</p>
+<ul>
+<li>代理服务：会话双向代理，用户与服务器不产生直接链接，对于DDOS攻击可以抑制</li>
+<li>特征识别：通过正则表达式的特征库进行特征识别</li>
+<li>算法识别：针对攻击方式进行模式化识别，如SQL注入、DDOS、XSS等</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080716800.png" alt="image-20211208071609641"></p>
+</li>
+</ul>
+<h5 id="5、多合一安全网关（UTM）"><a href="#5、多合一安全网关（UTM）" class="headerlink" title="5、多合一安全网关（UTM）"></a>5、多合一安全网关（UTM）</h5><ul>
+<li><p>包含功能：FW（防火墙）、IDS（入侵检测）、IPS（入侵防御）、AV（防病毒）</p>
+</li>
+<li><p>工作范围：2-7层（但是不具备web应用防护能力）</p>
+</li>
+<li><p>目的：将多种安全问题通过一台设备解决</p>
+</li>
+<li><p>优点：功能多合一有效降低了硬件成本、人力成本、时间成本</p>
+</li>
+<li><p>缺点：模块串联检测效率低，性能消耗大</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080717751.png" alt="image-20211208071727685"></p>
+</li>
+</ul>
+<h5 id="6、下一代防火墙（NGFW）"><a href="#6、下一代防火墙（NGFW）" class="headerlink" title="6、下一代防火墙（NGFW）"></a>6、下一代防火墙（NGFW）</h5><ul>
+<li><p>包含功能：FW、IDS、IPS、AV、WAF</p>
+</li>
+<li><p>工作范围：2-7层</p>
+</li>
+<li><p>和UTM的区别：与UTM相比增加的web应用防护功能；UTM是串行处理机制，NGFW是并行处理机制；NGFW的性能更强，管理更高效</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112080718572.png" alt="image-20211208071853524"></p>
+</li>
+</ul>
+<h4 id="三、常见防火墙"><a href="#三、常见防火墙" class="headerlink" title="三、常见防火墙"></a>三、常见防火墙</h4><h5 id="1、Windows-defender"><a href="#1、Windows-defender" class="headerlink" title="1、Windows defender"></a>1、Windows defender</h5><ul>
+<li>微软官方出品，对于 Windows 的兼容性有着独一无二的优势，只防御真正的威胁，而不会误杀善意软件。</li>
+<li>基于云的技术，病毒库高度整合，更新速度极快，能够防御和查杀最新的威胁。</li>
+<li>简约不简单，界面友好，无任何多余花哨功能，专注杀毒防护。</li>
+<li>系统资源占用低，采用最新的防御技术，查杀率高。</li>
+<li>默认内置于Windows vista及之后Windows操作系统</li>
+</ul>
+<h5 id="2、iptables"><a href="#2、iptables" class="headerlink" title="2、iptables"></a>2、iptables</h5><ul>
+<li>IPTABLES 是与最新的 3.5 版本 Linux 内核集成的 IP 信息包过滤系统。如果 Linux 系统连接到因特网或 LAN、服务器或连接 LAN 和因特网的代理服务器， 则该系统有利于在 Linux 系统上更好地控制 IP 信息包过滤和防火墙配置。</li>
+<li>防火墙在做数据包过滤决定时，有一套遵循和组成的规则，这些规则存储在专用的数据包过滤表中，而这些表集成在 Linux 内核中。在数据包过滤表中，规则被分组放在我们所谓的链（chain）中。而netfilter&#x2F;iptables IP 数据包过滤系统是一款功能强大的工具，可用于添加、编辑和移除规则。</li>
+</ul>
+<h5 id="3、firewalld"><a href="#3、firewalld" class="headerlink" title="3、firewalld"></a>3、firewalld</h5><ul>
+<li>Firewalld自CentOS 7及更新版本后作为默认防火墙管理工具</li>
+<li>Firewalld 提供动态管理的防火墙，支持定义网络连接或接口的信任级别的网络&#x2F;防火墙区域。它支持 IPv4、IPv6 防火墙设置、以太网桥和 IP 集。运行时和永久配置选项是分开的。它还为服务或应用程序提供直接添加防火墙规则的接口。</li>
+<li><a target="_blank" rel="noopener" href="https://firewalld.org/">https://firewalld.org/</a></li>
+</ul>
+<h5 id="4、思科Secure-防火墙"><a href="#4、思科Secure-防火墙" class="headerlink" title="4、思科Secure 防火墙"></a>4、思科Secure 防火墙</h5><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cisco.com/c/zh_cn/products/security/firewalls/index.html">https://www.cisco.com/c/zh_cn/products/security/firewalls/index.html</a></li>
+</ul>
+<h5 id="5、深信服下一代防火墙（AF）"><a href="#5、深信服下一代防火墙（AF）" class="headerlink" title="5、深信服下一代防火墙（AF）"></a>5、深信服下一代防火墙（AF）</h5><ul>
+<li>深信服下一代防火墙AF融合边界对抗威胁所需的专业安全能力，通过简单易用的方式交付，全面防护各类威胁，并具备多重智能模型和智能联动手段，可持续对抗不断出现的各类新风险。</li>
+<li><a target="_blank" rel="noopener" href="https://www.sangfor.com.cn/product-and-solution/sangfor-security/22">https://www.sangfor.com.cn/product-and-solution/sangfor-security/22</a></li>
+</ul>
+<h5 id="6、启明星辰天清汉马T系列防火墙"><a href="#6、启明星辰天清汉马T系列防火墙" class="headerlink" title="6、启明星辰天清汉马T系列防火墙"></a>6、启明星辰天清汉马T系列防火墙</h5><ul>
+<li>天清汉马T系列防火墙采用启明星辰领先的VSOS操作系统，通过多核并行化处理、特征库树形存储、流扫描处理、零拷贝、分布式T比特硬件平台等技术手段，实现了整个处理过程一次拆包，确保天清汉马T系列防火墙开启多重防护功能后依然能够保证高速度、低时延的安全防护。</li>
+<li><a target="_blank" rel="noopener" href="https://www.venustech.com.cn/new_type/xydfhq/">https://www.venustech.com.cn/new_type/xydfhq/</a></li>
+</ul>
+<h5 id="7、明御安全网关"><a href="#7、明御安全网关" class="headerlink" title="7、明御安全网关"></a>7、明御安全网关</h5><ul>
+<li>全流程防御体系<ul>
+<li>事前感知预警（资产识别、风险识别、策略评估、热点威胁事件）</li>
+<li>事中防护响应（L2-4防护、入侵防御、病毒防护、协同防御）</li>
+<li>持续检测分析（精准告警、运营报表、威胁情报检测）</li>
+<li>事后取证优化（攻击链分析、资产画像、日志报表、抓包取证）</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://www.dbappsecurity.com.cn/product/cloud151.html">https://www.dbappsecurity.com.cn/product/cloud151.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88%E9%82%AE%E4%BB%B6%E6%94%B6%E5%8F%91%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="prev" title="流量攻击-应用层协议（邮件收发协议）">
+      <i class="fa fa-chevron-left"></i> 流量攻击-应用层协议（邮件收发协议）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88windows-denfender%EF%BC%89/" rel="next" title="windiws操作-进阶版（windows denfender）">
+      windiws操作-进阶版（windows denfender） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E9%98%B2%E7%81%AB%E5%A2%99%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">一、防火墙介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">1、概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">2、分类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E9%98%B2%E7%81%AB%E5%A2%99%E5%8A%9F%E8%83%BD%EF%BC%88%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">3、防火墙功能（常见功能）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E9%98%B2%E7%81%AB%E5%A2%99%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.</span> <span class="nav-text">4、防火墙策略</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%98%B2%E7%81%AB%E5%A2%99%E5%8F%91%E5%B1%95"><span class="nav-number">2.</span> <span class="nav-text">二、防火墙发展</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%8C%85%E8%BF%87%E6%BB%A4%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">2.1.</span> <span class="nav-text">1、包过滤防火墙</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%BA%94%E7%94%A8%E4%BB%A3%E7%90%86%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">2.2.</span> <span class="nav-text">2、应用代理防火墙</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E7%8A%B6%E6%80%81%E6%A3%80%E6%B5%8B%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">2.3.</span> <span class="nav-text">3、状态检测防火墙</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81Web%E5%BA%94%E7%94%A8%E9%98%B2%E7%81%AB%E5%A2%99%EF%BC%88WAF%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">4、Web应用防火墙（WAF）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E5%A4%9A%E5%90%88%E4%B8%80%E5%AE%89%E5%85%A8%E7%BD%91%E5%85%B3%EF%BC%88UTM%EF%BC%89"><span class="nav-number">2.5.</span> <span class="nav-text">5、多合一安全网关（UTM）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6%E3%80%81%E4%B8%8B%E4%B8%80%E4%BB%A3%E9%98%B2%E7%81%AB%E5%A2%99%EF%BC%88NGFW%EF%BC%89"><span class="nav-number">2.6.</span> <span class="nav-text">6、下一代防火墙（NGFW）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%B8%B8%E8%A7%81%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">3.</span> <span class="nav-text">三、常见防火墙</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81Windows-defender"><span class="nav-number">3.1.</span> <span class="nav-text">1、Windows defender</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81iptables"><span class="nav-number">3.2.</span> <span class="nav-text">2、iptables</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81firewalld"><span class="nav-number">3.3.</span> <span class="nav-text">3、firewalld</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E6%80%9D%E7%A7%91Secure-%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">3.4.</span> <span class="nav-text">4、思科Secure 防火墙</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E6%B7%B1%E4%BF%A1%E6%9C%8D%E4%B8%8B%E4%B8%80%E4%BB%A3%E9%98%B2%E7%81%AB%E5%A2%99%EF%BC%88AF%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">5、深信服下一代防火墙（AF）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6%E3%80%81%E5%90%AF%E6%98%8E%E6%98%9F%E8%BE%B0%E5%A4%A9%E6%B8%85%E6%B1%89%E9%A9%ACT%E7%B3%BB%E5%88%97%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">3.6.</span> <span class="nav-text">6、启明星辰天清汉马T系列防火墙</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7%E3%80%81%E6%98%8E%E5%BE%A1%E5%AE%89%E5%85%A8%E7%BD%91%E5%85%B3"><span class="nav-number">3.7.</span> <span class="nav-text">7、明御安全网关</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

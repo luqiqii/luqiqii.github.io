@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、分析引导1、分析模式 实时分析：实时分析以网络适配器作为数据采集来源，实时捕获网络通讯的数据包，并提供实时分析、实时诊断、实时报警等。   回放分析：回放分析以数据包存储文件作为第二分析数据源，提供历史问题回溯分析，并支持原速和快速两种回放模式。    2、选择网络适配器 系统能够自动检测和显示当前的网络适配器及其 IP 地址、每秒数据包数，并图形化的显示当前网络适配器的流量趋势，您可以根据实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流量攻击-科来网络分析工具">
+<meta property="og:url" content="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%A7%91%E6%9D%A5%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、分析引导1、分析模式 实时分析：实时分析以网络适配器作为数据采集来源，实时捕获网络通讯的数据包，并提供实时分析、实时诊断、实时报警等。   回放分析：回放分析以数据包存储文件作为第二分析数据源，提供历史问题回溯分析，并支持原速和快速两种回放模式。    2、选择网络适配器 系统能够自动检测和显示当前的网络适配器及其 IP 地址、每秒数据包数，并图形化的显示当前网络适配器的流量趋势，您可以根据实">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122127445.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122127795.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122129434.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122132021.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122155993.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122233162.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122233641.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122234538.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122234150.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122240077.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122241742.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122304136.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122305247.png">
+<meta property="article:published_time" content="2023-10-22T14:02:07.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:26:42.327Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122127445.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%A7%91%E6%9D%A5%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>流量攻击-科来网络分析工具 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%A7%91%E6%9D%A5%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          流量攻击-科来网络分析工具
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:02:07 / 修改时间：22:26:42" itemprop="dateCreated datePublished" datetime="2023-10-22T22:02:07+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、分析引导"><a href="#一、分析引导" class="headerlink" title="一、分析引导"></a>一、分析引导</h4><h5 id="1、分析模式"><a href="#1、分析模式" class="headerlink" title="1、分析模式"></a>1、分析模式</h5><ul>
+<li><p>实时分析：实时分析以网络适配器作为数据采集来源，实时捕获网络通讯的数据包，并提供实时分析、实时诊断、实时报警等。</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122127445.png" alt="image-20220412212708360"></p>
+</li>
+<li><p>回放分析：回放分析以数据包存储文件作为第二分析数据源，提供历史问题回溯分析，并支持原速和快速两种回放模式。</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122127795.png" alt="image-20220412212733720"></p>
+</li>
+</ul>
+<h5 id="2、选择网络适配器"><a href="#2、选择网络适配器" class="headerlink" title="2、选择网络适配器"></a>2、选择网络适配器</h5><ul>
+<li><p>系统能够自动检测和显示当前的网络适配器及其 IP 地址、每秒数据包数，并图形化的显示当前网络适配器的流量趋势，您可以根据实际情况选择用于采集数据的网络适配器。</p>
+</li>
+<li><p>系统支持多网卡的数据采集，您可以同时选择多块网卡进行数据源的采集。</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122129434.png" alt="image-20220412212958393"></p>
+</li>
+</ul>
+<h5 id="3、开始分析"><a href="#3、开始分析" class="headerlink" title="3、开始分析"></a>3、开始分析</h5><ul>
+<li><p>直接点击开始进行抓取数据包分析</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122132021.png" alt="image-20220412213201956"></p>
+</li>
+</ul>
+<h4 id="二、整体布局"><a href="#二、整体布局" class="headerlink" title="二、整体布局"></a>二、整体布局</h4><h5 id="1、标题栏"><a href="#1、标题栏" class="headerlink" title="1、标题栏"></a>1、标题栏</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122155993.png" alt="image-20220412215514963"></p>
+<ul>
+<li>新建：创建一个新的工程</li>
+<li>导出数据包：导出缓存中的数据包，保存到本地磁盘</li>
+<li>定时分析：到达指定时间时，系统自动捕获数据并进行分析</li>
+<li>全局配置导入导出<ul>
+<li>导入配置：导入用户自定义的网络档案、分析方案、网络适配器等配置信息</li>
+<li>导出配置：导出用户自定义的网络档案、分析方案、网络适配器等配置信息，方便下次重新调用</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、功能区"><a href="#2、功能区" class="headerlink" title="2、功能区"></a>2、功能区</h5><ul>
+<li><p>分析：包括数据包捕捉、网络档案设置、分析方案设置、数据存储设置、全局仪表盘以及数据包缓存状态显示，您可以从该栏中进行各项分析设置、快速查看网络全局利用率、每秒数据包、网络流量趋势以及数据包缓存状态等信息</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122233162.png" alt="image-20220412223248845"></p>
+</li>
+<li><p>系统：包括协议解码器以及定时分析设置，此外，可以快速访问科来官方网站、CSNA 网络分析社区，重新注册、激活产品等</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122233641.png" alt="image-20220412223352615"></p>
+</li>
+<li><p>工具：免费提供了 5 个网络小工具：Base64 编解码工具、科来Ping 工具、MAC 地址扫描器、数据生成器以及数据包播放器</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122234538.png" alt="image-20220412223416498"></p>
+</li>
+<li><p>视图：提供了物理地址及 IP 地址的显示格式选择以及节点浏览器、警报视图、在线资源页面的显示或隐藏选择</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122234150.png" alt="image-20220412223438123"></p>
+</li>
+</ul>
+<h5 id="3、节点浏览器"><a href="#3、节点浏览器" class="headerlink" title="3、节点浏览器"></a>3、节点浏览器</h5><ul>
+<li><p>可以按协议浏览、按物理端点浏览、按 IP 端点浏览、按 VoIP 通信节点浏览、按进程浏览、按应用浏览、按客户端浏览这 7 类方式，实时的反映网络中出现的协议、主机及该主机的物理地址和 IP 地址，主机当前是否正在通讯和通信进程。</p>
+</li>
+<li><p>节点浏览器以树状层级方式显示当前通讯的网络协议、物理地址、IP 地址和进程。通过节点浏览器，您可以快速定位和查看节点数据信息，如查看某个 IP 组信息、某个 VLAN 信息，单个 IP 地址、物理地址或协议的信息</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122240077.png" alt="image-20220412224005030"></p>
+</li>
+</ul>
+<h5 id="4、主视图区"><a href="#4、主视图区" class="headerlink" title="4、主视图区"></a>4、主视图区</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122241742.png" alt="image-20220412224155678"></p>
+<ul>
+<li>我的图表<ul>
+<li>系统默认提供了多个图表面板，您可以自定义添加图表面板，每个图表面板又可任意添加新的图表。除了添加全局的图表，您还可以从多个视图中对选中的网络对象进行图表创建并在图表视图中进行显示。</li>
+<li>通过灵活的设置图表，您可以更直观的对所关心的网络对象和应用的重要流量参数进行实时的监控。</li>
+</ul>
+</li>
+<li>概要统计<ul>
+<li>对网络流量及常见网络应用进行详细的统计显示。通过概要统计视图，您可以快速的查看当前的网络流量、数据包大小分布、TCP 通讯情况、HTTP 通讯、DNS 通讯等多种类型的数据统计。</li>
+<li>配合节点浏览器的使用，您可以快速查看单个网络对象或对象组的概要统计信息。在节点浏览器中选择某个网络对象，系统会自动过滤出该对象的统计数据，能极大的提高您的分析效率。</li>
+</ul>
+</li>
+<li>诊断<ul>
+<li>分为诊断分层、诊断发生地址以及详细事件描述 3 个分隔子窗口</li>
+<li>诊断模块同样严格遵循 OSI 模型对网络事件进行分层显示：应用层、传输层、网络层、数据链路层</li>
+</ul>
+</li>
+<li>协议<ul>
+<li>提供全局的协议统计，遵循 OSI 七层协议分析，根据实际的网络协议封装顺序，不同的协议赋予不同的色彩，层次化的展现，并且，能够单独统计每一个层次下所使用的协议</li>
+</ul>
+</li>
+<li>物理端点<ul>
+<li>全新的物理端点视图，按 MAC 地址类型统计网络中物理端点之间的通讯情况，物理端点视图统计参数多达 46 种</li>
+</ul>
+</li>
+<li>IP端点<ul>
+<li>按 IP 类型统计 IP 地址之间的通讯情况。与物理端点视图类似，IP 端点的统计参数同样可以提供自定义统计参数显示以及按参数大小排序</li>
+</ul>
+</li>
+<li>物理会话<ul>
+<li>统提供全新的物理会话视图，详细统计网络中物理地址之间的通讯会话情况</li>
+</ul>
+</li>
+<li>IP会话<ul>
+<li>统计了 IP 地址间的通讯会话情况</li>
+</ul>
+</li>
+<li>TCP会话<ul>
+<li>提供了详细的 TCP 通讯会话分析</li>
+</ul>
+</li>
+<li>UDP会话<ul>
+<li>展现了网络中的 UDP 通讯情况</li>
+</ul>
+</li>
+<li>服务<ul>
+<li>展现了用户对外访问的服务类型情况</li>
+</ul>
+</li>
+<li>端口<ul>
+<li>用于实时显示网络中的端口流量统计信息，统计的端口包括 TCP 端口和UDP 端口</li>
+</ul>
+</li>
+<li>VoIP呼叫<ul>
+<li>用于实时显示网络中的 VoIP 呼叫统计信息</li>
+</ul>
+</li>
+<li>进程<ul>
+<li>提供了本机进程分析视图，能够帮助用户快速分析本地计算机的进程通信情况</li>
+</ul>
+</li>
+<li>应用<ul>
+<li>支持以应用为对象，进行网络通讯数据的分析和统计</li>
+</ul>
+</li>
+<li>矩阵<ul>
+<li>用于实时显示网络通讯的节点和会话信息</li>
+<li>系统默认提供了 TOP 100 物理会话矩阵与物理节点矩阵以及 TOP 100 IPv4 会话矩阵与 IPv4 节点矩阵</li>
+</ul>
+</li>
+<li>数据包<ul>
+<li>可以详细查看网络中原始的数据包通讯情况，系统对每个数据包进行详细分析和界面，包括：概要解码，字段解码，十六制解码</li>
+</ul>
+</li>
+<li>日志<ul>
+<li>提供常见网络应用的日志显示及保存</li>
+<li>每个日志由相应的分析模块提供，是否显示该日志由分析方案的设置决定</li>
+<li>日志包括（全局日志、DNS 日志、Email 日志、HTTP 日志、FTP 日志、VoIP 信令事件日志、VoIP 呼叫日志）</li>
+</ul>
+</li>
+<li>报表<ul>
+<li>提供丰富的报表定制，可以生成各种统计数据的报表。并且，可以配合节点浏览器的选择，自定义生成各种网络对象的报表显示。</li>
+</ul>
+</li>
+</ul>
+<h5 id="5、警报浏览器"><a href="#5、警报浏览器" class="headerlink" title="5、警报浏览器"></a>5、警报浏览器</h5><ul>
+<li><p>系统提供实时全局实时警报，以醒目的方式提醒管理员当前警报。并在主视图右下角显示当前触发的警报数量。</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122304136.png" alt="image-20220412230431069"></p>
+</li>
+</ul>
+<h5 id="6、状态栏"><a href="#6、状态栏" class="headerlink" title="6、状态栏"></a>6、状态栏</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204122305247.png" alt="image-20220412230547220"></p>
+<ul>
+<li>提供全局状态栏显示，状态栏包括以下信息<ul>
+<li>当前分析模式与分析方案名称</li>
+<li>网络适配器或回放文件再选择及状态显示</li>
+<li>数据包捕捉过滤器状态显示与设置</li>
+<li>工程数据统计，包括持续时间，包捕捉过滤统计</li>
+<li>警报状态显示与设置</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-wireshark%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/" rel="prev" title="流量攻击-wireshark网络分析工具">
+      <i class="fa fa-chevron-left"></i> 流量攻击-wireshark网络分析工具
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88arp%E5%8D%8F%E8%AE%AE%E5%88%86%E6%9E%90%EF%BC%89/" rel="next" title="流量攻击-网络层协议（arp协议分析）">
+      流量攻击-网络层协议（arp协议分析） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%88%86%E6%9E%90%E5%BC%95%E5%AF%BC"><span class="nav-number">1.</span> <span class="nav-text">一、分析引导</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%88%86%E6%9E%90%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">1、分析模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%80%89%E6%8B%A9%E7%BD%91%E7%BB%9C%E9%80%82%E9%85%8D%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">2、选择网络适配器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E5%BC%80%E5%A7%8B%E5%88%86%E6%9E%90"><span class="nav-number">1.3.</span> <span class="nav-text">3、开始分析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%95%B4%E4%BD%93%E5%B8%83%E5%B1%80"><span class="nav-number">2.</span> <span class="nav-text">二、整体布局</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%A0%87%E9%A2%98%E6%A0%8F"><span class="nav-number">2.1.</span> <span class="nav-text">1、标题栏</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%8A%9F%E8%83%BD%E5%8C%BA"><span class="nav-number">2.2.</span> <span class="nav-text">2、功能区</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E8%8A%82%E7%82%B9%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-number">2.3.</span> <span class="nav-text">3、节点浏览器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E4%B8%BB%E8%A7%86%E5%9B%BE%E5%8C%BA"><span class="nav-number">2.4.</span> <span class="nav-text">4、主视图区</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E8%AD%A6%E6%8A%A5%E6%B5%8F%E8%A7%88%E5%99%A8"><span class="nav-number">2.5.</span> <span class="nav-text">5、警报浏览器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6%E3%80%81%E7%8A%B6%E6%80%81%E6%A0%8F"><span class="nav-number">2.6.</span> <span class="nav-text">6、状态栏</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

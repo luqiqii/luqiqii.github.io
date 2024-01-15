@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、HTTPS协议1、简介 HTTPS （全称：Hyper Text Transfer Protocol over SecureSocket Layer），是以安全为目标的 HTTP 通道，在HTTP的基础上通过传输加密和身份认证保证了传输过程的安全性 。HTTPS 在HTTP 的基础下加入SSL，HTTPS 的安全基础是 SSL，因此加密的详细内容就需要 SSL。 HTTPS 存在不同于 HTT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流量攻击-应用层协议（https协议）">
+<meta property="og:url" content="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88https%E5%8D%8F%E8%AE%AE%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、HTTPS协议1、简介 HTTPS （全称：Hyper Text Transfer Protocol over SecureSocket Layer），是以安全为目标的 HTTP 通道，在HTTP的基础上通过传输加密和身份认证保证了传输过程的安全性 。HTTPS 在HTTP 的基础下加入SSL，HTTPS 的安全基础是 SSL，因此加密的详细内容就需要 SSL。 HTTPS 存在不同于 HTT">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803110500.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803110525.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803145157.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803145208.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803111913.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803154714.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803154839.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155000.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155228.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155309.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155741.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155916.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803160337.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803160535.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803160602.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803160802.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161022.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161108.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161331.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161515.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161751.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803162231.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803180204.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052320417.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052256549.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052307001.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052323167.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052333618.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112060018576.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112060020649.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112071057843.png">
+<meta property="article:published_time" content="2023-10-22T14:04:35.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:31:42.340Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803110500.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88https%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>流量攻击-应用层协议（https协议） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88https%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          流量攻击-应用层协议（https协议）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:04:35 / 修改时间：22:31:42" itemprop="dateCreated datePublished" datetime="2023-10-22T22:04:35+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、HTTPS协议"><a href="#一、HTTPS协议" class="headerlink" title="一、HTTPS协议"></a>一、HTTPS协议</h4><h5 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h5><ul>
+<li>HTTPS （全称：Hyper Text Transfer Protocol over SecureSocket Layer），是以安全为目标的 HTTP 通道，在HTTP的基础上通过传输加密和身份认证保证了传输过程的安全性 。HTTPS 在HTTP 的基础下加入SSL，HTTPS 的安全基础是 SSL，因此加密的详细内容就需要 SSL。 HTTPS 存在不同于 HTTP 的默认端口及一个加密&#x2F;身份验证层（在 HTTP与 TCP 之间）。这个系统提供了身份验证与加密通讯方法。它被广泛用于万维网上安全敏感的通讯，例如交易支付等方面</li>
+</ul>
+<h5 id="2、TLS"><a href="#2、TLS" class="headerlink" title="2、TLS"></a>2、TLS</h5><ul>
+<li>传输层安全协议，TLS1.0与SSL3.0保持一致，目前常用版本TLS1.2</li>
+<li>设计目标：<ul>
+<li>保密性：通过加密encryption实现，所有信息都加密传输，第三方无法窃听</li>
+<li>完整性：通过MAC校验机制，一旦被篡改，通信双方会立刻发现</li>
+<li>认证：双方认证，双方都可以配备证书，防止身份被冒充</li>
+<li>互操作、通用性：根据公开的RFC（互联网工程任务组（IETF）发布的一系列备忘录），任何符合RFC的软件实现都可以互操作，不受限于任何专利技术</li>
+<li>可扩展性：通过扩展机制TLS_Ext可以添加功能，有大量的新功能，都是通过扩展添加的</li>
+<li>高效率：通过session cache，恰当部署cache之后，TLS的效率很高</li>
+</ul>
+</li>
+<li>发展历史<ul>
+<li>1995年，SSL 2.0</li>
+<li>1996年，SSL 3.0</li>
+<li>1999年，TLS 1.0</li>
+<li>2006年，TLS 1.1</li>
+<li>2008年，TLS 1.2</li>
+<li>2015年之后，TLS 1.3</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、HTTP的缺点"><a href="#2、HTTP的缺点" class="headerlink" title="2、HTTP的缺点"></a>2、HTTP的缺点</h5><ul>
+<li>HTTP的明文数据传输</li>
+<li>HTTP在传输客户端请求和服务端响应时, 唯一的数据完整性检验就是在报文头部包含了本次传输数据的长度, 而对内容是否被篡改不作确认</li>
+</ul>
+<h5 id="3、HTTPS的改进"><a href="#3、HTTPS的改进" class="headerlink" title="3、HTTPS的改进"></a>3、HTTPS的改进</h5><ul>
+<li>双向身份认证<ul>
+<li>客户端和服务端在传输数据之前，会基于X.509（公钥证书的格式标准）对双方进行身份认证<ul>
+<li>客户端发起 SSL 握手消息给服务端要求连接</li>
+<li>服务端将证书发送给客户端</li>
+<li>客户端检查服务端证书，确认是否由自己信任的证书签发机构签发。 如果不是，将是否继续通讯的决定权交给用户选择 ( 注意，这里将是一个安全缺陷 )。如果检查无误或者用户选择继续，则客户端认可服务端的身份</li>
+<li>服务端要求客户端发送证书，并检查是否通过验证。失败则关闭连接，认证成功则从客户端证书中获得客户端的公钥，一般为1024位或者 2048位。到此，服务器客户端双方的身份认证结束，双方确保身份都是真实可靠的</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据传输的机密性<ul>
+<li>客户端和服务端在开始传输数据之前，会协商传输过程需要使用的加密算法。 客户端发送协商请求给服务端, 其中包含自己支持的非对称加密的密钥交换算法 ( 一般是RSA), 数据签名摘要算法 ( 一般是SHA或者MD5) , 加密传输数据的对称加密算法 ( 一般是DES),以及加密密钥的长度。 服务端接收到消息之后，选中安全性最高的算法，并将选中的算法发送给客户端，完成协商。客户端生成随机的字符串，通过协商好的非对称加密算法，使用服务端的公钥对该字符串进行加密，发送给服务端。 服务端接收到之后，使用自己的私钥解密得到该字符串。在随后的数据传输当中，使用这个字符串作为密钥进行对称加密</li>
+</ul>
+</li>
+</ul>
+<h4 id="二、加密算法"><a href="#二、加密算法" class="headerlink" title="二、加密算法"></a>二、加密算法</h4><h5 id="1、对称加密算法"><a href="#1、对称加密算法" class="headerlink" title="1、对称加密算法"></a>1、对称加密算法</h5><ul>
+<li>加密的密钥和解密的密钥相同</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803110500.png" alt="image-20210803110500840"></p>
+<ul>
+<li>对称算法的缺陷<ul>
+<li>密钥传输风险<ul>
+<li>发送方和接收方必须要使用一个安全的信道建立密钥。</li>
+<li>但是消息传递的通信链路是不安全的</li>
+</ul>
+</li>
+<li>密钥多难管理<ul>
+<li>如果一个用户要和其他的所有N个用户通信，那么该用户需要同时保管N把对应的对称密钥。如果在拥有n个用户的网络中，每个用户都需要互相通信，那么整个网络中需要的密钥对数是n*（n-1）&#x2F;2，这种情况在一个中大型的企业中，比如一个拥有2000位员工的企业中，需约生成400万个对称密钥，并且每个对称密钥需要通过安全的信道传输，是很困难的</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>常见的对称加密算法<ul>
+<li>DES&#x2F;3DES算法：DES加密采用的是分组加密的方法，使用56位密钥加密64位明文，最后产生64位密文。3DES用两个密钥对数据进行3次加密&#x2F;解密运算。</li>
+<li>AES算法：AES为分组密码，分组密码也就是把明文分成一组一组的，每组长度相等，每次加密一组数据，直到加密完整个明文。高级加密标准，是下一代的加密算法标准，速度快，安全级别高，在21世纪AES 标准的一个实现是 Rijndael 算法。</li>
+<li>RC系列算法</li>
+<li>IDEA</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、非对称加密算法"><a href="#2、非对称加密算法" class="headerlink" title="2、非对称加密算法"></a>2、非对称加密算法</h5><ul>
+<li>加密和解密使用的是不同的密钥（公钥（公共密钥）、私钥），两个密钥之间存在着相互依存关系，用其中任一个密钥加密的信息只能用另一个密钥进行解密，即用公钥加密，用私钥解密就可以得到明文。（通信双方无需事先交换密钥就可进行保密通信）</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803110525.png" alt="image-20210803110525526"></p>
+<ul>
+<li>加密算法相对比较复杂，对于大规模数据进行加解密，过程比较影响效率</li>
+<li>常见的非对称加密算法<ul>
+<li>Elgamal：Elgamal由Taher Elgamal于1985年发明，其基础是Diffie-Hellman密钥交换算法，后者使通信双方能通过公开通信来推导出只有他们知道的密钥</li>
+<li>RSA：由 RSA 公司发明，是一个支持变长密钥的公共密钥算法，需要加密的文件块的长度也是可变的，非对称算法</li>
+<li>ECC</li>
+<li>Rabin</li>
+</ul>
+</li>
+</ul>
+<h4 id="三、PKI体系"><a href="#三、PKI体系" class="headerlink" title="三、PKI体系"></a>三、PKI体系</h4><h5 id="1、PKI概念"><a href="#1、PKI概念" class="headerlink" title="1、PKI概念"></a>1、PKI概念</h5><ul>
+<li>公钥基础设施（Public Key Infrastructure）<ul>
+<li>通过使用<strong>公钥技术</strong>和<strong>数字签名</strong>来确保信息安全</li>
+<li>由公钥加密技术、数字证书、CA、RA组成<ul>
+<li>数字证书用于用户的身份验证。</li>
+<li>认证机构CA是PKI的核心，负责管理PKI中所有用户（包括各种应用程序）的数字证书的生成、分发、验证和撤销。</li>
+<li>RA（注册机构）接受用户的请求，负责将用户的有关申请信息存档备案，并存储在数据库中，等待审核，并将审核通过的证书请求发送给证书颁发机构。RA分担了CA的部分任务，使管理变得更方便。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>公钥加密技术就是使用非对称加密算法进行加解密</li>
+<li>PKI体系能够实现的功能<ul>
+<li>身份验证：确认用户的身份标识。</li>
+<li>数据完整性：确保数据在传输过程中没有被修改。</li>
+<li>数据机密性：防止非授权用户获取数据。</li>
+<li>操作的不可否认性：确保用户不能冒充其他用户的身份。</li>
+</ul>
+</li>
+<li>身份认证技术<ul>
+<li>身份认证：通过标识和鉴别用户的身份，防止攻击者假冒合法用户来获取访问权限。</li>
+<li>身份认证技术：是在网络中确认操作者身份的过程而产生的有效解决方法。</li>
+<li>应用场景：<ul>
+<li>Alice先用Hash函数，生成信件的摘要（digest）。</li>
+<li>Alice再使用自己的私钥，对这个摘要加密，生成”数字签名”（signature）</li>
+<li>Alice将这个签名，附在信件下面，一起发给Bob</li>
+<li>Bob收信后，取下数字签名，用Alice的公钥解密，得到信件的摘要。由此证明，这封信确实是Alice发出的。—-完成身份的验证</li>
+<li>Bob再对信件本身使用Hash函数，将得到的结果，与上一步得到的摘要进行对比。如果两者一致，就证明这封信未被修改过。—完成数据完整性的验证</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803145157.png" alt="image-20210803145157611"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803145208.png" alt="image-20210803145208230"></p>
+<h5 id="2、数字证书"><a href="#2、数字证书" class="headerlink" title="2、数字证书"></a>2、数字证书</h5><ul>
+<li>证书用于保证密钥的合法性</li>
+<li>证书的主体可以是用户、计算机、服务等</li>
+<li>证书格式遵循X.509标准</li>
+<li>数字证书包含信息<ul>
+<li>使用者的公钥值</li>
+<li>使用者标识信息（如名称和电子邮件地址）</li>
+<li>有效期（证书的有效时间）</li>
+<li>颁发者标识信息</li>
+<li>颁发者的数字签名</li>
+</ul>
+</li>
+<li>数字证书由权威公正的第三方机构即CA签发</li>
+</ul>
+<h5 id="3、数据安全传输案例"><a href="#3、数据安全传输案例" class="headerlink" title="3、数据安全传输案例"></a>3、数据安全传输案例</h5><ul>
+<li>首先搞清楚一个问题：在这个传输案例中，Alice是发送方，Bob是接收方</li>
+<li>第一步：Alice将原始数据通过hash算法得出信息摘要，使用<strong>Alice的私钥</strong>对信息摘要进行签名得到数字签名</li>
+<li>第二步：Alice将原始信息和数字签名和自己的证书通过<strong>对称加密算法的密钥</strong>进行加密得到加密信息</li>
+<li>第三步：Alice使用<strong>Bob的公钥</strong>对<strong>对称加密算法的密钥</strong>进行加密得到密钥信封</li>
+<li>第四步：Alice将加密信息和密钥信封通过公网传输给Bob</li>
+<li>第五步：Bob收到Alice发送的加密信息和密钥信封</li>
+<li>第六步：Bob首先将密钥信封通过<strong>Bob的私钥</strong>进行解密得到<strong>对称加密算法的密钥</strong></li>
+<li>第七步：Bob使用<strong>对称加密算法的密钥</strong>将加密信息进行解密得到原始信息、Alice的数字签名和Alice的证书</li>
+<li>第八步：Bob使用相同的hash算法对原始信息进行计算得到信息摘要</li>
+<li>第九步：Bob根据Alice的证书中<strong>Alice的公钥</strong>将Alice的数字前面进行解密得到Alice计算的信息摘要</li>
+<li>第十步：Bob通过自己计算的信息摘要和Alice计算的信息摘要进行比对</li>
+</ul>
+<h5 id="“-class-x3D-”reference-link”-gt"><a href="#“-class-x3D-”reference-link”-gt" class="headerlink" title="“ class&#x3D;”reference-link”&gt;"></a>“ class&#x3D;”reference-link”&gt;<img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803111913.png" alt="image-20210803111913163"></h5><h5 id="4、CA（Certificate-Authority，证书颁发机构）"><a href="#4、CA（Certificate-Authority，证书颁发机构）" class="headerlink" title="4、CA（Certificate Authority，证书颁发机构）"></a>4、CA（Certificate Authority，证书颁发机构）</h5><ul>
+<li>CA的核心功能是颁发和管理数字证书</li>
+<li>CA的作用<ul>
+<li>处理证书申请</li>
+<li>发放证书</li>
+<li>更新证书</li>
+<li>接受最终用户数字证书的查询、撤销</li>
+<li>产生和发布证书吊销列表（CRL）</li>
+<li>数字证书归档</li>
+<li>密钥归档</li>
+<li>历史数据归档</li>
+</ul>
+</li>
+</ul>
+<h4 id="四、部署证书服务器"><a href="#四、部署证书服务器" class="headerlink" title="四、部署证书服务器"></a>四、部署证书服务器</h4><h5 id="1、这里需要两台服务器（一台作为CA，一台作为web服务器）"><a href="#1、这里需要两台服务器（一台作为CA，一台作为web服务器）" class="headerlink" title="1、这里需要两台服务器（一台作为CA，一台作为web服务器）"></a>1、这里需要两台服务器（一台作为CA，一台作为web服务器）</h5><h5 id="2、服务器设置固定IP"><a href="#2、服务器设置固定IP" class="headerlink" title="2、服务器设置固定IP"></a>2、服务器设置固定IP</h5><ul>
+<li>与网站服务器同一网段</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803154714.png" alt="image-20210803154714886"></p>
+<h5 id="3、添加角色Active-Directory证书服务"><a href="#3、添加角色Active-Directory证书服务" class="headerlink" title="3、添加角色Active Directory证书服务"></a>3、添加角色Active Directory证书服务</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803154839.png" alt="image-20210803154839342"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155000.png" alt="image-20210803155000546"></p>
+<h5 id="4、配置角色服务"><a href="#4、配置角色服务" class="headerlink" title="4、配置角色服务"></a>4、配置角色服务</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155228.png" alt="image-20210803155228518"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155309.png" alt="image-20210803155309522"></p>
+<h5 id="5、使用web服务器申请证书"><a href="#5、使用web服务器申请证书" class="headerlink" title="5、使用web服务器申请证书"></a>5、使用web服务器申请证书</h5><ul>
+<li><p>打开web服务器管理器找到服务器证书</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155741.png" alt="image-20210803155741159"></p>
+</li>
+<li><p>创建证书申请</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803155916.png" alt="image-20210803155916065"></p>
+</li>
+<li><p>提交证书申请</p>
+<ul>
+<li><p>访问证书服务器虚拟目录，地址：<a target="_blank" rel="noopener" href="http://192.168.1.55/certsrv">http://192.168.1.55/certsrv</a></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803160337.png" alt="image-20210803160337077"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803160535.png" alt="image-20210803160535258"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803160602.png" alt="image-20210803160602014"></p>
+</li>
+<li><p>将刚才在web服务器上创建的证书申请生成的base64位编码填入</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803160802.png" alt="image-20210803160802468"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="6、在CA上批准证书申请"><a href="#6、在CA上批准证书申请" class="headerlink" title="6、在CA上批准证书申请"></a>6、在CA上批准证书申请</h5><ul>
+<li><p>打开证书颁发机构管理器，找到挂起的申请</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161022.png" alt="image-20210803161022749"></p>
+</li>
+<li><p>直接进行颁发</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161108.png" alt="image-20210803161108300"></p>
+</li>
+</ul>
+<h5 id="7、使用web服务器再次访问证书服务器虚拟目录下载证书"><a href="#7、使用web服务器再次访问证书服务器虚拟目录下载证书" class="headerlink" title="7、使用web服务器再次访问证书服务器虚拟目录下载证书"></a>7、使用web服务器再次访问证书服务器虚拟目录下载证书</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161331.png" alt="image-20210803161331699"></p>
+<h5 id="8、使用web服务器完成证书申请，导入证书文件"><a href="#8、使用web服务器完成证书申请，导入证书文件" class="headerlink" title="8、使用web服务器完成证书申请，导入证书文件"></a>8、使用web服务器完成证书申请，导入证书文件</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161515.png" alt="image-20210803161515324"></p>
+<h4 id="五、部署HTTPS服务器"><a href="#五、部署HTTPS服务器" class="headerlink" title="五、部署HTTPS服务器"></a>五、部署HTTPS服务器</h4><h5 id="1、在web服务器上编辑绑定，增加https协议支持，选择对应证书"><a href="#1、在web服务器上编辑绑定，增加https协议支持，选择对应证书" class="headerlink" title="1、在web服务器上编辑绑定，增加https协议支持，选择对应证书"></a>1、在web服务器上编辑绑定，增加https协议支持，选择对应证书</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803161751.png" alt="image-20210803161750949"></p>
+<h5 id="2、要求使用SSL"><a href="#2、要求使用SSL" class="headerlink" title="2、要求使用SSL"></a>2、要求使用SSL</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803162231.png" alt="image-20210803162231507"></p>
+<h4 id="六、分析HTTPS流量"><a href="#六、分析HTTPS流量" class="headerlink" title="六、分析HTTPS流量"></a>六、分析HTTPS流量</h4><h5 id="1、TLS交互过程"><a href="#1、TLS交互过程" class="headerlink" title="1、TLS交互过程"></a>1、TLS交互过程</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210803180204.png" alt="image-20210803180204144"></p>
+<h5 id="2、通过数据包捕获进行查看交互过程"><a href="#2、通过数据包捕获进行查看交互过程" class="headerlink" title="2、通过数据包捕获进行查看交互过程"></a>2、通过数据包捕获进行查看交互过程</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052320417.png" alt="image-20211205232034366"></p>
+<ul>
+<li><p>握手阶段一（Client Hello）客户机发起握手消息</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052256549.png" alt="image-20211205225613471"></p>
+</li>
+<li><p>握手阶段二（Server Hello，Certificate，Server Key Exchange，Server Hello Done）服务器响应握手消息，将服务器证书发送给客户端，执行DH密钥协商</p>
+<ul>
+<li><p>Server Hello</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052307001.png" alt="image-20211205230742929"></p>
+</li>
+<li><p>Certificate</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052323167.png" alt="image-20211205232306099"></p>
+</li>
+<li><p>Server Key Exchange，Server Hello Done</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112052333618.png" alt="image-20211205233321552"></p>
+</li>
+</ul>
+</li>
+<li><p>握手阶段三（Client Key Exchange，Change Cipher Spec，Encrypted Handshake Message ）客户端进行密钥协商完成DH过程（因为主密钥是由客户端和服务器的随机数共同生成），随即改变密码规范，告诉服务器启用加密参数</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112060018576.png" alt="image-20211206001842507"></p>
+</li>
+<li><p>握手阶段四（Change Cipher Spec，Encrypted Handshake Message）服务器响应客户端改变密码规范，启用加密参数</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112060020649.png" alt="image-20211206002026591"></p>
+</li>
+<li><p>DH密钥交互过程</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112071057843.png" alt="image-20211207105701765"></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88http%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="prev" title="流量攻击-应用层协议（http协议）">
+      <i class="fa fa-chevron-left"></i> 流量攻击-应用层协议（http协议）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88%E9%82%AE%E4%BB%B6%E6%94%B6%E5%8F%91%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="next" title="流量攻击-应用层协议（邮件收发协议）">
+      流量攻击-应用层协议（邮件收发协议） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81HTTPS%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">一、HTTPS协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1、简介</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81TLS"><span class="nav-number">1.2.</span> <span class="nav-text">2、TLS</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81HTTP%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">1.3.</span> <span class="nav-text">2、HTTP的缺点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81HTTPS%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="nav-number">1.4.</span> <span class="nav-text">3、HTTPS的改进</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">二、加密算法</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">1、对称加密算法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">2、非对称加密算法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81PKI%E4%BD%93%E7%B3%BB"><span class="nav-number">3.</span> <span class="nav-text">三、PKI体系</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81PKI%E6%A6%82%E5%BF%B5"><span class="nav-number">3.1.</span> <span class="nav-text">1、PKI概念</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6"><span class="nav-number">3.2.</span> <span class="nav-text">2、数字证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8%E4%BC%A0%E8%BE%93%E6%A1%88%E4%BE%8B"><span class="nav-number">3.3.</span> <span class="nav-text">3、数据安全传输案例</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E2%80%9C-class-x3D-%E2%80%9Dreference-link%E2%80%9D-gt"><span class="nav-number">3.4.</span> <span class="nav-text">“ class&#x3D;”reference-link”&gt;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81CA%EF%BC%88Certificate-Authority%EF%BC%8C%E8%AF%81%E4%B9%A6%E9%A2%81%E5%8F%91%E6%9C%BA%E6%9E%84%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">4、CA（Certificate Authority，证书颁发机构）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E9%83%A8%E7%BD%B2%E8%AF%81%E4%B9%A6%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">四、部署证书服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E8%BF%99%E9%87%8C%E9%9C%80%E8%A6%81%E4%B8%A4%E5%8F%B0%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88%E4%B8%80%E5%8F%B0%E4%BD%9C%E4%B8%BACA%EF%BC%8C%E4%B8%80%E5%8F%B0%E4%BD%9C%E4%B8%BAweb%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">1、这里需要两台服务器（一台作为CA，一台作为web服务器）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%BE%E7%BD%AE%E5%9B%BA%E5%AE%9AIP"><span class="nav-number">4.2.</span> <span class="nav-text">2、服务器设置固定IP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%B7%BB%E5%8A%A0%E8%A7%92%E8%89%B2Active-Directory%E8%AF%81%E4%B9%A6%E6%9C%8D%E5%8A%A1"><span class="nav-number">4.3.</span> <span class="nav-text">3、添加角色Active Directory证书服务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E9%85%8D%E7%BD%AE%E8%A7%92%E8%89%B2%E6%9C%8D%E5%8A%A1"><span class="nav-number">4.4.</span> <span class="nav-text">4、配置角色服务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E4%BD%BF%E7%94%A8web%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%94%B3%E8%AF%B7%E8%AF%81%E4%B9%A6"><span class="nav-number">4.5.</span> <span class="nav-text">5、使用web服务器申请证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6%E3%80%81%E5%9C%A8CA%E4%B8%8A%E6%89%B9%E5%87%86%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7"><span class="nav-number">4.6.</span> <span class="nav-text">6、在CA上批准证书申请</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7%E3%80%81%E4%BD%BF%E7%94%A8web%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%86%8D%E6%AC%A1%E8%AE%BF%E9%97%AE%E8%AF%81%E4%B9%A6%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%99%9A%E6%8B%9F%E7%9B%AE%E5%BD%95%E4%B8%8B%E8%BD%BD%E8%AF%81%E4%B9%A6"><span class="nav-number">4.7.</span> <span class="nav-text">7、使用web服务器再次访问证书服务器虚拟目录下载证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8%E3%80%81%E4%BD%BF%E7%94%A8web%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%8C%E6%88%90%E8%AF%81%E4%B9%A6%E7%94%B3%E8%AF%B7%EF%BC%8C%E5%AF%BC%E5%85%A5%E8%AF%81%E4%B9%A6%E6%96%87%E4%BB%B6"><span class="nav-number">4.8.</span> <span class="nav-text">8、使用web服务器完成证书申请，导入证书文件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E9%83%A8%E7%BD%B2HTTPS%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">五、部署HTTPS服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%9C%A8web%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%BC%96%E8%BE%91%E7%BB%91%E5%AE%9A%EF%BC%8C%E5%A2%9E%E5%8A%A0https%E5%8D%8F%E8%AE%AE%E6%94%AF%E6%8C%81%EF%BC%8C%E9%80%89%E6%8B%A9%E5%AF%B9%E5%BA%94%E8%AF%81%E4%B9%A6"><span class="nav-number">5.1.</span> <span class="nav-text">1、在web服务器上编辑绑定，增加https协议支持，选择对应证书</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E8%A6%81%E6%B1%82%E4%BD%BF%E7%94%A8SSL"><span class="nav-number">5.2.</span> <span class="nav-text">2、要求使用SSL</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%88%86%E6%9E%90HTTPS%E6%B5%81%E9%87%8F"><span class="nav-number">6.</span> <span class="nav-text">六、分析HTTPS流量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81TLS%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-number">6.1.</span> <span class="nav-text">1、TLS交互过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%80%9A%E8%BF%87%E6%95%B0%E6%8D%AE%E5%8C%85%E6%8D%95%E8%8E%B7%E8%BF%9B%E8%A1%8C%E6%9F%A5%E7%9C%8B%E4%BA%A4%E4%BA%92%E8%BF%87%E7%A8%8B"><span class="nav-number">6.2.</span> <span class="nav-text">2、通过数据包捕获进行查看交互过程</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、网络截获数据包的基础1、以太网卡的工作模式以太网卡在正常情况下只接收 MAC 地址与自己相匹配的数据帧（单播包），广播包，属于自己的组播包  网卡完成收发数据包的工作，两种接收模式 混杂模式：不管数据帧中的目的地址是否与自己的地址匹配，都接收下来 非混杂模式：只接收目的地址相匹配的数据帧，以及广播数据包和组播数据包    2、单播、组播、广播的概念 单播：是在一个单个的发送者和一个接受者之间通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流量攻击-wireshark网络分析工具">
+<meta property="og:url" content="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-wireshark%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、网络截获数据包的基础1、以太网卡的工作模式以太网卡在正常情况下只接收 MAC 地址与自己相匹配的数据帧（单播包），广播包，属于自己的组播包  网卡完成收发数据包的工作，两种接收模式 混杂模式：不管数据帧中的目的地址是否与自己的地址匹配，都接收下来 非混杂模式：只接收目的地址相匹配的数据帧，以及广播数据包和组播数据包    2、单播、组播、广播的概念 单播：是在一个单个的发送者和一个接受者之间通">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102115120.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102172025.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102172217.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210709095037.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102143407.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102145904.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102150629.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102151517.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102151549.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102154059.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102171514.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102180701.png">
+<meta property="article:published_time" content="2023-10-22T14:01:47.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:26:21.404Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102115120.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-wireshark%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>流量攻击-wireshark网络分析工具 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-wireshark%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          流量攻击-wireshark网络分析工具
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:01:47 / 修改时间：22:26:21" itemprop="dateCreated datePublished" datetime="2023-10-22T22:01:47+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、网络截获数据包的基础"><a href="#一、网络截获数据包的基础" class="headerlink" title="一、网络截获数据包的基础"></a>一、网络截获数据包的基础</h4><h5 id="1、以太网卡的工作模式"><a href="#1、以太网卡的工作模式" class="headerlink" title="1、以太网卡的工作模式"></a>1、以太网卡的工作模式</h5><p><strong>以太网卡在正常情况下只接收 MAC 地址与自己相匹配的数据帧（单播包），广播包，属于自己的组播包</strong></p>
+<ul>
+<li>网卡完成收发数据包的工作，两种接收模式<ul>
+<li>混杂模式：不管数据帧中的目的地址是否与自己的地址匹配，都接收下来</li>
+<li>非混杂模式：只接收目的地址相匹配的数据帧，以及广播数据包和组播数据包</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、单播、组播、广播的概念"><a href="#2、单播、组播、广播的概念" class="headerlink" title="2、单播、组播、广播的概念"></a>2、单播、组播、广播的概念</h5><ul>
+<li>单播：是在一个单个的发送者和一个接受者之间通过网络进行的通信</li>
+<li>组播：它允许把 所发消息传送给所有可能目的地中的一个经过选择的子集，即向明确指出的多种地址输送信息</li>
+<li>广播：在网络中只有一个单一的通信信道，由这个网络中所有的主机所共享</li>
+</ul>
+<h4 id="二、软件介绍"><a href="#二、软件介绍" class="headerlink" title="二、软件介绍"></a>二、软件介绍</h4><h5 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h5><ul>
+<li>是一个网络封包分析软件。网络封包分析软件的功能是撷取网络封包，并尽可能显示出最为详细的网络封包资料。Wireshark使用WinPCAP作为接口，直接与网卡进行数据报文交换</li>
+</ul>
+<h5 id="2、界面功能介绍"><a href="#2、界面功能介绍" class="headerlink" title="2、界面功能介绍"></a>2、界面功能介绍</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102115120.png" alt="image-20210709070844272"></p>
+<h5 id="3、Wireshark过滤器"><a href="#3、Wireshark过滤器" class="headerlink" title="3、Wireshark过滤器"></a>3、Wireshark过滤器</h5><ul>
+<li><p>捕获过滤器：在抓包之前设置，让Wireshark只抓取过滤器指定的包。</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102172025.png" alt="image-20211102172025365"></p>
+</li>
+<li><p>显示过滤器：在抓包之前或者完成抓包之后都可，不影响抓包，只是方便查看。</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102172217.png" alt="image-20211102172217707"></p>
+</li>
+</ul>
+<h5 id="4、Wireshark抓包模式"><a href="#4、Wireshark抓包模式" class="headerlink" title="4、Wireshark抓包模式"></a>4、Wireshark抓包模式</h5><ul>
+<li><p>在开始抓包之前还可修改Wireshark的抓包选项。通过工具栏或者菜单Capture-&gt;Options 打开抓包选项设置界面。这里可以设置很多选项，我们这里介绍一下 混杂模式 和 非混杂模式。</p>
+<ul>
+<li>混杂模式：抓取经过网卡的所有数据包，包括发往本网卡和非发往本网卡的。</li>
+<li>非混杂模式：只抓取目标地址是本网卡的数据包，对于发往别的主机而经过本网卡的数据包忽略。</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210709095037.png" alt="image-20210709095037654"></p>
+</li>
+</ul>
+<h4 id="三、常见界面设置"><a href="#三、常见界面设置" class="headerlink" title="三、常见界面设置"></a>三、常见界面设置</h4><h5 id="1、列设置"><a href="#1、列设置" class="headerlink" title="1、列设置"></a>1、列设置</h5><ul>
+<li><p>默认列（依次为：编号、时间、源地址、目的地址、协议、帧长度、信息）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102143407.png" alt="image-20211102143407222"></p>
+</li>
+<li><p>增加列</p>
+<ul>
+<li><p>如果想要增加列，可以根据数据包中的某个字段进行添加，例如：这里将 TTL 值添加为列</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102145904.png" alt="image-20211102145904593"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、时间显示格式"><a href="#2、时间显示格式" class="headerlink" title="2、时间显示格式"></a>2、时间显示格式</h5><ul>
+<li><p>默认显示的是从当前开始抓包，数据包产生的时间，我们在这里可以进行调整，设置为更方便的查看方式</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102150629.png" alt="image-20211102150629465"></p>
+</li>
+<li><p>如果想要对两个数据包的时间间隔进行分析，可以通过设置时间参考来进行查看</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102151517.png" alt="image-20211102151517457"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102151549.png" alt="image-20211102151549138"></p>
+</li>
+</ul>
+<h5 id="3、名字解析"><a href="#3、名字解析" class="headerlink" title="3、名字解析"></a>3、名字解析</h5><ul>
+<li><p>MAC 地址解析、网络名字解析、传输名字解析（默认只开启MAC地址解析）</p>
+</li>
+<li><p>开启方式（开启后也可能会出现解析错误并且资源消耗大）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102154059.png" alt="image-20211102154059219"></p>
+</li>
+</ul>
+<h4 id="四、过滤器"><a href="#四、过滤器" class="headerlink" title="四、过滤器"></a>四、过滤器</h4><h5 id="1、捕获过滤器"><a href="#1、捕获过滤器" class="headerlink" title="1、捕获过滤器"></a>1、捕获过滤器</h5><p> <strong>当进行数据包捕获时，只有那些满足给定的包含&#x2F;排除表达式的数据包会被捕获，基于BPF语法（Berkeley Packet Filter）——基于libpcap&#x2F;wincap库，在抓包的过程中过滤掉某些类型的协议，不抓取过滤掉的协议</strong></p>
+<ul>
+<li><p>语法说明</p>
+<ul>
+<li>类型Type：host、net、port</li>
+<li>方向Dir：src、dst</li>
+<li>协议Proto：ether、ip、tcp、udp、http、ftp</li>
+<li>逻辑运算符： &amp;&amp;与、||或、！非</li>
+</ul>
+</li>
+<li><p>举例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#抓取源地址为192.168.1.1，目的端口为80的流量src host 192.168.1.1 &amp;&amp; dst port 80 #抓取192.168.1.1和192.168.1.2的流量host 192.168.1.1 || host 192.168.1.2 #不要抓广播包！broadcast #抓取目的UDP端口为4569的封包udp dst port 4569#抓取目的或来源IP地址为192.168.4.7的封包host 192.168.4.7#抓取来源为TCP或UDP，并且端口在2000~5000范围内的封包src portrange 2000-5000#抓取来源IP地址为172.17.12.1，但目的地址不是192.168.2.0/24的封包src host 172.17.12.1 and not dst net 192.168.2.0/24#抓取来源IP为10.4.1.12或者来源网络为10.6.0.0/16，目的地TCP端口号在200至10000之间，并且目的位于网络10.0.0.0/8内的所有封包(src host 10.4.1.12 or src net 10.6.0.0/16) and tcp dst portrange 200-10000 and dst net 10.0.0.0/8</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102171514.png" alt="image-20211102171514342"></p>
+<h5 id="2、显示过滤器"><a href="#2、显示过滤器" class="headerlink" title="2、显示过滤器"></a>2、显示过滤器</h5><p> <strong>该过滤器根据指定的表达式用于在一个已捕获的数据包集合中，隐藏不想显示的数据包，或者只显示那些需要的数据包。</strong></p>
+<ul>
+<li><p>语法说明</p>
+<ul>
+<li>比较操作符：&#x3D;&#x3D; 等于（eq）、!&#x3D; 不等于（ne）、&gt; 大于（gt）、&lt; 小于（lt）、&gt;&#x3D; 大于等于（ge）、&lt;&#x3D; 小于等于（le）</li>
+<li>逻辑操作符：and 两个条件同时满足、or 其中一个条件被满足、xor 有且仅有一个条件被满足、not 没有条件被满足</li>
+<li>IP地址过滤：ip.addr、ip.src、ip.dst</li>
+<li>端口过滤：tcp.port、tcp.srcport、tcp.dstport、tcp.flag.syn、tcp.flag.ack</li>
+<li>协议过滤：arp、ip、icmp、udp、tcp、http、tls、………….等等</li>
+</ul>
+</li>
+<li><p>举例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#显示源IP等于192.168.1.100并且udp端口号为4000的封包ip.src == 192.168.1.100 and udp.port == 4000#显示SNMP或DNS或ICMP封包snmp || dns || icmp #显示来源或目的IP地址为10.1.1.1的封包ip.addr == 10.1.1.1#显示来源不为10.1.2.3或者目的不为10.4.5.6的封包ip.src != 10.1.2.3 or ip.dst != 10.4.5.6#显示来源不为10.1.2.3并且目的不为10.4.5.6的封包ip.src != 10.1.2.3 and ip.dst != 10.4.5.6#显示来源或目的UDP端口号为4569的封包udp.port eq 4569#显示目的TCP端口号为25的封包tcp.dstport == 25#显示带有TCP标志的封包tcp.flags#显示带有TCP SYN标志的封包tcp.flags.syn eq 0x02</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211102180701.png" alt="image-20211102180701347"></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E5%85%B1%E4%BA%AB%EF%BC%89/" rel="prev" title="网工基础-windows基础（共享）">
+      <i class="fa fa-chevron-left"></i> 网工基础-windows基础（共享）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%A7%91%E6%9D%A5%E7%BD%91%E7%BB%9C%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/" rel="next" title="流量攻击-科来网络分析工具">
+      流量攻击-科来网络分析工具 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%BD%91%E7%BB%9C%E6%88%AA%E8%8E%B7%E6%95%B0%E6%8D%AE%E5%8C%85%E7%9A%84%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">一、网络截获数据包的基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%8D%A1%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">1、以太网卡的工作模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%8D%95%E6%92%AD%E3%80%81%E7%BB%84%E6%92%AD%E3%80%81%E5%B9%BF%E6%92%AD%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.</span> <span class="nav-text">2、单播、组播、广播的概念</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%BD%AF%E4%BB%B6%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">二、软件介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="nav-number">2.1.</span> <span class="nav-text">1、简介</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%95%8C%E9%9D%A2%E5%8A%9F%E8%83%BD%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.2.</span> <span class="nav-text">2、界面功能介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81Wireshark%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">2.3.</span> <span class="nav-text">3、Wireshark过滤器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81Wireshark%E6%8A%93%E5%8C%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.4.</span> <span class="nav-text">4、Wireshark抓包模式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%B8%B8%E8%A7%81%E7%95%8C%E9%9D%A2%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">三、常见界面设置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%88%97%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">1、列设置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%97%B6%E9%97%B4%E6%98%BE%E7%A4%BA%E6%A0%BC%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">2、时间显示格式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E5%90%8D%E5%AD%97%E8%A7%A3%E6%9E%90"><span class="nav-number">3.3.</span> <span class="nav-text">3、名字解析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">四、过滤器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%8D%95%E8%8E%B7%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">4.1.</span> <span class="nav-text">1、捕获过滤器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%98%BE%E7%A4%BA%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">4.2.</span> <span class="nav-text">2、显示过滤器</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

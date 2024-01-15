@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、命令基础1、介绍 Windows PowerShell 是一种命令行外壳程序和脚本环境，使命令行用户和脚本编写者可以利用 .NET Framework的强大功能  PowerShell是一门开源、跨平台的脚本语言和管理Shell，由命令行管理程序和脚本语言组成。  基于 .NET 构建，输出是基于对象的，兼容CMD，命令可扩展  .NET 分为 Core和Framework 5版本是基于Fra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windiws操作-进阶版（powershell命令）">
+<meta property="og:url" content="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E5%91%BD%E4%BB%A4%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、命令基础1、介绍 Windows PowerShell 是一种命令行外壳程序和脚本环境，使命令行用户和脚本编写者可以利用 .NET Framework的强大功能  PowerShell是一门开源、跨平台的脚本语言和管理Shell，由命令行管理程序和脚本语言组成。  基于 .NET 构建，输出是基于对象的，兼容CMD，命令可扩展  .NET 分为 Core和Framework 5版本是基于Fra">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202205031320380.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202205031335849.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202205031349054.png">
+<meta property="article:published_time" content="2023-10-22T14:08:08.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:23:59.533Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202205031320380.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E5%91%BD%E4%BB%A4%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>windiws操作-进阶版（powershell命令） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E5%91%BD%E4%BB%A4%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          windiws操作-进阶版（powershell命令）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:08:08 / 修改时间：22:23:59" itemprop="dateCreated datePublished" datetime="2023-10-22T22:08:08+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、命令基础"><a href="#一、命令基础" class="headerlink" title="一、命令基础"></a>一、命令基础</h4><h5 id="1、介绍"><a href="#1、介绍" class="headerlink" title="1、介绍"></a>1、介绍</h5><ul>
+<li><p>Windows PowerShell 是一种命令行外壳程序和脚本环境，使命令行用户和脚本编写者可以利用 .NET Framework的强大功能</p>
+</li>
+<li><p>PowerShell是一门开源、跨平台的脚本语言和管理Shell，由命令行管理程序和脚本语言组成。</p>
+</li>
+<li><p>基于 .NET 构建，输出是基于对象的，兼容CMD，命令可扩展</p>
+<ul>
+<li>.NET 分为 Core和Framework</li>
+<li>5版本是基于Framework框架</li>
+<li>6和7版本基于Core框架，Core为微软的一个开源项目</li>
+</ul>
+</li>
+<li><p>查看版本使用内置变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS C:\&gt; $PSVersionTableName                           Value                                           ----                           -----                                           PSVersion                      5.1.14393.206                                   PSEdition                      Desktop                                         PSCompatibleVersions           &#123;1.0, 2.0, 3.0, 4.0...&#125;                         BuildVersion                   10.0.14393.206                                  CLRVersion                     4.0.30319.42000                                 WSManStackVersion              3.0                                             PSRemotingProtocolVersion      2.3                                             SerializationVersion           1.1.0.1</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、使用ISE工具"><a href="#2、使用ISE工具" class="headerlink" title="2、使用ISE工具"></a>2、使用ISE工具</h5><ul>
+<li><p>Powershell控制台工具</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202205031320380.png" alt="image-20220503132052267"></p>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">优点</th>
+<th align="left">缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">控制台程序非常轻量，可以快速加载且不需要太多内存</td>
+<td align="left">不支持双字节字符集，非英语语言可能无法展示</td>
+</tr>
+<tr>
+<td align="left">不需要任何非Powershell自身必须的 .NET Fromework之外的资源</td>
+<td align="left">剪切板使用的是非标准键（直接右击复制）</td>
+</tr>
+<tr>
+<td align="left">可以设置不同的字体颜色和背景</td>
+<td align="left">只有少量的帮助信息和自能使用Tab键不全，没有提示</td>
+</tr>
+</tbody></table>
+<ul>
+<li><h5 id="集成脚本环境（ISE）"><a href="#集成脚本环境（ISE）" class="headerlink" title="集成脚本环境（ISE）"></a>集成脚本环境（ISE）</h5><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202205031335849.png" alt="image-20220503133540794"></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">优点</th>
+<th align="left">缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">支持双字节字符集</td>
+<td align="left">不能再没有安装图形桌面的服务器上运行</td>
+</tr>
+<tr>
+<td align="left">提供更多的帮助</td>
+<td align="left">以一个单独的程序存在，需要更多的硬件资源</td>
+</tr>
+<tr>
+<td align="left">使用标准的复制、粘贴按键（Ctrl+c、Ctrl+v）</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<h5 id="3、使用命令"><a href="#3、使用命令" class="headerlink" title="3、使用命令"></a>3、使用命令</h5><ul>
+<li><p>命令的几种类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS C:\&gt; [System.Management.Automation.CommandTypes].GetEnumNames()Alias                    #别名Function                #函数FilterCmdlet                    #Powershell编译命令（Command-Let）ExternalScriptApplication                #可执行文件或程序ScriptWorkflowConfigurationAll</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>命令基本剖析</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202205031349054.png" alt="image-20220428222119592"></p>
+</li>
+<li><p>Cmdlet命名惯例（Powershell命令命名惯例）</p>
+<ul>
+<li><p>规则以标准的动词开始，例如：Get、Set、New或Pause等等，可以使用Get-Verb进行查看运行使用的动词列表</p>
+</li>
+<li><p>动词后面紧跟的是一个 “-” 破折号，然后是一个单数形式的名词，例如：Service或Process等</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">New-Service        #创建一个新服务Get-Process        #获取本地计算机或远程计算机上运行的进程Set-Service        #设置一个服务Invoke-Command        #在本地计算机或远程计算机上运行命令</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>别名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#获取命令的别名PS C:\&gt; Get-Alias -Definition Get-ServiceCommandType     Name                                               Version    Source                      -----------     ----                                               -------    ------                      Alias           gsv -&gt; Get-Service#gsv就是Get-Service的别名，可以直接使用别名help gsv</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="4、使用命令帮助"><a href="#4、使用命令帮助" class="headerlink" title="4、使用命令帮助"></a>4、使用命令帮助</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看Get-Service命令的帮助信息help Get-Service#更新帮助文档Update-Help        #需要更新一部分时间#在想操作某个事务时，但不知道使用命令，可以使用帮助help *log*#使用在线帮助Help Get-EventLog -online</span><br></pre></td></tr></table></figure>
+
+<h5 id="5、命令的参数"><a href="#5、命令的参数" class="headerlink" title="5、命令的参数"></a>5、命令的参数</h5><ul>
+<li><p>必选参数和可选参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS C:\&gt; help Get-EventLog名称    Get-EventLog   语法    Get-EventLog [-LogName] &lt;string&gt; [[-InstanceId] &lt;long[]&gt;]  [&lt;CommonParameters&gt;]       Get-EventLog  [&lt;CommonParameters&gt;]# -LogName为必选参数，因为参数名称和参数值没有被 [] 包裹# 使用 [] 整个包裹的为可选参数</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#本地计算机上的事件日志中获取最近的5个条目PS C:\&gt; Get-EventLog -LogName System -Newest 5   Index Time          EntryType   Source                 InstanceID Message                                          ----- ----          ---------   ------                 ---------- -------                                            760 4月 28 20:42   Information Service Control M...   1073748860 Software Protection 服务处于 停止 状态。                    759 4月 28 20:42   Information Service Control M...   1073748864 Windows Biometric Service 服务的启动类型从 按需启动 更改为...     758 4月 28 20:42   Information Service Control M...   1073748860 Windows Biometric Service 服务处于 正在运行 状态。            757 4月 28 20:42   Information Service Control M...   1073748860 Software Protection 服务处于 正在运行 状态。                  756 4月 28 20:42   Information Service Control M...   1073748860 Microsoft Storage Spaces SMP 服务处于 正在运行 状态。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>位置参数（参数具有位置性，位置不能调换）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PS C:\&gt; Get-EventLog Application 1   Index Time          EntryType   Source                 InstanceID Message                                 ----- ----          ---------   ------                 ---------- -------                                  8003 4月 28 13:04   Information SecurityCenter                  1 已经启动 Windows 安全中心服务。                     6712 4月 24 10:58   Information SecurityCenter                  1 已经启动 Windows 安全中心服务。#Application 参数名为 -LogName # 1 参数名为    -InstanceID</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>参数值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[-LogName] &lt;string&gt;            #后面的 &lt;string&gt; 为参数值，表示键入值的类型#常用类型#string   一系列字母和数字，也可以包含空格符，包含空格时需要使用引号包裹，建议单引号，也可以交叉使用双引号Get-EventLog System#Int、Int32或Int64    整数，不包含小数Get-EventLog System -Newest 5#DateTime    日期，通常表示为：月-日-年Get-EventLog System -After 4-28-2022[-ComputerName &lt;string[]&gt;]    #后面的 &lt;string[]&gt; 表示可以接收数组、集合或列表类型的字符串Get-EventLog Security -ComputerName server-r2,dc4#将多个值放入到某个文件中去读取Get-EventLog Application -computer (Get-Content names.txt)    #这里使用Get-Content去获取对象的内容</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="6、使用管道"><a href="#6、使用管道" class="headerlink" title="6、使用管道"></a>6、使用管道</h5><ul>
+<li><p>通过管道把命令互相连接起来，通过传输一个命令，把其输出作为另一个Cmdlet的输入（前面命令的输出结果作为后面命令的操作对象）</p>
+</li>
+<li><p>使用管道输出为文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#输出为CSV文件Get-Process | Export-Csv procs.csv#导入查看CSV文件Import-Csv procs.csv</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#输出为XML文件Get-Process | Export-Clixml procs.xml#使用diff比较差异，显示出前后运行的进程差异并显示对应名称diff -Reference (Import-Clixml .\procs.xml) -Difference (Get-Process) -Property name#比较差异时返回结果：“&lt;=”表示参照结果（前者有，后者无），“=&gt;”表示差异结果（前者无，后者有）</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#转换为HTML文件并输出Get-Service | ConvertTo-Html | Out-File services.html</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用Cmdlets修改系统</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#中止进程Get-Process -Name explorer | Stop-Process#停止服务Get-Service -Name Spooler | Stop-Service</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="7、常用命令"><a href="#7、常用命令" class="headerlink" title="7、常用命令"></a>7、常用命令</h5><ul>
+<li><p>Get类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-Command        #得到所有PowerShell命令，获取有关 cmdlet 以及有关 PowerShell 命令的其他元素的基本信息（包括Cmdlet、Alias、Function）Get-Process        #获取所有进程Get-Help        #显示有关 Windows PowerShell 命令和概念的信息Get-History        #获取在当前会话中输入的命令的列表Get-Job            #获取在当前会话中运行的 Windows PowerShell 后台作业Get-FormatData    #获取当前会话中的格式数据Get-Event        #获取事件队列中的事件Get-Alias        #获取当前会话的别名Get-Culture        #获取操作系统中设置的当前区域性Get-Date        #获取当前日期和时间Get-Host        #获取表示当前主机程序的对象Get-Member        #获取对象的属性和方法Get-Random        #从集合中获取随机数或随机选择对象Get-UICulture    #获取操作系统中当前用户界面 (UI) 区域性设置Get-Unique        #从排序列表返回唯一项目Get-Variable    #获取当前控制台中的变量Get-EventLog    #获取本地或远程计算机上的事件日志或事件日志列表中的事件Get-ChildItem    #获取一个或多个指定位置中的项和子项Get-Content        #获取指定位置的项的内容Get-ItemProperty    #获取指定项的属性Get-WmiObject        #获取 Windows Management Instrumentation (WMI) 类的实例或可用类的相关信息Get-Location        #获取当前工作位置的相关信息（如：F:\Users\TaoMin ）Get-PSDrive            #获取当前会话中的 Windows PowerShell 驱动器Get-Item            #获取位于指定位置的项Get-Process            #获取在本地计算机或远程计算机上运行的进程Get-Service            #获取本地或远程计算机上的服务Get-Transaction        #获取当前（活动）事务Get-ExecutionPolicy    #获取当前会话中的执行策略</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Set类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-Alias            #在当前 Windows PowerShell 会话中为 cmdlet 或其他命令元素创建或更改别名（替代名称）Set-PSDebug            #打开和关闭脚本调试功能，设置跟踪级别并切换 strict 模式Set-StrictMode        #建立和强制执行表达式、脚本和脚本块中的编码规则Set-Date            #将计算机上的系统时间更改为指定的时间Set-Variable        #设置变量的值，如果该变量还不存在，则创建该变量Set-PSBreakpoint    #在行、命令或者变量上设置断点Set-Location        #将当前工作位置设置为指定的位置Set-Item            #将项的值更改为命令中指定的值Set-Service            #启动、停止和挂起服务并更改服务的属性Set-Content            #在项中写入内容或用新内容替换其中的内容Set-ItemProperty    #创建或更改某一项的属性值Set-WmiInstance        #创建或更新现有 Windows Management Instrumentation (WMI) 类的实例Set-ExecutionPolicy    #更改 Windows PowerShell 执行策略的用户首选项。</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Write类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Write-Host                #将自定义输出内容写入主机。类似于.net的 write()或者writeline()功能Write-Progress            #在 Windows PowerShell 命令窗口内显示进度栏Write-Debug                #将调试消息写入控制台Write-Verbose            #将文本写入详细消息流Write-Warning            #写入警告消息Write-Error                #将对象写入错误流Write-Output            #将指定对象发送到管道中的下一个命令；如果该命令是管道中的最后一个命令，则在控制台上显示这些对象Write-EventLog            #将事件写入事件日志</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="8、任务"><a href="#8、任务" class="headerlink" title="8、任务"></a>8、任务</h5><ul>
+<li>显示正在运行的进程列表</li>
+<li>显示最新的100个应用程序日志</li>
+<li>显示所有类型为 “Cmdlet” 的命令</li>
+<li>显示所有的别名</li>
+<li>创建一个别名，使用 “np” 直接打开 notepad.exe</li>
+<li>显示以字母M开头的服务名称</li>
+<li>显示所有的防火墙规则</li>
+<li>显示防火墙的所有入站规则</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88windows-%E5%9F%9F-%E5%9F%9F%E7%AD%96%E7%95%A5%E5%BA%94%E7%94%A8%EF%BC%89/" rel="prev" title="windiws操作-进阶版（windows 域-域策略应用）">
+      <i class="fa fa-chevron-left"></i> windiws操作-进阶版（windows 域-域策略应用）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E5%8F%98%E9%87%8F%EF%BC%89/" rel="next" title="windiws操作-进阶版（powershell变量）">
+      windiws操作-进阶版（powershell变量） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%91%BD%E4%BB%A4%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">一、命令基础</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">1、介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%BD%BF%E7%94%A8ISE%E5%B7%A5%E5%85%B7"><span class="nav-number">1.2.</span> <span class="nav-text">2、使用ISE工具</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%9B%86%E6%88%90%E8%84%9A%E6%9C%AC%E7%8E%AF%E5%A2%83%EF%BC%88ISE%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">集成脚本环境（ISE）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.</span> <span class="nav-text">3、使用命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4%E5%B8%AE%E5%8A%A9"><span class="nav-number">1.5.</span> <span class="nav-text">4、使用命令帮助</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E5%91%BD%E4%BB%A4%E7%9A%84%E5%8F%82%E6%95%B0"><span class="nav-number">1.6.</span> <span class="nav-text">5、命令的参数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6%E3%80%81%E4%BD%BF%E7%94%A8%E7%AE%A1%E9%81%93"><span class="nav-number">1.7.</span> <span class="nav-text">6、使用管道</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7%E3%80%81%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.8.</span> <span class="nav-text">7、常用命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8%E3%80%81%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.9.</span> <span class="nav-text">8、任务</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

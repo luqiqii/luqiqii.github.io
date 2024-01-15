@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、数组与哈希表1、数组 Powershell会把文本按每一行作为元素存为数组。如果一个命令的返回值不止一个结果时，Powershell也会自动把结果存储为数组。  数组是一种作为多个项集合的数据结构。 你可以循环访问数组或使用索引来访问单个项。 数组是作为一个连续的内存块创建的，其中每个值存储在相邻位置  创建数组 1$arr&#x3D;@(1,2,3)$arr&#x3D;&quot;张三&quot;,25,&amp;qu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windiws操作-进阶版（powershell数组与哈希表）">
+<meta property="og:url" content="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E6%95%B0%E7%BB%84%E4%B8%8E%E5%93%88%E5%B8%8C%E8%A1%A8%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、数组与哈希表1、数组 Powershell会把文本按每一行作为元素存为数组。如果一个命令的返回值不止一个结果时，Powershell也会自动把结果存储为数组。  数组是一种作为多个项集合的数据结构。 你可以循环访问数组或使用索引来访问单个项。 数组是作为一个连续的内存块创建的，其中每个值存储在相邻位置  创建数组 1$arr&#x3D;@(1,2,3)$arr&#x3D;&quot;张三&quot;,25,&amp;qu">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T14:08:29.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:24:47.391Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E6%95%B0%E7%BB%84%E4%B8%8E%E5%93%88%E5%B8%8C%E8%A1%A8%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>windiws操作-进阶版（powershell数组与哈希表） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E6%95%B0%E7%BB%84%E4%B8%8E%E5%93%88%E5%B8%8C%E8%A1%A8%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          windiws操作-进阶版（powershell数组与哈希表）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:08:29 / 修改时间：22:24:47" itemprop="dateCreated datePublished" datetime="2023-10-22T22:08:29+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、数组与哈希表"><a href="#一、数组与哈希表" class="headerlink" title="一、数组与哈希表"></a>一、数组与哈希表</h4><h5 id="1、数组"><a href="#1、数组" class="headerlink" title="1、数组"></a>1、数组</h5><ul>
+<li><p>Powershell会把文本按每一行作为元素存为数组。如果一个命令的返回值不止一个结果时，Powershell也会自动把结果存储为数组。</p>
+</li>
+<li><p>数组是一种作为多个项集合的数据结构。 你可以循环访问数组或使用索引来访问单个项。 数组是作为一个连续的内存块创建的，其中每个值存储在相邻位置</p>
+</li>
+<li><p>创建数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$arr=@(1,2,3)$arr=&quot;张三&quot;,25,&quot;180cm&quot;    #存放不同类型的值    $arr=@()                #空数组$arr=,&quot;woniu&quot;            #单元素数组$arr=1..5                #连续数字[int[]] $arr=@()        #定义强类型数组$arr = Write-Output 1 2 3 4        #使用Write-Output创建数组</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>访问数组</p>
+<ul>
+<li><p>数组的元素可以使用索引寻址，第一个元素的索引为0，第i个元素的索引为i-1，最后一个元素的索引为Count-1，但是Powershell为了使用方便，直接可以将 -1 作为最后的一个元素的索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$var=1..10$var[2]$var[-1]$var[0..3]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$result=ls$result[1,3,5]</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>修改数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#修改数组中的值$var=1,2,3$var[2]=4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#向数组中添加元素$var=1,2,3$var+=4</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#删除数组中的元素$var=1,2,3,4$var=$var[0..1]+$var[3]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将一个字符串转换为数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$var=&quot;1234&quot;$var=$var.ToCharArray()</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>数组和其他集合具有计数属性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$arr=1..10$arr.count10#访问最后一项$arr[$arr.count-1]10</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>获得最大索引号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$arr.GetUpperBound(0)10</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将命令返回结果存为对象数组来进行引用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$arr=Get-Process$arr[0].Id                #下标为 0 的项的 ID 属性10928</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>where</code> 方法进行筛选</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$arr.Where(&#123;$_.name -eq &#x27;wps&#x27;&#125;)Handles  NPM(K)    PM(K)      WS(K)     CPU(s)     Id  SI ProcessName          -------  ------    -----      -----     ------     --  -- -----------              696      49    76400      87020       3.91  30168   2 wps</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>数组中使用运算符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-join        #将数组中的所有元素与你指定的字符或字符串联接在一起$arr=&#x27;192.168.10.1&#x27;,&#x27;192.168.10.2&#x27;$arr -join &quot;,&quot;192.168.10.1,192.168.10.2            #使用 ， 号将所有项串联-join $arr192.168.10.1192.168.10.2            #直接连接成了一个字符串</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-contains        #检查值数组，以查看其是否包含指定值$data = @(&#x27;red&#x27;,&#x27;green&#x27;,&#x27;blue&#x27;)$data -contains &#x27;green&#x27;True</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-in            #验证的单个值与几个值中的一个相匹配，该值位于运算符的左侧，而数组位于右侧$data = @(&#x27;red&#x27;,&#x27;green&#x27;,&#x27;blue&#x27;)&#x27;green&#x27; -in $dataTrue</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>嵌套数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$a=@(@(1,2,3),@(3,3,5))$a[1][0]3</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、哈希表"><a href="#2、哈希表" class="headerlink" title="2、哈希表"></a>2、哈希表</h5><ul>
+<li><p>哈希表是一种数据结构，与数组非常相似，只不过是使用键存储每个值（对象）。 它是一个基本的键&#x2F;值存储</p>
+</li>
+<li><p>哈希表存放的是成对的，在哈希表中不再仅仅限制使用数字寻址，可以使用任意类型的数据类型寻址。</p>
+</li>
+<li><p>创建哈希表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ageList = @&#123;&#125;            #空哈希表$stu=@&#123; Name = &quot;小明&quot;;Age=&quot;12&quot;;sex=&quot;男&quot; &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>插入新的值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$stu=@&#123;&#125;$stu.name=&quot;张三&quot;$stu.major=&quot;网络安全&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>修改哈希表值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$stu=@&#123;name=&quot;张三&quot;;major=&quot;网络安全&quot;;school=&quot;蜗牛学苑&quot;&#125;$stu.major=&quot;测试开发&quot;            #将&quot;major&quot;键重新赋值为&quot;测试开发&quot;$stu.remove(&quot;school&quot;)        #将对应的键删除</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>清除键和清空哈希表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$stu.Remove(&#x27;school&#x27;)        #当清除了键，值也一并删除$stu.Clear()                #使用 Clear() 方法进行清空哈希表</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建哈希表时指定顺序</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$person = [ordered]@&#123; name = &#x27;Kevin&#x27;; age  = 36 &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>嵌套哈希表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$stu=[ordered]@&#123;&#x27;张三&#x27;=@&#123;major=&#x27;网络安全&#x27;;school=&#x27;蜗牛学苑&#x27;&#125;;&#x27;李四&#x27;=@&#123;major=&#x27;测试开发&#x27;;school=&#x27;蜗牛学苑&#x27;&#125;&#125;$stu.张三[&#x27;major&#x27;]网络安全</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用哈希表格式化输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls | Format-Table name,mode        #表格形式只显示&quot;name&quot;和&quot;mode&quot;列</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>表格的每一个列包含四个属性：</p>
+<ul>
+<li><strong>Expression</strong>:绑定的表达式</li>
+<li><strong>Width</strong>:列宽度</li>
+<li>**Label:**列标题</li>
+<li>**Alignment:**列的对齐方式</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$column1 = @&#123;expression=&quot;Name&quot;; width=30;label=&quot;filename&quot;; alignment=&quot;left&quot;&#125;$column2 = @&#123;expression=&quot;LastWriteTime&quot;; width=40;label=&quot;last modification&quot;; alignment=&quot;right&quot;&#125;ls | Format-Table $column1, $column2</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E5%8F%98%E9%87%8F%EF%BC%89/" rel="prev" title="windiws操作-进阶版（powershell变量）">
+      <i class="fa fa-chevron-left"></i> windiws操作-进阶版（powershell变量）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E7%BB%93%E6%9E%84%E8%AF%AD%E5%8F%A5%EF%BC%89/" rel="next" title="windiws操作-进阶版（powershell结构语句）">
+      windiws操作-进阶版（powershell结构语句） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%95%B0%E7%BB%84%E4%B8%8E%E5%93%88%E5%B8%8C%E8%A1%A8"><span class="nav-number">1.</span> <span class="nav-text">一、数组与哈希表</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%95%B0%E7%BB%84"><span class="nav-number">1.1.</span> <span class="nav-text">1、数组</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%93%88%E5%B8%8C%E8%A1%A8"><span class="nav-number">1.2.</span> <span class="nav-text">2、哈希表</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

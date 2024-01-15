@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、DHCP服务1、DHCP概述 DHCP（动态主机配置协议）是一个局域网的网络协议。指的是由服务器控制一段IP地址范围，客户机登录服务器时就可以自动获得服务器分配的IP地址和子网掩码 为网络中计算机自动分配TCP&#x2F;IP参数的协议 IP地址、子网掩码、网关、DNS等     使用DHCP的好处 减少管理员的工作量 避免输入错误的可能 避免IP冲突 提高了IP地址的利用率 方便客户端的配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流量攻击-应用层协议（dhcp协议）">
+<meta property="og:url" content="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dhcp%E5%8D%8F%E8%AE%AE%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、DHCP服务1、DHCP概述 DHCP（动态主机配置协议）是一个局域网的网络协议。指的是由服务器控制一段IP地址范围，客户机登录服务器时就可以自动获得服务器分配的IP地址和子网掩码 为网络中计算机自动分配TCP&#x2F;IP参数的协议 IP地址、子网掩码、网关、DNS等     使用DHCP的好处 减少管理员的工作量 避免输入错误的可能 避免IP冲突 提高了IP地址的利用率 方便客户端的配置">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210727135147.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728114935.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728115117.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728120213.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728120304.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728121912.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728122134.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728122452.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728122722.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128230519.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128211056.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128211531.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128211935.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128212302.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128212911.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128212801.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211202085018.png">
+<meta property="article:published_time" content="2023-10-22T14:04:11.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:30:09.094Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210727135147.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dhcp%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>流量攻击-应用层协议（dhcp协议） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dhcp%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          流量攻击-应用层协议（dhcp协议）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:04:11 / 修改时间：22:30:09" itemprop="dateCreated datePublished" datetime="2023-10-22T22:04:11+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、DHCP服务"><a href="#一、DHCP服务" class="headerlink" title="一、DHCP服务"></a>一、DHCP服务</h4><h5 id="1、DHCP概述"><a href="#1、DHCP概述" class="headerlink" title="1、DHCP概述"></a>1、DHCP概述</h5><ul>
+<li>DHCP（动态主机配置协议）是一个局域网的网络协议。指的是由服务器控制一段IP地址范围，客户机登录服务器时就可以自动获得服务器分配的IP地址和子网掩码<ul>
+<li>为网络中计算机自动分配TCP&#x2F;IP参数的协议<ul>
+<li>IP地址、子网掩码、网关、DNS等</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>使用DHCP的好处<ul>
+<li>减少管理员的工作量</li>
+<li>避免输入错误的可能</li>
+<li>避免IP冲突</li>
+<li>提高了IP地址的利用率</li>
+<li>方便客户端的配置</li>
+</ul>
+</li>
+<li>DHCP分配方式<ul>
+<li>自动分配 ：分配到一个IP地址后永久使用（固定配置）</li>
+<li>手动分配：由DHCP服务器管理员专门指定IP地址（在服务器上进行IP&#x2F;MAC绑定）</li>
+<li>动态分配：使用完后释放该IP，供其它客户机使用</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、DHCP工作原理"><a href="#2、DHCP工作原理" class="headerlink" title="2、DHCP工作原理"></a>2、DHCP工作原理</h5><ul>
+<li><p>DHCP协议采用UDP作为传输协议，主机发送请求消息到DHCP服务器的67号端口，DHCP服务器回应应答消息给主机的68号端口</p>
+</li>
+<li><p>客户机与DHCP服务器交互过程</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210727135147.png" alt="image-20210727135147033"></p>
+<ul>
+<li>DHCP Client以广播的方式发出DHCP Discover报文。 （DHCP Discover是广播）</li>
+<li>所有的DHCP Server都能够接收到DHCP Client发送的DHCP Discover报文，所有的DHCP Server都会给出响应，向DHCP Client发送一个DHCP Offer报文。</li>
+<li>DHCP Offer报文中“Your(Client) IP Address”字段就是DHCP Server能够提供给DHCP Client使用的IP地址，且DHCP Server会将自己的IP地址放在“option”字段中以便DHCP Client区分不同的DHCP Server。DHCP Server在发出此报文后会存在一个已分配IP地址的纪录。</li>
+<li>DHCP Client只能处理其中的一个DHCP Offer报文，一般的原则是DHCP Client处理最先收到的DHCP Offer报文。</li>
+<li>DHCP Client会发出一个广播的DHCP Request报文，在选项字段中会加入选中的DHCP Server的IP地址和需要的IP地址。 （DHCP Request是广播）</li>
+<li>DHCP Server收到DHCP Request报文后，判断选项字段中的IP地址是否与自己的地址相同。如果不相同，DHCP Server不做任何处理只清除相应IP地址分配记录；如果相同，DHCP Server就会向DHCP Client响应一个DHCP ACK报文，并在选项字段中增加IP地址的使用租期信息</li>
+</ul>
+</li>
+</ul>
+<h4 id="二、部署DHCP服务器"><a href="#二、部署DHCP服务器" class="headerlink" title="二、部署DHCP服务器"></a>二、部署DHCP服务器</h4><h5 id="1、安装要求"><a href="#1、安装要求" class="headerlink" title="1、安装要求"></a>1、安装要求</h5><ul>
+<li>服务器具有静态IP地址</li>
+<li>在域环境下需要授权DHCP服务</li>
+</ul>
+<h5 id="2、部署过程"><a href="#2、部署过程" class="headerlink" title="2、部署过程"></a>2、部署过程</h5><ul>
+<li><p>为服务器设置固定IP地址</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728114935.png" alt="image-20210728114935590"></p>
+</li>
+<li><p>添加DHCP服务器角色，添加完成之后，直接下一步进行安装</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728115117.png" alt="image-20210728115117379"></p>
+</li>
+</ul>
+<h5 id="3、管理服务器"><a href="#3、管理服务器" class="headerlink" title="3、管理服务器"></a>3、管理服务器</h5><ul>
+<li><p>新建作用域</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728120213.png" alt="image-20210728120213067"></p>
+</li>
+<li><p>激活作用域</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728120304.png" alt="image-20210728120304723"></p>
+</li>
+</ul>
+<h4 id="三、分析DHCP流量"><a href="#三、分析DHCP流量" class="headerlink" title="三、分析DHCP流量"></a>三、分析DHCP流量</h4><h5 id="1、DHCP-Discover（广播）"><a href="#1、DHCP-Discover（广播）" class="headerlink" title="1、DHCP Discover（广播）"></a>1、DHCP Discover（广播）</h5><ul>
+<li>客户端搜索发现DHCP服务器</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728121912.png" alt="image-20210728121912651"></p>
+<h5 id="2、DHCP-Offer（广播）"><a href="#2、DHCP-Offer（广播）" class="headerlink" title="2、DHCP Offer（广播）"></a>2、DHCP Offer（广播）</h5><ul>
+<li>DHCP服务器响应客户端</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728122134.png" alt="image-20210728122134561"></p>
+<h5 id="3、DHCP-Request（广播）"><a href="#3、DHCP-Request（广播）" class="headerlink" title="3、DHCP Request（广播）"></a>3、DHCP Request（广播）</h5><ul>
+<li>客户机请求DHCP服务器提供的IP地址</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728122452.png" alt="image-20210728122452811"></p>
+<h5 id="4、DHCP-ACK（广播）"><a href="#4、DHCP-ACK（广播）" class="headerlink" title="4、DHCP ACK（广播）"></a>4、DHCP ACK（广播）</h5><ul>
+<li>DHCP服务器收到客户机的请求后进行确认</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210728122722.png" alt="image-20210728122722166"></p>
+<h5 id="5、DHCP的8种报文"><a href="#5、DHCP的8种报文" class="headerlink" title="5、DHCP的8种报文"></a>5、DHCP的8种报文</h5><ul>
+<li>DHCP DISCOVER：<ul>
+<li>这是 DHCP 客户端首次登录网络时进行 DHCP 过程的第一个报文，用来寻找 DHCP 服务器。</li>
+</ul>
+</li>
+<li>DHCP OFFER：<ul>
+<li>DHCP服务器用来响应DHCP,DISCOVER报文，此报文携带了各种配置信息。</li>
+</ul>
+</li>
+<li>DHCP REQUEST：此报文用于以下三种用途<ul>
+<li>客户端初始化后，发送广播的 DHCP REQUEST 报文来回应服务器的 DHCP OFFER 报文。</li>
+<li>客户端重启初始化后，发送广播的 DHCP REQUEST 报文来确认先前被分配的 IP 地址等配置信息。</li>
+<li>当客户端已经和某个 IP 地址绑定后，发送 DHCP REQUEST 报文来延长 IP 地址的租期（一般情况下，租约时间到50%时，客户机会再次发送DHCP request报文）。</li>
+</ul>
+</li>
+<li>DHCP ACK：<ul>
+<li>服务器对客户端的 DHCP REQUEST 报文的确认响应报文，客户端收到此报文后，才真正获得了 IP 地址和相关的配置信息。</li>
+</ul>
+</li>
+<li>DHCP NAK：<ul>
+<li>服务器对客户端的 DHCP REQUEST 报文的拒绝响应报文，比如服务器对客户端分配的 IP 地址已超过使用租借期限（服务器没有找到相应的租约记录）或者由于某些原因无法正常分配 IP 地址，则发送 DHCP NAK 报文作为应答（客户端移到了另一个新的网络）。</li>
+<li>通知 DHCP 客户端无法分配合适 IP 地址。DHCP 客户端需要重新发送DHCP DISCOVERY 报文来申请新的 IP 地址。</li>
+</ul>
+</li>
+<li>DHCP DECLINE：<ul>
+<li>当客户端发现服务器分配给它的 IP 地址发生冲突时会通过发送此报文来通知服务器，并且会重新向服务器申请地址。</li>
+</ul>
+</li>
+<li>DHCP RELEASE：<ul>
+<li>客户端可通过发送此报文主动释放服务器分配给它的 IP 地址，当服务器收到此报文后，可将这个 IP 地址分配给其它的客户端。</li>
+</ul>
+</li>
+<li>DHCP INFORM：<ul>
+<li>客户端已经获得了 IP 地址，发送此报文的目的是为了从服务器获得其他的一些网络配置信息，比如网关地址、DNS 服务器地址等。</li>
+</ul>
+</li>
+</ul>
+<h5 id="6、DHCP报文格式"><a href="#6、DHCP报文格式" class="headerlink" title="6、DHCP报文格式"></a>6、DHCP报文格式</h5><ul>
+<li><p>DHCP服务的8种报文的格式是相同的，不同类型的报文只是报文中的某些字段取值不同</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128230519.png" alt="image-20211128230519391"></p>
+<ul>
+<li>Message type：消息类型（1表示请求，2表示响应）</li>
+<li>Hardware type：硬件类型（以太网接口类型为1）</li>
+<li>Hardware address length：硬件地址长度</li>
+<li>Hops：表示当前的DHCP报文经过的DHCP中继的数目。该字段由客户端或服务器设置为0，每经过一个DHCP中继时，该字段加1；此字段的作用是限制DHCP报文所经过的DHCP中继数目</li>
+<li>Transaction ID：事务ID，由客户端选择的一个随机数，被服务器和客户端用来在它们之间交流请求和响应，客户端用它对请求和应答进行匹配；该ID由客户端设置并由服务器返回，为32位整数</li>
+<li>Seconds elapsed：由客户端填充，表示从客户端开始获得IP地址或IP地址续借后所使用了的秒数</li>
+<li>Bootp flags：此字段在BOOTP中保留未用，在DHCP中表示标志字段</li>
+<li>Client IP address：客户机 IP 地址</li>
+<li>Your (client) IP address：服务器分配给客户端的IP地址。当服务器进行DHCP响应时，将分配给客户端的IP地址填入此字段</li>
+<li>Next server IP address：DHCP客户端获得启动配置信息的服务器的IP地址</li>
+<li>Relay agent IP address：中继代理IP地址</li>
+<li>Client MAC address：客户端MAC地址</li>
+<li>Client hardware address padding：客户端硬件地址填充</li>
+<li>Server host name not given：未给出服务器主机名</li>
+<li>Boot file name not given：未给出引导文件名</li>
+<li>Magic cookie：固定字节流，当server看到这个magic COOKIE固定字节流后，就能知道后面是options field</li>
+<li>Option：参数字段</li>
+</ul>
+</li>
+</ul>
+<h4 id="四、模拟-DHCP-欺骗攻击"><a href="#四、模拟-DHCP-欺骗攻击" class="headerlink" title="四、模拟 DHCP 欺骗攻击"></a>四、模拟 DHCP 欺骗攻击</h4><h5 id="1、DHCP欺骗原理"><a href="#1、DHCP欺骗原理" class="headerlink" title="1、DHCP欺骗原理"></a>1、DHCP欺骗原理</h5><ul>
+<li>伪造真实的DHCP服务器向主机分配IP，如果有多个DHCP服务器，用先收到的server的offer来获取IP</li>
+</ul>
+<h5 id="2、DHCP欺骗实验"><a href="#2、DHCP欺骗实验" class="headerlink" title="2、DHCP欺骗实验"></a>2、DHCP欺骗实验</h5><ul>
+<li><p>实验场景</p>
+<ul>
+<li>一台 Windows 10 作为 client</li>
+<li>一台 kali Linux 作为攻击主机</li>
+<li>一台 Windows 2016 作为 DHCP server</li>
+</ul>
+</li>
+<li><p>实验拓扑</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128211056.png" alt="image-20211128211056328"></p>
+</li>
+<li><p>实验步骤</p>
+<ul>
+<li><p>在Windows server 2016上开启 DHCP 服务</p>
+</li>
+<li><p>在 R1 上开启 DHCP 中继，是 client 可以获取到 IPv4 参数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">R1(config)#int f0/0R1(config-if)#ip helper-address 192.168.2.100</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在kali Linux 上实施 DHCP DOS 攻击，使用 Yersinia 工具中的 DHCP 模块攻击，使 DHCP 服务器上地址耗尽</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128211531.png" alt="image-20211128211531136"></p>
+</li>
+<li><p>查看 DHCP 服务器中地址使用情况</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128211935.png" alt="image-20211128211935228"></p>
+</li>
+<li><p>确认 DHCP 服务器地址耗尽，将 kali Linux 伪装为 DHCP 服务器（伪装前，先停止 DHCP 攻击，因为攻击是发送的广播报文，没有停止容易造成自身崩溃）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128212302.png" alt="image-20211128212302360"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128212911.png" alt="image-20211128212910711"></p>
+</li>
+<li><p>客户机获取 IP 时就获取的是 kali Linux 伪装的 DHCP 服务器所提供的 IP 地址</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211128212801.png" alt="image-20211128212801432"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="五、DHCP-欺骗防护"><a href="#五、DHCP-欺骗防护" class="headerlink" title="五、DHCP 欺骗防护"></a>五、DHCP 欺骗防护</h4><h5 id="1、在交换机设备上配置信任端口"><a href="#1、在交换机设备上配置信任端口" class="headerlink" title="1、在交换机设备上配置信任端口"></a>1、在交换机设备上配置信任端口</h5><ul>
+<li><p>启用DHCP监听</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch(config)#ip dhcp snooping</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置DHCP监听作用于那个VLAN</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch(config)#ip dhcp snooping vlan 1        //可设置多个vlan</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置端口信任或非信任</p>
+<ul>
+<li>启用DHCP监听后，默认所有端口为非信任端口</li>
+<li>配置端口为信任端口</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch(config-if)#ip dhcp snooping trust</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>报文中插入选项82信息</p>
+<ul>
+<li>DHCP报文中的“选项82”<ul>
+<li>选项中主要包括：DHCP请求报文进入设备的端口、属于的Vlan、交换机的MAC等信息</li>
+<li>DHCP服务器可以根据这些信息更加精确的为客户端分配IP地址、设置策略等</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch(config)#ip dhcp snooping information option</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>限制DHCP报文速率，减缓DHCP耗尽攻击（在非信任端口配置）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch(config-if)#ip dhcp snooping limit rate 100        //速率单位pps</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启用核实MAC地址功能，避免DHCP耗尽攻击</p>
+<ul>
+<li>检测非信任端口的请求报文中源MAC地址和DHCP请求报文中的客户端MAC地址是否相同</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch(config)#ip dhcp snooping verify mac-address</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、DHCP监听配置案例"><a href="#2、DHCP监听配置案例" class="headerlink" title="2、DHCP监听配置案例"></a>2、DHCP监听配置案例</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211202085018.png" alt="image-20211128211056328"></p>
+<ul>
+<li><p>在SW上启用DHCP监听，并将 SW 的 f0&#x2F;3 接口和 f0&#x2F;8 接口配置为信任端口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch(config)#ip dhcp snooping                     //启用DHCP监听Switch(config)#ip dhcp snooping vlan 1Switch(config)#ip dhcp snooping information option         //启用“选项82”Switch(config)#interface fastEthernet 0/3Switch(config-if)#ip dhcp snooping trust             //设置信任端口Switch(config-if)#exitSwitch(config)#interface fastEthernet 0/8Switch(config-if)#ip dhcp snooping trust             //设置信任端口Switch(config-if)#exitSwitch(config)#interface range fastEthernet 0/1Switch(config-if-range)#ip dhcp snooping limit rate 100        //DHCP报文限速Switch(config-if-range)#exitSwitch(config)#ip dhcp snooping verify mac-address        //启用核实 MAC 地址功能</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看监听表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch#show ip dhcp snooping binding</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>清楚绑定表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Switch#clear ip dhcp snooping binding</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E4%BC%A0%E8%BE%93%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88udp%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="prev" title="流量攻击-传输层协议（udp协议）">
+      <i class="fa fa-chevron-left"></i> 流量攻击-传输层协议（udp协议）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dns%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="next" title="流量攻击-应用层协议（dns协议）">
+      流量攻击-应用层协议（dns协议） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81DHCP%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">一、DHCP服务</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81DHCP%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">1、DHCP概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81DHCP%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">2、DHCP工作原理</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E9%83%A8%E7%BD%B2DHCP%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">二、部署DHCP服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%AE%89%E8%A3%85%E8%A6%81%E6%B1%82"><span class="nav-number">2.1.</span> <span class="nav-text">1、安装要求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%83%A8%E7%BD%B2%E8%BF%87%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">2、部署过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E7%AE%A1%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.3.</span> <span class="nav-text">3、管理服务器</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%86%E6%9E%90DHCP%E6%B5%81%E9%87%8F"><span class="nav-number">3.</span> <span class="nav-text">三、分析DHCP流量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81DHCP-Discover%EF%BC%88%E5%B9%BF%E6%92%AD%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">1、DHCP Discover（广播）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81DHCP-Offer%EF%BC%88%E5%B9%BF%E6%92%AD%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">2、DHCP Offer（广播）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81DHCP-Request%EF%BC%88%E5%B9%BF%E6%92%AD%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">3、DHCP Request（广播）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81DHCP-ACK%EF%BC%88%E5%B9%BF%E6%92%AD%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">4、DHCP ACK（广播）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81DHCP%E7%9A%848%E7%A7%8D%E6%8A%A5%E6%96%87"><span class="nav-number">3.5.</span> <span class="nav-text">5、DHCP的8种报文</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6%E3%80%81DHCP%E6%8A%A5%E6%96%87%E6%A0%BC%E5%BC%8F"><span class="nav-number">3.6.</span> <span class="nav-text">6、DHCP报文格式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%A8%A1%E6%8B%9F-DHCP-%E6%AC%BA%E9%AA%97%E6%94%BB%E5%87%BB"><span class="nav-number">4.</span> <span class="nav-text">四、模拟 DHCP 欺骗攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81DHCP%E6%AC%BA%E9%AA%97%E5%8E%9F%E7%90%86"><span class="nav-number">4.1.</span> <span class="nav-text">1、DHCP欺骗原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81DHCP%E6%AC%BA%E9%AA%97%E5%AE%9E%E9%AA%8C"><span class="nav-number">4.2.</span> <span class="nav-text">2、DHCP欺骗实验</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81DHCP-%E6%AC%BA%E9%AA%97%E9%98%B2%E6%8A%A4"><span class="nav-number">5.</span> <span class="nav-text">五、DHCP 欺骗防护</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%9C%A8%E4%BA%A4%E6%8D%A2%E6%9C%BA%E8%AE%BE%E5%A4%87%E4%B8%8A%E9%85%8D%E7%BD%AE%E4%BF%A1%E4%BB%BB%E7%AB%AF%E5%8F%A3"><span class="nav-number">5.1.</span> <span class="nav-text">1、在交换机设备上配置信任端口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81DHCP%E7%9B%91%E5%90%AC%E9%85%8D%E7%BD%AE%E6%A1%88%E4%BE%8B"><span class="nav-number">5.2.</span> <span class="nav-text">2、DHCP监听配置案例</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、ICMP 基本概念1、ICMP 协议 ICMP（Internet Control Message Protocol）Internet控制报文协议。它是TCP&#x2F;IP协议簇的一个子协议，用于在IP主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。这些控制消息虽然并不传输用户数据，但是对于用户数据的传递起着重要的作用  ICMP 协议属于网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流量攻击-网络层协议（icmp协议）">
+<meta property="og:url" content="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88icmp%E5%8D%8F%E8%AE%AE%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、ICMP 基本概念1、ICMP 协议 ICMP（Internet Control Message Protocol）Internet控制报文协议。它是TCP&#x2F;IP协议簇的一个子协议，用于在IP主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。这些控制消息虽然并不传输用户数据，但是对于用户数据的传递起着重要的作用  ICMP 协议属于网络">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210914155632.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210914162402.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204010018346.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204010038936.png">
+<meta property="article:published_time" content="2023-10-22T14:02:58.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:28:14.795Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210914155632.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88icmp%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>流量攻击-网络层协议（icmp协议） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88icmp%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          流量攻击-网络层协议（icmp协议）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:02:58 / 修改时间：22:28:14" itemprop="dateCreated datePublished" datetime="2023-10-22T22:02:58+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、ICMP-基本概念"><a href="#一、ICMP-基本概念" class="headerlink" title="一、ICMP 基本概念"></a>一、ICMP 基本概念</h4><h5 id="1、ICMP-协议"><a href="#1、ICMP-协议" class="headerlink" title="1、ICMP 协议"></a>1、ICMP 协议</h5><ul>
+<li><p>ICMP（Internet Control Message Protocol）Internet控制报文协议。它是TCP&#x2F;IP协议簇的一个子协议，用于在IP主机、路由器之间传递控制消息。控制消息是指网络通不通、主机是否可达、路由是否可用等网络本身的消息。这些控制消息虽然并不传输用户数据，但是对于用户数据的传递起着重要的作用</p>
+</li>
+<li><p>ICMP 协议属于网络层协议，封装在传输层与网络层之间</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210914155632.png" alt="image-20210914155632476"></p>
+</li>
+</ul>
+<h5 id="2、ICMP-报文格式"><a href="#2、ICMP-报文格式" class="headerlink" title="2、ICMP 报文格式"></a>2、ICMP 报文格式</h5><ul>
+<li><p>ICMP报文包含在IP数据报中，IP头部就在ICMP报文的前面</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210914162402.png" alt="image-20210914162402358"></p>
+<ul>
+<li>ICMP头部中的类型域用于说明ICMP报文的作用及格式，此外还有一个代码域用于详细说明某种ICMP报文的类型，所有数据都在ICMP头部后面</li>
+</ul>
+</li>
+</ul>
+<h4 id="二、分析ICMP流量"><a href="#二、分析ICMP流量" class="headerlink" title="二、分析ICMP流量"></a>二、分析ICMP流量</h4><h5 id="1、ICMP请求报文"><a href="#1、ICMP请求报文" class="headerlink" title="1、ICMP请求报文"></a>1、ICMP请求报文</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204010018346.png" alt="image-20220401001827226"></p>
+<ul>
+<li>Type：报文类型</li>
+<li>Code：类型代码</li>
+<li>Checksum：检验和</li>
+<li>[Checksum Status: Good]：校验和状态</li>
+<li>Identifier (BE)：标识符大端</li>
+<li>Identifier (LE)：标识符小端</li>
+<li>Sequence Number (BE)：序列号大端</li>
+<li>Sequence Number (LE)：序列号小端</li>
+<li>Data：数据字段</li>
+</ul>
+<h5 id="2、ICMP应答报文"><a href="#2、ICMP应答报文" class="headerlink" title="2、ICMP应答报文"></a>2、ICMP应答报文</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204010038936.png" alt="image-20220401003818855"></p>
+<h5 id="3、13种ICMP报文类型"><a href="#3、13种ICMP报文类型" class="headerlink" title="3、13种ICMP报文类型"></a>3、13种ICMP报文类型</h5><table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">代码</th>
+<th align="left">描述</th>
+<th align="left">处理方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">回显应答</td>
+<td align="left">用户进程</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15</td>
+<td align="left">目的不可达： 网络不可达 主机不可达 协议不可达 端口不可达 需要进行分片但设置了不分片比特DF 源站选路失败 目的网络不认识 目的主机不认识 源主机被隔离（作废不用） 目的网络被强制禁止 目的主机被强制禁止 由于服务类型TOS，网络不可达 由于服务类型TOS，主机不可达 由于过滤，通信被强制禁止 主机越权 优先权中止生效</td>
+<td align="left">“无路由到达主机” “无路由到达主机” “连接被拒绝” “连接被拒绝” “报文太长” “无路由到达主机” “无路由到达主机” “无路由到达主机” “无路由到达主机” “无路由到达主机” “无路由到达主机” “无路由到达主机” “无路由到达主机” （忽略） （忽略） （忽略）</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">0</td>
+<td align="left">源站被抑制(quench)</td>
+<td align="left">TCP由内核处理，UDP则忽略</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="left">0 1 2 3</td>
+<td align="left">重定向 对网络重定向 对主机重定向 对服务类型和网络重定向 对服务类型和主机重定向</td>
+<td align="left">内核更新路由表 内核更新路由表 内核更新路由表 内核更新路由表</td>
+</tr>
+<tr>
+<td align="left">8</td>
+<td align="left">0</td>
+<td align="left">回显请求</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">9</td>
+<td align="left">0</td>
+<td align="left">路由通告</td>
+<td align="left">用户进程</td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="left">0</td>
+<td align="left">路由请求</td>
+<td align="left">用户进程</td>
+</tr>
+<tr>
+<td align="left">11</td>
+<td align="left">0 1</td>
+<td align="left">超时传输 期间生存时间为0 在数据报组装期间生存时间为0</td>
+<td align="left">用户进程 用户进程</td>
+</tr>
+<tr>
+<td align="left">12</td>
+<td align="left">0 1</td>
+<td align="left">参数问题 坏的IP首部(包括各种差错) 缺少必须的选项</td>
+<td align="left">“协议不可用” “协议不可用”</td>
+</tr>
+<tr>
+<td align="left">13</td>
+<td align="left">0</td>
+<td align="left">时间戳请求</td>
+<td align="left">内核产生应答</td>
+</tr>
+<tr>
+<td align="left">14</td>
+<td align="left">0</td>
+<td align="left">时间戳应答</td>
+<td align="left">用户进程</td>
+</tr>
+<tr>
+<td align="left">15</td>
+<td align="left">0</td>
+<td align="left">信息请求(作废不用)</td>
+<td align="left">(忽略)</td>
+</tr>
+<tr>
+<td align="left">16</td>
+<td align="left">0</td>
+<td align="left">信息应答(作废不用)</td>
+<td align="left">用户进程</td>
+</tr>
+<tr>
+<td align="left">17</td>
+<td align="left">0</td>
+<td align="left">地址掩码请求</td>
+<td align="left">内核产生应答</td>
+</tr>
+<tr>
+<td align="left">18</td>
+<td align="left">0</td>
+<td align="left">地址掩码应答</td>
+<td align="left">用户进程</td>
+</tr>
+</tbody></table>
+<h4 id="三、常见的-ICMP-报文"><a href="#三、常见的-ICMP-报文" class="headerlink" title="三、常见的 ICMP 报文"></a>三、常见的 ICMP 报文</h4><h5 id="1、响应请求"><a href="#1、响应请求" class="headerlink" title="1、响应请求"></a>1、响应请求</h5><ul>
+<li>ping命令，就是响应请求（Type&#x3D;8）和应答（Type&#x3D;0），一台主机向一个节点发送一个Type&#x3D;8的ICMP报文，如果途中没有异常，则目标返回Type&#x3D;0的ICMP报文，说明这台主机存在</li>
+</ul>
+<h5 id="2、目标不可到达"><a href="#2、目标不可到达" class="headerlink" title="2、目标不可到达"></a>2、目标不可到达</h5><ul>
+<li>目标不可到达报文（Type&#x3D;3）在路由器或主机不能传递数据报时使用，例如我们要连接对方一个不存在的系统端口时，将返回Type&#x3D;3、Code&#x3D;3的ICMP报文。常见的不可到达类型还有网络不可到达 （Code&#x3D;0）、主机不可到达（Code&#x3D;1）、协议不可到达（Code&#x3D;2）等</li>
+</ul>
+<h5 id="3、源抑制"><a href="#3、源抑制" class="headerlink" title="3、源抑制"></a>3、源抑制</h5><ul>
+<li>源抑制则充当一个控制流量的角色，它通知主机减少数据报流量，由于ICMP没有恢复传输的报文，所以只要停止该报文，主机就会逐渐恢复传输速率</li>
+</ul>
+<h5 id="4、超时报文"><a href="#4、超时报文" class="headerlink" title="4、超时报文"></a>4、超时报文</h5><ul>
+<li>无连接方式网络的问题就是数据报会丢失，或者长时间在网络游荡而找不到目标，或者拥塞导致主机在规定时间内无法重组数据报分段，这时就要触发ICMP超时报文的产生。超时报文（Type&#x3D;11）的代码域有两种取值：Code&#x3D;0表示传输超时，Code&#x3D;1表示重组分段超时</li>
+</ul>
+<h5 id="5、时间戳"><a href="#5、时间戳" class="headerlink" title="5、时间戳"></a>5、时间戳</h5><ul>
+<li>时间戳请求报文（Type&#x3D;13）和时间戳应答报文（Type&#x3D;14）用于测试两台主机之间数据报来回一次的传输时间。传输时，主机填充原始时间戳，接收方收到请求后填充接收时间戳后以Type&#x3D;14的报文格式返回，发送方计算这个时间差</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88arp%E6%94%BB%E5%87%BB%E4%B8%8E%E6%AC%BA%E9%AA%97%EF%BC%89/" rel="prev" title="流量攻击-网络层协议（arp攻击与欺骗）">
+      <i class="fa fa-chevron-left"></i> 流量攻击-网络层协议（arp攻击与欺骗）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E7%BD%91%E7%BB%9C%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88icmp%E9%87%8D%E5%AE%9A%E5%90%91%EF%BC%89/" rel="next" title="流量攻击-网络层协议（icmp重定向）">
+      流量攻击-网络层协议（icmp重定向） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81ICMP-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">一、ICMP 基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81ICMP-%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.1.</span> <span class="nav-text">1、ICMP 协议</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81ICMP-%E6%8A%A5%E6%96%87%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">2、ICMP 报文格式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%88%86%E6%9E%90ICMP%E6%B5%81%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">二、分析ICMP流量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81ICMP%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87"><span class="nav-number">2.1.</span> <span class="nav-text">1、ICMP请求报文</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81ICMP%E5%BA%94%E7%AD%94%E6%8A%A5%E6%96%87"><span class="nav-number">2.2.</span> <span class="nav-text">2、ICMP应答报文</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%8113%E7%A7%8DICMP%E6%8A%A5%E6%96%87%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.3.</span> <span class="nav-text">3、13种ICMP报文类型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%B8%B8%E8%A7%81%E7%9A%84-ICMP-%E6%8A%A5%E6%96%87"><span class="nav-number">3.</span> <span class="nav-text">三、常见的 ICMP 报文</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%93%8D%E5%BA%94%E8%AF%B7%E6%B1%82"><span class="nav-number">3.1.</span> <span class="nav-text">1、响应请求</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%9B%AE%E6%A0%87%E4%B8%8D%E5%8F%AF%E5%88%B0%E8%BE%BE"><span class="nav-number">3.2.</span> <span class="nav-text">2、目标不可到达</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%BA%90%E6%8A%91%E5%88%B6"><span class="nav-number">3.3.</span> <span class="nav-text">3、源抑制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E8%B6%85%E6%97%B6%E6%8A%A5%E6%96%87"><span class="nav-number">3.4.</span> <span class="nav-text">4、超时报文</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E6%97%B6%E9%97%B4%E6%88%B3"><span class="nav-number">3.5.</span> <span class="nav-text">5、时间戳</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

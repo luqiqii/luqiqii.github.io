@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、HTTP协议1、HTTP简介 HTTP（Hyper Text Transfer Protocal，超文本传输协议），是用于从万维网（World Wide Web，WWW）服务器传输超文本（HTML）到本地浏览器的传输协议 HTTP基于TCP&#x2F;IP来传递数据（HTML文件、图片文件、查询结构等）  2、万维网服务（WWW服务） Internet上广泛应用的一种信息服务技术 采用客户机&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流量攻击-应用层协议（http协议）">
+<meta property="og:url" content="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88http%E5%8D%8F%E8%AE%AE%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、HTTP协议1、HTTP简介 HTTP（Hyper Text Transfer Protocal，超文本传输协议），是用于从万维网（World Wide Web，WWW）服务器传输超文本（HTML）到本地浏览器的传输协议 HTTP基于TCP&#x2F;IP来传递数据（HTML文件、图片文件、查询结构等）  2、万维网服务（WWW服务） Internet上广泛应用的一种信息服务技术 采用客户机&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404962.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404362.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404033.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404365.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404507.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404036.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404792.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404804.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404924.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404051.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404068.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404143.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112130045669.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112130106707.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112130138906.png">
+<meta property="article:published_time" content="2023-10-22T14:04:28.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:31:12.138Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404962.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88http%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>流量攻击-应用层协议（http协议） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88http%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          流量攻击-应用层协议（http协议）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:04:28 / 修改时间：22:31:12" itemprop="dateCreated datePublished" datetime="2023-10-22T22:04:28+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、HTTP协议"><a href="#一、HTTP协议" class="headerlink" title="一、HTTP协议"></a>一、HTTP协议</h4><h5 id="1、HTTP简介"><a href="#1、HTTP简介" class="headerlink" title="1、HTTP简介"></a>1、HTTP简介</h5><ul>
+<li>HTTP（Hyper Text Transfer Protocal，超文本传输协议），是用于从万维网（World Wide Web，WWW）服务器传输超文本（HTML）到本地浏览器的传输协议</li>
+<li>HTTP基于TCP&#x2F;IP来传递数据（HTML文件、图片文件、查询结构等）</li>
+</ul>
+<h5 id="2、万维网服务（WWW服务）"><a href="#2、万维网服务（WWW服务）" class="headerlink" title="2、万维网服务（WWW服务）"></a>2、万维网服务（WWW服务）</h5><ul>
+<li>Internet上广泛应用的一种信息服务技术</li>
+<li>采用客户机&#x2F;服务器架构（C&#x2F;S）</li>
+<li>客户机通过浏览器可以观看服务器上图形化页面，浏览器&#x2F;服务器（B&#x2F;S）</li>
+</ul>
+<h5 id="3、WWW服务软件"><a href="#3、WWW服务软件" class="headerlink" title="3、WWW服务软件"></a>3、WWW服务软件</h5><ul>
+<li>Apache（多平台）</li>
+<li>IIS（Windows平台）</li>
+<li>tomcat（多平台）</li>
+<li>nginx（多平台）</li>
+<li>……….</li>
+</ul>
+<h5 id="4、HTTP工作原理"><a href="#4、HTTP工作原理" class="headerlink" title="4、HTTP工作原理"></a>4、HTTP工作原理</h5><ul>
+<li><p>HTTP工作于客户端&#x2F;服务器架构上。浏览器作为HTTP客户端通过URL向HTTP服务器即WEB服务器发送所有请求。</p>
+<ul>
+<li><p>URL即统一资源定位符(Uniform Resource Locator)，用来唯一地标识万维网中的某一个文档。URL由协议、主机和端口(默认为80)以及文件名三部分构成</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404962.png" alt="image-20210802173359713"></p>
+</li>
+</ul>
+</li>
+<li><p>WEB服务器根据接收到的请求向客户端发送响应信息</p>
+</li>
+<li><p>HTTP默认端口号为80，但是管理员可以可以将其端口进行修改（但建议改为其他非标准端口）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404362.png" alt="image-20210802173214629"></p>
+</li>
+</ul>
+<h5 id="5、HTTP的3点注意事项"><a href="#5、HTTP的3点注意事项" class="headerlink" title="5、HTTP的3点注意事项"></a>5、HTTP的3点注意事项</h5><ul>
+<li>HTTP是无连接的：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户端的请求并收到客户端的应答后即断开连接。采用这种方式可以节省传输时间</li>
+<li>HTTP是媒体独立的：只要客户端和服务器知道如何处理数据内容，任何类型的数据都可以通过HTTP发送。客户端以及服务器指定使用适合的MIME-type（消息内容类型）</li>
+<li>HTTP是无状态的：是指协议对于事务处理没有记忆能力，如果后续处理需要前面的信息，则必须重传，这样可能导致每次连接传送的数据量增大，另一方面，在服务器不需要提供先前信息时它的应答就较快</li>
+</ul>
+<h4 id="二、Windows-server部署web服务"><a href="#二、Windows-server部署web服务" class="headerlink" title="二、Windows server部署web服务"></a>二、Windows server部署web服务</h4><h5 id="1、服务器固定IP"><a href="#1、服务器固定IP" class="headerlink" title="1、服务器固定IP"></a>1、服务器固定IP</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404033.png" alt="image-20210802161705328"></p>
+<h5 id="2、添加服务器角色"><a href="#2、添加服务器角色" class="headerlink" title="2、添加服务器角色"></a>2、添加服务器角色</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404365.png" alt="image-20210802161758306"></p>
+<ul>
+<li><p>角色添加完成后，打开IIS管理器，可以看到上面自动运行了一个默认站点</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404507.png" alt="image-20210802162244431"></p>
+</li>
+</ul>
+<h5 id="3、配置站点"><a href="#3、配置站点" class="headerlink" title="3、配置站点"></a>3、配置站点</h5><ul>
+<li><p>新增站点</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404036.png" alt="image-20210802163737524"></p>
+</li>
+<li><p>配置默认文档</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404792.png" alt="image-20210802164728511"></p>
+</li>
+</ul>
+<h5 id="4、配置虚拟目录"><a href="#4、配置虚拟目录" class="headerlink" title="4、配置虚拟目录"></a>4、配置虚拟目录</h5><ul>
+<li><p>添加虚拟目录（目录位置可以和网站根目录分离开）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404804.png" alt="image-20210802165108172"></p>
+</li>
+<li><p>访问时需要加上路径（path）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404924.png" alt="image-20210802165224601"></p>
+</li>
+</ul>
+<h5 id="5、配置虚拟主机"><a href="#5、配置虚拟主机" class="headerlink" title="5、配置虚拟主机"></a>5、配置虚拟主机</h5><ul>
+<li><p>在服务器上创建多个站点</p>
+<ul>
+<li><p>使用不同IP地址来进行区分</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404051.png" alt="image-20210802170419809"></p>
+</li>
+<li><p>相同IP地址情况，使用不同端口号进行区分</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404068.png" alt="image-20210802170657198"></p>
+</li>
+<li><p>相同IP地址相同端口号情况，使用不同主机名进行区分（需要DNS支持，在DNS上有对应的主机（A）记录）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112031404143.png" alt="image-20210802170951289"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="三、分析HTTP流量"><a href="#三、分析HTTP流量" class="headerlink" title="三、分析HTTP流量"></a>三、分析HTTP流量</h4><h5 id="1、抓取HTTP流量"><a href="#1、抓取HTTP流量" class="headerlink" title="1、抓取HTTP流量"></a>1、抓取HTTP流量</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112130045669.png" alt="image-20211213004531563"></p>
+<h5 id="2、HTTP请求报文"><a href="#2、HTTP请求报文" class="headerlink" title="2、HTTP请求报文"></a>2、HTTP请求报文</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112130106707.png" alt="image-20211213010647631"></p>
+<ul>
+<li>请求方法</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">说明</th>
+<th align="left">支持的HTTP协议版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">GET</td>
+<td align="left">获取资源</td>
+<td align="left">1.0、1.1</td>
+</tr>
+<tr>
+<td align="left">POST</td>
+<td align="left">传输实体主体</td>
+<td align="left">1.0、1.1</td>
+</tr>
+<tr>
+<td align="left">PUT</td>
+<td align="left">传输文件</td>
+<td align="left">1.0、1.1</td>
+</tr>
+<tr>
+<td align="left">HEAD</td>
+<td align="left">获得报文首部</td>
+<td align="left">1.0、1.1</td>
+</tr>
+<tr>
+<td align="left">DELETE</td>
+<td align="left">删除文件</td>
+<td align="left">1.0、1.1</td>
+</tr>
+<tr>
+<td align="left">OPTIONS</td>
+<td align="left">询问支持得方法</td>
+<td align="left">1.1</td>
+</tr>
+<tr>
+<td align="left">TRACE</td>
+<td align="left">追踪路径</td>
+<td align="left">1.1</td>
+</tr>
+<tr>
+<td align="left">CONNECT</td>
+<td align="left">要求用隧道协议连接代理</td>
+<td align="left">1.1</td>
+</tr>
+<tr>
+<td align="left">LINK</td>
+<td align="left">建立和资源之间的联系</td>
+<td align="left">1.1</td>
+</tr>
+<tr>
+<td align="left">UNLINE</td>
+<td align="left">断开连接关系</td>
+<td align="left">1.0</td>
+</tr>
+</tbody></table>
+<ul>
+<li>请求头内容</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">首部字段名</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Accept</td>
+<td align="left">用户代理可处理的媒体类型</td>
+</tr>
+<tr>
+<td align="left">Accept-Charset</td>
+<td align="left">优先的字符集</td>
+</tr>
+<tr>
+<td align="left">Accept-Encoding</td>
+<td align="left">邮件的内容编码</td>
+</tr>
+<tr>
+<td align="left">Accept-Language</td>
+<td align="left">优先的语言（自然语言）</td>
+</tr>
+<tr>
+<td align="left">Authorization</td>
+<td align="left">Web认证信息</td>
+</tr>
+<tr>
+<td align="left">Expect</td>
+<td align="left">期待服务器的特点行为</td>
+</tr>
+<tr>
+<td align="left">From</td>
+<td align="left">用户的电子邮箱地址</td>
+</tr>
+<tr>
+<td align="left">Host</td>
+<td align="left">请求资源所在服务器</td>
+</tr>
+<tr>
+<td align="left">If-Match</td>
+<td align="left">比较实体标记（ETag）</td>
+</tr>
+<tr>
+<td align="left">If-Modified-Since</td>
+<td align="left">比较资源的更新时间</td>
+</tr>
+<tr>
+<td align="left">If-None-Match</td>
+<td align="left">比较实体标记（与 If-Match 相反）</td>
+</tr>
+<tr>
+<td align="left">If-Range</td>
+<td align="left">资源未更新时发送实体 Byte 的范围请求</td>
+</tr>
+<tr>
+<td align="left">If-Unmodified-Since</td>
+<td align="left">比较资源的更新时间（与 If-Modified-Since 相反）</td>
+</tr>
+<tr>
+<td align="left">Max-Forwards</td>
+<td align="left">最大传输逐跳数</td>
+</tr>
+<tr>
+<td align="left">Proxy-Authorization</td>
+<td align="left">代理服务器要求客户端的认证信息</td>
+</tr>
+<tr>
+<td align="left">Range</td>
+<td align="left">实体的字节范围请求</td>
+</tr>
+<tr>
+<td align="left">Referer</td>
+<td align="left">对请求中 URI 的原始获取方</td>
+</tr>
+<tr>
+<td align="left">Te</td>
+<td align="left">传输编码的优先级</td>
+</tr>
+<tr>
+<td align="left">User-Agent</td>
+<td align="left">HTTP 客户端程序的信息</td>
+</tr>
+</tbody></table>
+<h5 id="3、HTTP响应报文"><a href="#3、HTTP响应报文" class="headerlink" title="3、HTTP响应报文"></a>3、HTTP响应报文</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112130138906.png" alt="image-20211213013849828"></p>
+<ul>
+<li>HTTP响应状态码<ul>
+<li>当浏览者访问一个网页时，浏览者的浏览器会向网页所在的服务器发出请求。当浏览器接收并显示网页前，此网页所在的服务器会返回一个包含HTTP状态码的信息头（Server Header）用以响应浏览器的请求</li>
+<li>HTTP状态码类型<ul>
+<li>HTTP状态码由三个十进制数字组成，第一个十进制数字定义了状态码的类型，后两个数字没有分类的作用。HTTP状态码共分为5种类型</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1**</td>
+<td align="left">信息，服务器收到请求，需要请求者继续执行操作</td>
+</tr>
+<tr>
+<td align="left">2**</td>
+<td align="left">成功，操作被成功接收并处理</td>
+</tr>
+<tr>
+<td align="left">3**</td>
+<td align="left">重定向，需要进一步操作以完成请求</td>
+</tr>
+<tr>
+<td align="left">4**</td>
+<td align="left">客户端错误，请求包含语法错误或无法完成请求</td>
+</tr>
+<tr>
+<td align="left">5**</td>
+<td align="left">服务器错误，服务器再处理请求的过程中发生了错误</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">状态码</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">200</td>
+<td align="left">成功响应</td>
+</tr>
+<tr>
+<td align="left">204</td>
+<td align="left">请求处理成功，但是没有资源可以返回</td>
+</tr>
+<tr>
+<td align="left">206</td>
+<td align="left">对资源某一部分进行响应，由Content-Range 指定范围的实体内容。</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">状态码</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">301</td>
+<td align="left">永久性重定向，该状态码表示请求的资源已经重新分配 URI，以后应该使用资源现有的 URI</td>
+</tr>
+<tr>
+<td align="left">302</td>
+<td align="left">临时性重定向。该状态码表示请求的资源已被分配了新的 URI，希望用户（本次）能使用新的 URI 访问。</td>
+</tr>
+<tr>
+<td align="left">303</td>
+<td align="left">该状态码表示由于请求对应的资源存在着另一个 URI，应使用 GET 方法定向获取请求的资源。</td>
+</tr>
+<tr>
+<td align="left">304</td>
+<td align="left">该状态码表示客户端发送附带条件的请求时，服务器端允许请求访问资源，但未满足条件的情况。</td>
+</tr>
+<tr>
+<td align="left">307</td>
+<td align="left">临时重定向。该状态码与 302 Found 有着相同的含义。</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">状态码</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">400</td>
+<td align="left">该状态码表示请求报文中存在语法错误。当错误发生时，需修改请求的内容后再次发送请求。</td>
+</tr>
+<tr>
+<td align="left">401</td>
+<td align="left">该状态码表示发送的请求需要有通过 HTTP 认证（BASIC 认证、DIGEST 认证）的认证信息。</td>
+</tr>
+<tr>
+<td align="left">403</td>
+<td align="left">该状态码表明对请求资源的访问被服务器拒绝了。</td>
+</tr>
+<tr>
+<td align="left">404</td>
+<td align="left">该状态码表明服务器上无法找到请求的资源。</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">状态码</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">500</td>
+<td align="left">该状态码表明服务器端在执行请求时发生了错误。</td>
+</tr>
+<tr>
+<td align="left">503</td>
+<td align="left">该状态码表明服务器暂时处于超负载或正在进行停机维护，现在无法处理请求。</td>
+</tr>
+</tbody></table>
+<ul>
+<li>响应头</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">首部字段名</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Accept-Ranges</td>
+<td align="left">服务器指定它对某个资源请求的可接受范围</td>
+</tr>
+<tr>
+<td align="left">Age</td>
+<td align="left">服务器规定自服务器生成该响应以来所经过的时间，以秒为单位，主要用于缓存响应</td>
+</tr>
+<tr>
+<td align="left">Etag</td>
+<td align="left">提供实体标签的当前值</td>
+</tr>
+<tr>
+<td align="left">Location</td>
+<td align="left">因资源已经移动，把请求重定向至另一个位置，与状态编码302或者301配合使用</td>
+</tr>
+<tr>
+<td align="left">Proxy-Authenticate</td>
+<td align="left">类似于WWW-Authenticate,但回应的是来自请求链(代理)的下一个服务器的认证</td>
+</tr>
+<tr>
+<td align="left">Retry-After</td>
+<td align="left">由服务器与状态编码503 ( 无法提供服务)配合发送，以标明再次请求之前应该等待多长时间</td>
+</tr>
+<tr>
+<td align="left">Server</td>
+<td align="left">标明Web服务器软件及其版本号</td>
+</tr>
+<tr>
+<td align="left">Vary</td>
+<td align="left">用于代理是否可以使用缓存中的数据响应客户端的请求</td>
+</tr>
+<tr>
+<td align="left">WWW-Authenticate</td>
+<td align="left">提示客户端提供用户名和密码进行认证，与状态编码401 (未提权)配合使用530</td>
+</tr>
+</tbody></table>
+<h5 id="4、通用标头"><a href="#4、通用标头" class="headerlink" title="4、通用标头"></a>4、通用标头</h5><table>
+<thead>
+<tr>
+<th align="left">首部字段名</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Cache-Control</td>
+<td align="left">控制缓存的行为</td>
+</tr>
+<tr>
+<td align="left">Connection</td>
+<td align="left">逐跳首部、连接的管理</td>
+</tr>
+<tr>
+<td align="left">Date</td>
+<td align="left">创建报文的日期时间</td>
+</tr>
+<tr>
+<td align="left">Pragma</td>
+<td align="left">报文指令</td>
+</tr>
+<tr>
+<td align="left">Trailer</td>
+<td align="left">报文末端的首部一览</td>
+</tr>
+<tr>
+<td align="left">Transfer-Encoding</td>
+<td align="left">指定报文主体的传输编码方式</td>
+</tr>
+<tr>
+<td align="left">Upgrade</td>
+<td align="left">升级为其他协议</td>
+</tr>
+<tr>
+<td align="left">Via</td>
+<td align="left">代理服务器的相关信息</td>
+</tr>
+<tr>
+<td align="left">Warning</td>
+<td align="left">错误通知</td>
+</tr>
+</tbody></table>
+<h5 id="5、实体标头"><a href="#5、实体标头" class="headerlink" title="5、实体标头"></a>5、实体标头</h5><table>
+<thead>
+<tr>
+<th align="left">首部字段名</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">Allow</td>
+<td align="left">资源可支持的HTTP方法</td>
+</tr>
+<tr>
+<td align="left">Content-Encoding</td>
+<td align="left">实体主体适用的编码方式</td>
+</tr>
+<tr>
+<td align="left">Content-Language</td>
+<td align="left">实体主体的自然语言</td>
+</tr>
+<tr>
+<td align="left">Content-Length</td>
+<td align="left">实体主体的大小（单位：字节）</td>
+</tr>
+<tr>
+<td align="left">Content-Location</td>
+<td align="left">替代对应资源的URL</td>
+</tr>
+<tr>
+<td align="left">Content-MD5</td>
+<td align="left">实体主体的报文摘要</td>
+</tr>
+<tr>
+<td align="left">Content-Range</td>
+<td align="left">实体主体的位置范围</td>
+</tr>
+<tr>
+<td align="left">Content-Type</td>
+<td align="left">实体主体的媒体类型</td>
+</tr>
+<tr>
+<td align="left">Expires</td>
+<td align="left">实体主体过期的日期时间</td>
+</tr>
+<tr>
+<td align="left">Last-Modified</td>
+<td align="left">资源的最后修改日期时间</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dns%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="prev" title="流量攻击-应用层协议（dns协议）">
+      <i class="fa fa-chevron-left"></i> 流量攻击-应用层协议（dns协议）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88https%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="next" title="流量攻击-应用层协议（https协议）">
+      流量攻击-应用层协议（https协议） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81HTTP%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">一、HTTP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81HTTP%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1、HTTP简介</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%B8%87%E7%BB%B4%E7%BD%91%E6%9C%8D%E5%8A%A1%EF%BC%88WWW%E6%9C%8D%E5%8A%A1%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">2、万维网服务（WWW服务）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81WWW%E6%9C%8D%E5%8A%A1%E8%BD%AF%E4%BB%B6"><span class="nav-number">1.3.</span> <span class="nav-text">3、WWW服务软件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81HTTP%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">4、HTTP工作原理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81HTTP%E7%9A%843%E7%82%B9%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.5.</span> <span class="nav-text">5、HTTP的3点注意事项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81Windows-server%E9%83%A8%E7%BD%B2web%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">二、Windows server部署web服务</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%9B%BA%E5%AE%9AIP"><span class="nav-number">2.1.</span> <span class="nav-text">1、服务器固定IP</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%B7%BB%E5%8A%A0%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%A7%92%E8%89%B2"><span class="nav-number">2.2.</span> <span class="nav-text">2、添加服务器角色</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E9%85%8D%E7%BD%AE%E7%AB%99%E7%82%B9"><span class="nav-number">2.3.</span> <span class="nav-text">3、配置站点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E9%85%8D%E7%BD%AE%E8%99%9A%E6%8B%9F%E7%9B%AE%E5%BD%95"><span class="nav-number">2.4.</span> <span class="nav-text">4、配置虚拟目录</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E9%85%8D%E7%BD%AE%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA"><span class="nav-number">2.5.</span> <span class="nav-text">5、配置虚拟主机</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%88%86%E6%9E%90HTTP%E6%B5%81%E9%87%8F"><span class="nav-number">3.</span> <span class="nav-text">三、分析HTTP流量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%8A%93%E5%8F%96HTTP%E6%B5%81%E9%87%8F"><span class="nav-number">3.1.</span> <span class="nav-text">1、抓取HTTP流量</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81HTTP%E8%AF%B7%E6%B1%82%E6%8A%A5%E6%96%87"><span class="nav-number">3.2.</span> <span class="nav-text">2、HTTP请求报文</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81HTTP%E5%93%8D%E5%BA%94%E6%8A%A5%E6%96%87"><span class="nav-number">3.3.</span> <span class="nav-text">3、HTTP响应报文</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E9%80%9A%E7%94%A8%E6%A0%87%E5%A4%B4"><span class="nav-number">3.4.</span> <span class="nav-text">4、通用标头</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E5%AE%9E%E4%BD%93%E6%A0%87%E5%A4%B4"><span class="nav-number">3.5.</span> <span class="nav-text">5、实体标头</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

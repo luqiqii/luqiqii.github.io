@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、启明星辰天玥运维安全网关1、产品介绍 天玥运维安全网关，俗称堡垒机，能够对运维人员维护过程进行全面跟踪、控制、记录、回放； 支持细粒度配置运维人员的访问权限，实时阻断违规、越权的访问行为，同时提供维护人员操作的全过程的记录与报告； 系统支持对加密与图形协议进行审计，消除了传统行为审计系统中的审计盲点，是IT系统内部控制最有力的支撑平台。 运维过程三个阶段进行严格管控： 事前预防：建立“自然人-">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安全设备基础-堡垒机设备介绍">
+<meta property="og:url" content="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%A0%A1%E5%9E%92%E6%9C%BA%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、启明星辰天玥运维安全网关1、产品介绍 天玥运维安全网关，俗称堡垒机，能够对运维人员维护过程进行全面跟踪、控制、记录、回放； 支持细粒度配置运维人员的访问权限，实时阻断违规、越权的访问行为，同时提供维护人员操作的全过程的记录与报告； 系统支持对加密与图形协议进行审计，消除了传统行为审计系统中的审计盲点，是IT系统内部控制最有力的支撑平台。 运维过程三个阶段进行严格管控： 事前预防：建立“自然人-">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T14:13:04.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:16:51.966Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%A0%A1%E5%9E%92%E6%9C%BA%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>安全设备基础-堡垒机设备介绍 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%A0%A1%E5%9E%92%E6%9C%BA%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          安全设备基础-堡垒机设备介绍
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:13:04 / 修改时间：22:16:51" itemprop="dateCreated datePublished" datetime="2023-10-22T22:13:04+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、启明星辰天玥运维安全网关"><a href="#一、启明星辰天玥运维安全网关" class="headerlink" title="一、启明星辰天玥运维安全网关"></a>一、启明星辰天玥运维安全网关</h4><h5 id="1、产品介绍"><a href="#1、产品介绍" class="headerlink" title="1、产品介绍"></a>1、产品介绍</h5><ul>
+<li>天玥运维安全网关，俗称堡垒机，能够对运维人员维护过程进行全面跟踪、控制、记录、回放；</li>
+<li>支持细粒度配置运维人员的访问权限，实时阻断违规、越权的访问行为，同时提供维护人员操作的全过程的记录与报告；</li>
+<li>系统支持对加密与图形协议进行审计，消除了传统行为审计系统中的审计盲点，是IT系统内部控制最有力的支撑平台。</li>
+<li>运维过程三个阶段进行严格管控：<ul>
+<li>事前预防：建立“自然人-资源-资源账号”关系，实现统一认证和授权</li>
+<li>事中控制：建立“自然人-操作-资源”关系，实现操作审计和控制</li>
+<li>事后审计：建立“自然人-资源-审计日志”关系，实现事后溯源和责任界定</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、功能特点"><a href="#2、功能特点" class="headerlink" title="2、功能特点"></a>2、功能特点</h5><ul>
+<li>部署方式灵活性： 天玥运维安全网关支持单机、双机、分布式部署多种部署方式，并支持NAT和网口聚合方式，适应多变业务场景。</li>
+<li>操作使用便捷性： 天玥运维安全网关提供多种运维方式、C&#x2F;S运维客户端、资源批量登录、命令批量执行、设备自动改密等多种功能以保证运维过程的自动和快捷性。</li>
+<li>管控方式严格性： 天玥运维安全网关提供命令限制与复核、应用发布防跳转、运维账号IP、MAC限制等。严格的管控方式以保证运维过程的规范性。</li>
+<li>审计效果精细化： 数据库协议深度解析、数据库返回行数记录、Oracle数据库变量绑定解析。</li>
+<li>认证方式多样性： 天玥运维安全网关包括多样认证方式，支持对不同用户设置不同认证方式组合的双因素认证，更具灵活性。</li>
+<li>运维协议全面性： 天玥运维安全网关支持多种运维访问协议，能够充分满足日常运维需要。</li>
+</ul>
+<h5 id="3、技术优势"><a href="#3、技术优势" class="headerlink" title="3、技术优势"></a>3、技术优势</h5><ul>
+<li>堡垒机分身：虚化出多台堡垒机，适用于分权分域的用户管理场景。</li>
+<li>虚拟化部署：支持VMware、VirtualBox、KVM和Xen（HVM）虚拟化环境部署。</li>
+<li>运维操作防跳转：防止通过应用发布服务器进行跳转登录未授权资源。web页面防跳转功能，进行http&#x2F;https访问过程时运维人员仅允许访问授权地址。</li>
+<li>双重审计：实现数据库协议、字符协议、文件传输协议命令和录像的双重审计。实现命令审计和录像审计的关联检索和回放。</li>
+<li>命令限制与复核：对于高危命令实现实时告警或阻断。对于特别重要的命令实现多人审核。</li>
+<li>数据库深度解析：数据库协议级审计。数据库返回行数记录。Oracle数据库变量绑定解析。</li>
+<li>敏感数据管控：运维人员拥有高权限系统账号，会接触到重要敏感数据。对运维人员上传、下载、流转重要敏感数据进行控制和记录。</li>
+</ul>
+<h5 id="4、用户价值"><a href="#4、用户价值" class="headerlink" title="4、用户价值"></a>4、用户价值</h5><ul>
+<li>完善内控内审，满足合规要求：目前，越来越多的单位面临一种或者几种合规性要求。堡垒机提供的完备审计方案，可以完善组织的IT内控与审计体系，从而满足各种合规性要求，并且使组织能够顺利通过IT审计。</li>
+<li>简化运维管理，提高运维效率：堡垒机对账号和资产进行统一管理，规范简化运维流程。提供多种运维操作方式以满足各种不同使用习惯。自动便捷的使用体验提供整体运维效率。</li>
+<li>控制运维风险，防止数据泄露：堡垒机基于统一认证、集中管理、规范运维操作行为，对运维操作和数据流转过程做到严格的控制和记录，最大程度控制运维风险。</li>
+</ul>
+<h4 id="二、安恒明御运维审计与风险控制系统"><a href="#二、安恒明御运维审计与风险控制系统" class="headerlink" title="二、安恒明御运维审计与风险控制系统"></a>二、安恒明御运维审计与风险控制系统</h4><h5 id="1、产品介绍-1"><a href="#1、产品介绍-1" class="headerlink" title="1、产品介绍"></a>1、产品介绍</h5><ul>
+<li>明御运维审计与风险控制系统（简称：堡垒机或跳板机）是安恒信息结合多年运维安全管理理论和实际运维经验的基础上，结合各类法令法规(如等级保护、分级保护、银监、证监、PCI、企业内控管理、SOX塞班斯、ISO27001等) 对运维管理的要求，并提供4A(认证Authentication、账号Account、授权Authorization、审计Audit)的统一安全管理方案。</li>
+</ul>
+<h5 id="2、功能特点-1"><a href="#2、功能特点-1" class="headerlink" title="2、功能特点"></a>2、功能特点</h5><ul>
+<li>用户分权管理：支持多种用户角色:超级管理员、部门管理员、配置管理员、审计管理员、运维员、审计员、系统管理员、密码管理员，每种用户角色的权限都不同，为用户设立不同的角色提供了选择，满足合规对三权分立的要求，并提供灵活的角色自定义能力。</li>
+<li>集中运维授权：通过堡垒机的集中授权，帮助客户梳理用户与主机之间的关系，并且提供- -对一、一对多、多对一、多对多的灵活授权模式。</li>
+<li>资产单点登录：支持托管主机的账户和密码，运维人员登录堡垒机后选择相应资产即可成功自动登录到目标主机中进行运维操作，无需输入主机的账户和密码。</li>
+<li>精细命令控制：提供集中的命令控制策略功能，支持字符协议及数据库协议的命令级策略控制，支持通配符和正则表达式两种方式，实现阻断会话、阻断命令、审批、直接放行4种动作。</li>
+<li>统一操作审计：对所有的操作进行详细记录，并提供综合查询功能;审计日志可以在线播放也可以离线播放，所有的审计日志支持自动备份和自动归档。</li>
+</ul>
+<h5 id="3、产品优势"><a href="#3、产品优势" class="headerlink" title="3、产品优势"></a>3、产品优势</h5><ul>
+<li>远程运维安全接入：内置SSL VPN功能，实现远程运维的安全接入，保证数据传输安全。</li>
+<li>统一认证高效运维：提供本地认证，AD&#x2F;LDAP&#x2F;Radius远程认证、动态口令、usbkey、手机APP口令等双因子认证。</li>
+<li>灵活的权限控制：用户只能运维堡垒机中已授权的服务器，降低越权操作和高危操作的风险。</li>
+<li>运维审计满足合规：所有远程运维操作，均可进行审计录像，方便事后追踪溯源，满足合规建设要求。</li>
+<li>文件传输双向控制：支持灵活的文件传输双向控制，支持传输文件留存，有效防止数据泄漏风险。</li>
+<li>快速部署成本低：旁路部署，快速上线；公有云市场堡垒机可店铺下单，支持按月付费。</li>
+</ul>
+<h4 id="三、绿盟运维安全管理系统"><a href="#三、绿盟运维安全管理系统" class="headerlink" title="三、绿盟运维安全管理系统"></a>三、绿盟运维安全管理系统</h4><h5 id="1、产品介绍-2"><a href="#1、产品介绍-2" class="headerlink" title="1、产品介绍"></a>1、产品介绍</h5><ul>
+<li>绿盟运维安全管理系统（俗称堡垒机，英文简称OSMS）以满足等级保护下“身份鉴别、访问控制、安全审计”等监管要求为核心，基于“账号、认证、授权和审计”4A管理理念，采用三权分立和最小访问权限原则，实现精准的事前识别、精细的事中控制和精确的事后审计。</li>
+<li>绿盟运维安全管理系统提供了一套先进的运维安全管控与审计解决方案，目标是帮助企业转变传统IT安全运维的被动响应模式，建立面向用户的集中、主动的运维安全管控模式，降低人为安全风险，满足合规要求，保障企业效益。</li>
+<li>产品支持高性能硬件和国产化平台（CPU+OS），同时支持虚拟化、阿里云、AWS云等云环境部署。</li>
+</ul>
+<h5 id="2、功能特性"><a href="#2、功能特性" class="headerlink" title="2、功能特性"></a>2、功能特性</h5><ul>
+<li>全程运维行为审计：基于唯一身份标识，通过对用户从登录到退出的全程操作行为进行审计，监控用户对目标设备的所有敏感操作，聚焦关键事件，实现对安全事件的实时发现与预警。</li>
+<li>智能的资产管理体系：智能化发现运维人员在运维过程中违规新建的设备账号(简称幽灵账号)，以及长期不会被使用的设备账号(简称孤儿账号)，减少安全隐患。</li>
+<li>细粒度的授权体系：支持创建基于时间、IP IP段、用户用户组、设备设备组、设备账号、命令关键字、危险级别等元素的组合条件，授权用户可访问的目标设备或定义高危操作监控策略。当用户越权执行特定命令的时候，实时进行告警和阻断，确保信息系统安全运行。</li>
+</ul>
+<h5 id="3、产品优势-1"><a href="#3、产品优势-1" class="headerlink" title="3、产品优势"></a>3、产品优势</h5><ul>
+<li>安全：采用专业的硬件平台和安全优化的操作系统，支持数据通道加密，使用了系统和用户数据隔离的存储架构，对用户数据进行加密存储，确保数据存储和数据传输的安全性</li>
+<li>易用：支持运维过程中的单点登录，多种灵活的设备登录方式、向导式用户配置以及配置信息批量处理等功能。</li>
+<li>智能：OSMS支持设备自动发现、设备账号自动改密、运维过程按需自动切换权限、自动备份审计日志和自动生成发送报表等功能。</li>
+</ul>
+<h5 id="4、客户价值"><a href="#4、客户价值" class="headerlink" title="4、客户价值"></a>4、客户价值</h5><ul>
+<li>风险管控，降低运维风险：通过灵活的权限管理、登录和命令控制，智能发现幽灵账号和孤儿账号等功能，最大程度降低客户内部员工和第三方人员运维的风险。</li>
+<li>实时审计，提高分析效率：通过字符、图形等多种审计手段，使用倍数、拖拉、定点等多种播放方式，及时发现违规操作行为和追查取证。</li>
+<li>自动化运维，提升运维效率：通过自动改密、业务数据备份、补丁更新等手段，减少运维工作，提升运维效率。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%85%A5%E4%BE%B5%E6%A3%80%E6%B5%8B%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/" rel="prev" title="安全设备基础-入侵检测设备介绍">
+      <i class="fa fa-chevron-left"></i> 安全设备基础-入侵检测设备介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E4%B8%8A%E7%BD%91%E8%A1%8C%E4%B8%BA%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8/" rel="next" title="安全设备基础-深信服上网行为管理应用">
+      安全设备基础-深信服上网行为管理应用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%90%AF%E6%98%8E%E6%98%9F%E8%BE%B0%E5%A4%A9%E7%8E%A5%E8%BF%90%E7%BB%B4%E5%AE%89%E5%85%A8%E7%BD%91%E5%85%B3"><span class="nav-number">1.</span> <span class="nav-text">一、启明星辰天玥运维安全网关</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">1、产品介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%8A%9F%E8%83%BD%E7%89%B9%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">2、功能特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%8A%80%E6%9C%AF%E4%BC%98%E5%8A%BF"><span class="nav-number">1.3.</span> <span class="nav-text">3、技术优势</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E7%94%A8%E6%88%B7%E4%BB%B7%E5%80%BC"><span class="nav-number">1.4.</span> <span class="nav-text">4、用户价值</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AE%89%E6%81%92%E6%98%8E%E5%BE%A1%E8%BF%90%E7%BB%B4%E5%AE%A1%E8%AE%A1%E4%B8%8E%E9%A3%8E%E9%99%A9%E6%8E%A7%E5%88%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.</span> <span class="nav-text">二、安恒明御运维审计与风险控制系统</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D-1"><span class="nav-number">2.1.</span> <span class="nav-text">1、产品介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%8A%9F%E8%83%BD%E7%89%B9%E7%82%B9-1"><span class="nav-number">2.2.</span> <span class="nav-text">2、功能特点</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E4%BA%A7%E5%93%81%E4%BC%98%E5%8A%BF"><span class="nav-number">2.3.</span> <span class="nav-text">3、产品优势</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%BB%BF%E7%9B%9F%E8%BF%90%E7%BB%B4%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.</span> <span class="nav-text">三、绿盟运维安全管理系统</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BA%A7%E5%93%81%E4%BB%8B%E7%BB%8D-2"><span class="nav-number">3.1.</span> <span class="nav-text">1、产品介绍</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%8A%9F%E8%83%BD%E7%89%B9%E6%80%A7"><span class="nav-number">3.2.</span> <span class="nav-text">2、功能特性</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E4%BA%A7%E5%93%81%E4%BC%98%E5%8A%BF-1"><span class="nav-number">3.3.</span> <span class="nav-text">3、产品优势</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC"><span class="nav-number">3.4.</span> <span class="nav-text">4、客户价值</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="-  OCR图像分析：采用业界主流的高性能OCR图像分析算法，应用于泄密风险分析和事件追溯取证 行为基线分析：通过行为基线建模分析实现动态适配的风险判别标准，自适应客户场景建立异常行为监控机制 机器学习分析：风险分析引擎应用机器学习算法，行为日志分析效率和风险分析准确率自动迭代增强    二、组网方案1、基本操作 登录设备  出厂是有默认IP地址 Eth0口：10.251.251.251&amp;#x2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安全设备基础-深信服上网行为管理应用">
+<meta property="og:url" content="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E4%B8%8A%E7%BD%91%E8%A1%8C%E4%B8%BA%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="-  OCR图像分析：采用业界主流的高性能OCR图像分析算法，应用于泄密风险分析和事件追溯取证 行为基线分析：通过行为基线建模分析实现动态适配的风险判别标准，自适应客户场景建立异常行为监控机制 机器学习分析：风险分析引擎应用机器学习算法，行为日志分析效率和风险分析准确率自动迭代增强    二、组网方案1、基本操作 登录设备  出厂是有默认IP地址 Eth0口：10.251.251.251&amp;#x2">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291431947.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291440901.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291456313.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291513057.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291529690.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251927745.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251935111.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251936196.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251937233.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251937417.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291549260.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251938067.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252008766.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252014393.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252016456.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252016691.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252018757.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252021530.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252022720.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252030348.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252032937.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252033540.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252034649.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252026274.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252034615.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252035215.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252027391.png">
+<meta property="article:published_time" content="2023-10-22T14:13:25.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:17:38.263Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291431947.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E4%B8%8A%E7%BD%91%E8%A1%8C%E4%B8%BA%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>安全设备基础-深信服上网行为管理应用 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E6%B7%B1%E4%BF%A1%E6%9C%8D%E4%B8%8A%E7%BD%91%E8%A1%8C%E4%B8%BA%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          安全设备基础-深信服上网行为管理应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:13:25 / 修改时间：22:17:38" itemprop="dateCreated datePublished" datetime="2023-10-22T22:13:25+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li>-<br>  OCR图像分析：采用业界主流的高性能OCR图像分析算法，应用于泄密风险分析和事件追溯取证<ul>
+<li>行为基线分析：通过行为基线建模分析实现动态适配的风险判别标准，自适应客户场景建立异常行为监控机制</li>
+<li>机器学习分析：风险分析引擎应用机器学习算法，行为日志分析效率和风险分析准确率自动迭代增强</li>
+</ul>
+</li>
+</ul>
+<h4 id="二、组网方案"><a href="#二、组网方案" class="headerlink" title="二、组网方案"></a>二、组网方案</h4><h5 id="1、基本操作"><a href="#1、基本操作" class="headerlink" title="1、基本操作"></a>1、基本操作</h5><ul>
+<li><p>登录设备</p>
+<ul>
+<li>出厂是有默认IP地址<ul>
+<li>Eth0口：10.251.251.251&#x2F;24</li>
+<li>Eth1口：10.252.252.252&#x2F;24</li>
+</ul>
+</li>
+<li>主机使用一根网线连接Eth0口，给主机设置一个相同网段的IP直接开始访问</li>
+<li>在主机上打开浏览器输入管理IP，这里一定使用HTTPS进行访问：<a href="https://10.251.251.xn--251%2C%2C:admin%2C:admin-pz12af7a63pf9ovrilldda2152cla016wo9sga3241mcah536i4ia668bqa5100h8fxdjs8h/">https://10.251.251.251，使用出厂的用户名密码登录，默认一般为用户名：admin，密码：admin</a></li>
+</ul>
+</li>
+<li><p>恢复出厂设置</p>
+<ul>
+<li><p>如果可以登录进设备，直接在设备中进行恢复</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291431947.png" alt="image-20220329143137805"></p>
+</li>
+<li><p>如果无法登录进设备，也不知道管理IP的情况</p>
+<ul>
+<li>设备断电，使用一根交叉网线去短接一组 bypass 接口（默认情况下 Eth0 和 Eth2 口为一组 bypass 口），设备接电，大概过 5-10 分钟设备自动重启，表示恢复出厂设置成功</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>恢复登录密码（知道管理IP，能够进入到登录界面）</p>
+<ul>
+<li>使用一根交叉网线去短接非一组 bypass 接口</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、部署模式"><a href="#2、部署模式" class="headerlink" title="2、部署模式"></a>2、部署模式</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291440901.png" alt="image-20220329144044787"></p>
+<ul>
+<li>路由部署<ul>
+<li>采用路由部署模式，接口都是属于三层接口，需要配置 IP 地址，拥有所有的功能</li>
+</ul>
+</li>
+<li>网桥部署<ul>
+<li>采用网桥部署模式，相当于 AC 属于一台二层设备，针对于NAT、DHCP等功能就无法使用</li>
+</ul>
+</li>
+<li>旁路部署<ul>
+<li>只能够针对于TCP的应用进行控制，主要做审计的功能</li>
+</ul>
+</li>
+<li>TRUNK部署<ul>
+<li>AC相当于一台三层交换机，与下面二层交换机连接的链路为 trunk 链路</li>
+</ul>
+</li>
+</ul>
+<h5 id="3、基本防火墙（包过滤的防火墙）"><a href="#3、基本防火墙（包过滤的防火墙）" class="headerlink" title="3、基本防火墙（包过滤的防火墙）"></a>3、基本防火墙（包过滤的防火墙）</h5><p><strong>基于五元组进行控制</strong></p>
+<ul>
+<li><p>防火墙过滤</p>
+<ul>
+<li>默认情况下，流量全部是放通状态</li>
+</ul>
+</li>
+<li><p>NAT代理上网</p>
+<ul>
+<li><p>源地址转换（SNAT）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291456313.png" alt="image-20220329145626272"></p>
+</li>
+</ul>
+</li>
+<li><p>端口映射</p>
+<ul>
+<li><p>目的地址转换（DNAT）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291513057.png" alt="image-20220329151332954"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="三、用户认证技术"><a href="#三、用户认证技术" class="headerlink" title="三、用户认证技术"></a>三、用户认证技术</h4><h5 id="1、用户管理"><a href="#1、用户管理" class="headerlink" title="1、用户管理"></a>1、用户管理</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291529690.png" alt="image-20220329152917615"></p>
+<ul>
+<li>针对 AC 上创建本地用户及密码</li>
+<li>用户创建好之后，还需要去添加认证策略</li>
+</ul>
+<h5 id="2、不需要认证"><a href="#2、不需要认证" class="headerlink" title="2、不需要认证"></a>2、不需要认证</h5><ul>
+<li><p>也是一种认证方式，只不过用户是无感知的</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251927745.png" alt="image-20220425192711644"></p>
+</li>
+</ul>
+<h5 id="3、IP-x2F-MAC绑定认证"><a href="#3、IP-x2F-MAC绑定认证" class="headerlink" title="3、IP&#x2F;MAC绑定认证"></a>3、IP&#x2F;MAC绑定认证</h5><ul>
+<li><p>防止用户进行 IP 地址修改</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251935111.png" alt="image-20220425193410441"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251936196.png" alt="image-20220425193650118"></p>
+</li>
+</ul>
+<h5 id="4、密码认证"><a href="#4、密码认证" class="headerlink" title="4、密码认证"></a>4、密码认证</h5><ul>
+<li><p>本地账号密码：直接在AC上创建对应的用户名和密码</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251937233.png" alt="image-20220425193724110"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251937417.png" alt="image-20220425193759258"></p>
+</li>
+<li><p>外部服务器：一般最常见的是对接微软 AD 域控制器</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202203291549260.png" alt="image-20220329154955217"></p>
+</li>
+</ul>
+<h5 id="5、外部认证"><a href="#5、外部认证" class="headerlink" title="5、外部认证"></a>5、外部认证</h5><ul>
+<li><p>短信认证</p>
+</li>
+<li><p>微信认证</p>
+</li>
+<li><p>……………………</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204251938067.png" alt="image-20220425193832020"></p>
+</li>
+</ul>
+<h4 id="四、应用控制技术"><a href="#四、应用控制技术" class="headerlink" title="四、应用控制技术"></a>四、应用控制技术</h4><h5 id="1、应用特征识别控制"><a href="#1、应用特征识别控制" class="headerlink" title="1、应用特征识别控制"></a>1、应用特征识别控制</h5><ul>
+<li><p>根据应用进行控制</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252008766.png" alt="image-20220425200818578"></p>
+</li>
+<li><p>邮件过滤</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252014393.png" alt="image-20220425201416189"></p>
+</li>
+<li><p>搜索引擎的关键字过滤</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252016456.png" alt="image-20220425201605287"></p>
+</li>
+<li><p>QQ白名单</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252016691.png" alt="image-20220425201652554"></p>
+</li>
+</ul>
+<h5 id="2、URL识别控制（http和https）"><a href="#2、URL识别控制（http和https）" class="headerlink" title="2、URL识别控制（http和https）"></a>2、URL识别控制（http和https）</h5><ul>
+<li><p>针对于URL进行控制（可以访问哪些网站，不能访问哪些网站）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252018757.png" alt="image-20220425201846665"></p>
+</li>
+</ul>
+<h4 id="五、流量管理技术"><a href="#五、流量管理技术" class="headerlink" title="五、流量管理技术"></a>五、流量管理技术</h4><h5 id="1、限制通道"><a href="#1、限制通道" class="headerlink" title="1、限制通道"></a>1、限制通道</h5><ul>
+<li><p>针对于内网的用户使用对应的应用进行限速</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252021530.png" alt="image-20220425202113399"></p>
+</li>
+</ul>
+<h5 id="2、保障通道"><a href="#2、保障通道" class="headerlink" title="2、保障通道"></a>2、保障通道</h5><ul>
+<li><p>针对于内网的用户访问对应的应用保障带宽</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252022720.png" alt="image-20220425202242510"></p>
+</li>
+</ul>
+<h4 id="六、内容审计技术（上网行为审计）"><a href="#六、内容审计技术（上网行为审计）" class="headerlink" title="六、内容审计技术（上网行为审计）"></a>六、内容审计技术（上网行为审计）</h4><h5 id="1、外发邮件审计"><a href="#1、外发邮件审计" class="headerlink" title="1、外发邮件审计"></a>1、外发邮件审计</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252030348.png" alt="image-20220425203036297"></p>
+<h5 id="2、SSL内容解密"><a href="#2、SSL内容解密" class="headerlink" title="2、SSL内容解密"></a>2、SSL内容解密</h5><ul>
+<li><p>中间人解密</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252032937.png" alt="image-20220425202919306"></p>
+</li>
+<li><p>准入插件解密</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252033540.png" alt="image-20220425203331416"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252034649.png" alt="image-20220425203408554"></p>
+</li>
+</ul>
+<h5 id="4、WEB关键字过滤"><a href="#4、WEB关键字过滤" class="headerlink" title="4、WEB关键字过滤"></a>4、WEB关键字过滤</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252026274.png" alt="image-20220425202620179"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252034615.png" alt="image-20220425203455567"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252035215.png" alt="image-20220425203531167"></p>
+<h5 id="5、IM聊天审计"><a href="#5、IM聊天审计" class="headerlink" title="5、IM聊天审计"></a>5、IM聊天审计</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai202204252027391.png" alt="image-20220425202732335"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-%E5%A0%A1%E5%9E%92%E6%9C%BA%E8%AE%BE%E5%A4%87%E4%BB%8B%E7%BB%8D/" rel="prev" title="安全设备基础-堡垒机设备介绍">
+      <i class="fa fa-chevron-left"></i> 安全设备基础-堡垒机设备介绍
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BB%8B%E7%BB%8D/" rel="next" title="linux操作系统基础-linux操作系统介绍">
+      linux操作系统基础-linux操作系统介绍 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BB%84%E7%BD%91%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">二、组网方案</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.1.</span> <span class="nav-text">1、基本操作</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%83%A8%E7%BD%B2%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">2、部署模式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E5%9F%BA%E6%9C%AC%E9%98%B2%E7%81%AB%E5%A2%99%EF%BC%88%E5%8C%85%E8%BF%87%E6%BB%A4%E7%9A%84%E9%98%B2%E7%81%AB%E5%A2%99%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">3、基本防火墙（包过滤的防火墙）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E6%8A%80%E6%9C%AF"><span class="nav-number">2.</span> <span class="nav-text">三、用户认证技术</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-number">2.1.</span> <span class="nav-text">1、用户管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%B8%8D%E9%9C%80%E8%A6%81%E8%AE%A4%E8%AF%81"><span class="nav-number">2.2.</span> <span class="nav-text">2、不需要认证</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81IP-x2F-MAC%E7%BB%91%E5%AE%9A%E8%AE%A4%E8%AF%81"><span class="nav-number">2.3.</span> <span class="nav-text">3、IP&#x2F;MAC绑定认证</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E5%AF%86%E7%A0%81%E8%AE%A4%E8%AF%81"><span class="nav-number">2.4.</span> <span class="nav-text">4、密码认证</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81%E5%A4%96%E9%83%A8%E8%AE%A4%E8%AF%81"><span class="nav-number">2.5.</span> <span class="nav-text">5、外部认证</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%BA%94%E7%94%A8%E6%8E%A7%E5%88%B6%E6%8A%80%E6%9C%AF"><span class="nav-number">3.</span> <span class="nav-text">四、应用控制技术</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%BA%94%E7%94%A8%E7%89%B9%E5%BE%81%E8%AF%86%E5%88%AB%E6%8E%A7%E5%88%B6"><span class="nav-number">3.1.</span> <span class="nav-text">1、应用特征识别控制</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81URL%E8%AF%86%E5%88%AB%E6%8E%A7%E5%88%B6%EF%BC%88http%E5%92%8Chttps%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">2、URL识别控制（http和https）</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%B5%81%E9%87%8F%E7%AE%A1%E7%90%86%E6%8A%80%E6%9C%AF"><span class="nav-number">4.</span> <span class="nav-text">五、流量管理技术</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E9%99%90%E5%88%B6%E9%80%9A%E9%81%93"><span class="nav-number">4.1.</span> <span class="nav-text">1、限制通道</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E4%BF%9D%E9%9A%9C%E9%80%9A%E9%81%93"><span class="nav-number">4.2.</span> <span class="nav-text">2、保障通道</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%86%85%E5%AE%B9%E5%AE%A1%E8%AE%A1%E6%8A%80%E6%9C%AF%EF%BC%88%E4%B8%8A%E7%BD%91%E8%A1%8C%E4%B8%BA%E5%AE%A1%E8%AE%A1%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">六、内容审计技术（上网行为审计）</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%A4%96%E5%8F%91%E9%82%AE%E4%BB%B6%E5%AE%A1%E8%AE%A1"><span class="nav-number">5.1.</span> <span class="nav-text">1、外发邮件审计</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81SSL%E5%86%85%E5%AE%B9%E8%A7%A3%E5%AF%86"><span class="nav-number">5.2.</span> <span class="nav-text">2、SSL内容解密</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81WEB%E5%85%B3%E9%94%AE%E5%AD%97%E8%BF%87%E6%BB%A4"><span class="nav-number">5.3.</span> <span class="nav-text">4、WEB关键字过滤</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81IM%E8%81%8A%E5%A4%A9%E5%AE%A1%E8%AE%A1"><span class="nav-number">5.4.</span> <span class="nav-text">5、IM聊天审计</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

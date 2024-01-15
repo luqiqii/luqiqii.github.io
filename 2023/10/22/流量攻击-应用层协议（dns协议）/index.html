@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、DNS服务1、DNS概述 域名系统（Domain Name System，DNS）是互联网的一项服务。它作为将域名和IP地址相互映射的一个分布式数据库，能够使人更方便地访问互联网。DNS使用UDP端口53。当前，对于每一级域名长度的限制是63个字符，域名总长度则不能超过253个字符 域名（域名由因特网域名与地址管理机构(ICANN，Internet Corporation for Assign">
+<meta property="og:type" content="article">
+<meta property="og:title" content="流量攻击-应用层协议（dns协议）">
+<meta property="og:url" content="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dns%E5%8D%8F%E8%AE%AE%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、DNS服务1、DNS概述 域名系统（Domain Name System，DNS）是互联网的一项服务。它作为将域名和IP地址相互映射的一个分布式数据库，能够使人更方便地访问互联网。DNS使用UDP端口53。当前，对于每一级域名长度的限制是63个字符，域名总长度则不能超过253个字符 域名（域名由因特网域名与地址管理机构(ICANN，Internet Corporation for Assign">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729101754.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729091043.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729110832.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729110948.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729111221.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729111414.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729114323.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729114510.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729162939.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729163052.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729154011.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129012035.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129012546.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129014919.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129015228.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129015431.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129022612.png">
+<meta property="article:published_time" content="2023-10-22T14:04:20.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:30:38.537Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729101754.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dns%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>流量攻击-应用层协议（dns协议） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dns%E5%8D%8F%E8%AE%AE%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          流量攻击-应用层协议（dns协议）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:04:20 / 修改时间：22:30:38" itemprop="dateCreated datePublished" datetime="2023-10-22T22:04:20+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、DNS服务"><a href="#一、DNS服务" class="headerlink" title="一、DNS服务"></a>一、DNS服务</h4><h5 id="1、DNS概述"><a href="#1、DNS概述" class="headerlink" title="1、DNS概述"></a>1、DNS概述</h5><ul>
+<li>域名系统（Domain Name System，DNS）是互联网的一项服务。它作为将域名和IP地址相互映射的一个分布式数据库，能够使人更方便地访问互联网。DNS使用UDP端口53。当前，对于每一级域名长度的限制是63个字符，域名总长度则不能超过253个字符</li>
+<li>域名（域名由因特网域名与地址管理机构(ICANN，Internet Corporation for Assigned Names and Numbers)管理）<ul>
+<li>举例：<a target="_blank" rel="noopener" href="http://www.baidu.com/">www.baidu.com</a> <a target="_blank" rel="noopener" href="http://www.sina.com.cn/">www.sina.com.cn</a> <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a></li>
+</ul>
+</li>
+</ul>
+<h5 id="2、名称空间"><a href="#2、名称空间" class="headerlink" title="2、名称空间"></a>2、名称空间</h5><ul>
+<li><p>域名空间结构（树状结构）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729101754.png" alt="image-20210729101754114"></p>
+<ul>
+<li>根域（全世界只有13台根域服务器）</li>
+<li>顶级域（主要用于区分域名的用途）<ul>
+<li>组织域<ul>
+<li>com 商业</li>
+<li>edu 教育、学校</li>
+<li>org 社会非盈利性组织</li>
+</ul>
+</li>
+<li>国家&#x2F;地区域名<ul>
+<li>cn 中国</li>
+<li>hk 香港</li>
+<li>us 美国</li>
+<li>uk 英国</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>二级域名（一般情况下去申请域名，都是申请的二级域名）</li>
+<li>FQDN&#x3D;主机名.DNS后缀</li>
+</ul>
+</li>
+</ul>
+<h4 id="二、DNS查询"><a href="#二、DNS查询" class="headerlink" title="二、DNS查询"></a>二、DNS查询</h4><h5 id="1、查询过程"><a href="#1、查询过程" class="headerlink" title="1、查询过程"></a>1、查询过程</h5><ul>
+<li><p>查询<a target="_blank" rel="noopener" href="http://www.woniuxy.com过程/">www.woniuxy.com过程</a></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729091043.png" alt="image-20210729091036677"></p>
+<ul>
+<li>客户机将查询 <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a> 的信息传递到自己的首选DNS服务器。</li>
+<li>DNS客户机的首选DNS服务器检查区域数据库，由于此服务器没有woniuxy.com域的授权记录，因此，它将查询信息传递到根域DNS服务器，请求解析主机名称。</li>
+<li>根域DNS服务器把负责解析“com”顶级域的DNS服务器的IP地址返回给DNS客户机的首选DNS服务器。</li>
+<li>首选DNS服务器将请求发送给负责“com”域的DNS服务器。</li>
+<li>负责“com”域的服务器根据请求将负责“woniuxy.com”域的DNS服务器的IP地址返回给首选DNS服务器。</li>
+<li>首选DNS服务器向负责“woniuxy.com”区域的DNS服务器发送请求。</li>
+<li>由于此服务器具有 <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a> 的记录，因此它将 <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a> 的IP地址返回给首选DNS 服务器。</li>
+<li>客户机的首选DNS服务器将 <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a> 的IP 地址发送给客户机。</li>
+<li>域名解析成功后，客户机将http请求发送给Web服务器。</li>
+<li>Web服务器响应客户机的访问请求，客户机便可以访问目标主机。</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、查询方式"><a href="#2、查询方式" class="headerlink" title="2、查询方式"></a>2、查询方式</h5><ul>
+<li>从查询方式分类<ul>
+<li>递归查询：客户机请求自己的首选DNS服务器，首选DNS服务器上有对应的域名记录信息，直接回应给客户机</li>
+<li>迭代查询：首选DNS服务器上没有对应的域名记录信息，通过一步一步请根域服务器，请求定义域服务器，请求二级域服务器，最终找到对应的域名记录信息</li>
+</ul>
+</li>
+<li>从查询内容分类<ul>
+<li>正向查询：由域名查找IP地址</li>
+<li>反向查询：由IP地址查找域名</li>
+</ul>
+</li>
+</ul>
+<h4 id="三、部署DNS服务器"><a href="#三、部署DNS服务器" class="headerlink" title="三、部署DNS服务器"></a>三、部署DNS服务器</h4><h5 id="1、DNS服务器的分类"><a href="#1、DNS服务器的分类" class="headerlink" title="1、DNS服务器的分类"></a>1、DNS服务器的分类</h5><ul>
+<li>主要名称服务器：存放该区域（二级域名区域）中相关设置的DNS服务器，存放的是区域文件的正本数据（原件）</li>
+<li>辅助名称服务器：主要是从其他服务器中复制数据，数据为副本并且无法修改</li>
+<li>主控名称服务器：提供数据复制的DNS服务器</li>
+<li>缓存域名（Cache-Only）服务器：没有区域文件，主要为客户端提供高速缓存，将查询到的数据保存在高速缓存中</li>
+</ul>
+<h5 id="2、部署"><a href="#2、部署" class="headerlink" title="2、部署"></a>2、部署</h5><ul>
+<li><p>为服务器设置固定IP（一般情况下，服务器都是会对外或对内提供服务，使用固定IP，防止服务器IP发生变化造成无法访问情况）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729110832.png" alt="image-20210729110832686"></p>
+</li>
+<li><p>添加服务器角色，DNS角色</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729110948.png" alt="image-20210729110948497"></p>
+</li>
+</ul>
+<h5 id="3、配置DNS服务器"><a href="#3、配置DNS服务器" class="headerlink" title="3、配置DNS服务器"></a>3、配置DNS服务器</h5><ul>
+<li><p>打开DNS管理器（管理工具→DNS）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729111221.png" alt="image-20210729111221369"></p>
+</li>
+<li><p>新建正向区域（主要区域）</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729111414.png" alt="image-20210729111414867"></p>
+</li>
+<li><p>定义区域名称，直接下一步完成</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729114323.png" alt="image-20210729114323569"></p>
+</li>
+<li><p>创建主机记录</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729114510.png" alt="image-20210729114510321"></p>
+</li>
+</ul>
+<h5 id="4、DNS记录"><a href="#4、DNS记录" class="headerlink" title="4、DNS记录"></a>4、DNS记录</h5><ul>
+<li>SOA（起始授权机构）：定义了该域中的权威名称服务器</li>
+<li>NS（名称服务器）：表示某区域的权威服务器和SQA中指定的该区域的主要服务器和辅助服务器</li>
+<li>A（主机）：列出了区域中FQDN（完全合格的域名）到IP地址的映射</li>
+<li>PTR（指针）：相对于A资源记录，PTR记录是把IP地址映射到FQDN</li>
+<li>MX：邮件交换器记录，向指定的邮件交换主机提供消息路由</li>
+<li>SRV（服务）：列出了正在提供特定服务的服务器</li>
+<li>CNAME（别名）：将多个名字映射到同一台计算机上，便于用户访问</li>
+</ul>
+<h4 id="四、分析DNS流量"><a href="#四、分析DNS流量" class="headerlink" title="四、分析DNS流量"></a>四、分析DNS流量</h4><h5 id="1、通过wireshark抓取DNS报文"><a href="#1、通过wireshark抓取DNS报文" class="headerlink" title="1、通过wireshark抓取DNS报文"></a>1、通过wireshark抓取DNS报文</h5><ul>
+<li><p>请求报文</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729162939.png" alt="image-20210729162938616"></p>
+</li>
+<li><p>应答报文</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729163052.png" alt="image-20210729163052430"></p>
+</li>
+</ul>
+<h5 id="2、DNS报文字段"><a href="#2、DNS报文字段" class="headerlink" title="2、DNS报文字段"></a>2、DNS报文字段</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210729154011.png" alt="image-20210729154004427"></p>
+<ul>
+<li>ID：2字节，标识符，通过随机数标识该请求</li>
+<li>Flage：2字节，标志位设置<ul>
+<li>第1位：msg类型，0为请求（Query）1为响应（Response）</li>
+<li>第2~5位：opcode，查询种类，0000标识标准Query</li>
+<li>第6位：是否权威应答（应答时才有意义）</li>
+<li>第7位：因为一个UDP报文为512字节，所以该位指示是否截断超过的部分</li>
+<li>第8位：是否请求递归（这个位被请求设置，应答的时候使用相同的值返回）</li>
+<li>第9位：允许递归标识。此字段在应答字段中使用，0表示应答服务器不支持递归查询，1表示应答服务器支持递归查询</li>
+<li>第10~12位：保留位（设置为0）</li>
+<li>第13<del>16位：应答码（0：没有错误，1：格式错误，2：服务器错误，3：名字错误，4：服务器不支持，5：拒绝，6</del>15：保留值）</li>
+</ul>
+</li>
+<li>Questions：2字节，报文请求段中的问题记录数</li>
+<li>Answer RRs：2字节，报文回答段中的回答记录数</li>
+<li>Authority RRs：2字节，报文授权段中的授权记录数</li>
+<li>Additional RRs：2字节，报文附加段中的附加记录数</li>
+<li>Queries：查询请求内容（响应时不变即可）<ul>
+<li>Name：不定长，域名（例如，<a target="_blank" rel="noopener" href="http://www.baidu.com需写作3www5baidu3com0)/">www.baidu.com需写作3www5baidu3com0）</a></li>
+<li>Type：2字节查询的资源记录类型</li>
+<li>Class：2字节指定信息的协议组</li>
+</ul>
+</li>
+<li>Answers：查询响应内容，可以有0~n条（请求时为空即可）<ul>
+<li>Name：2字节（压缩编码）指向name第一次出现的地址且前两位为11</li>
+<li>Type：2字节响应类型</li>
+<li>Class：2字节</li>
+<li>TTL：4字节</li>
+<li>Datalength：2字节，指接下来data长度，单位为字节</li>
+<li>Address&#x2F;CNAME：4字节地址&#x2F;不定长域名</li>
+</ul>
+</li>
+<li>Authoritative Nameservers（权威域名服务器）<ul>
+<li>Name：2字节（压缩编码）指向Name第一次出现的地址且前两位为11</li>
+<li>Type：2字节响应类型。此处为2（NS）</li>
+<li>Class：2字节</li>
+<li>TTL：4字节</li>
+<li>Datalength：2字节，指接下来data长度，单位为字节</li>
+<li>Nameserver：此处为6字节，表示方法待研究</li>
+</ul>
+</li>
+<li>Additional Records（额外的记录）<ul>
+<li>Name：2字节（压缩编码）指向Name第一次出现的地址且前两位为11</li>
+<li>Type：2字节响应类型</li>
+<li>Class：2字节，表示类型</li>
+<li>TTL：4字节</li>
+<li>Datalength：2字节，指接下来data长度，单位为字节</li>
+<li>Address：此处为4字节地址</li>
+</ul>
+</li>
+</ul>
+<h4 id="五、实施DNS-欺骗攻击"><a href="#五、实施DNS-欺骗攻击" class="headerlink" title="五、实施DNS 欺骗攻击"></a>五、实施DNS 欺骗攻击</h4><h5 id="1、实验环境"><a href="#1、实验环境" class="headerlink" title="1、实验环境"></a>1、实验环境</h5><ul>
+<li>一台 Windows 10 客户机，正常桥接，可以访问公网</li>
+<li>一台 kali Linux 攻击主机，正常桥接（使用 Ettercap 工具）</li>
+</ul>
+<h5 id="2、实验步骤"><a href="#2、实验步骤" class="headerlink" title="2、实验步骤"></a>2、实验步骤</h5><ul>
+<li><p>使用 Windows 10 访问公网域名 <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a> 显示正常访问</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129012035.png" alt="image-20211129012035261"></p>
+</li>
+<li><p>使用 kali Linux 上的 Ettercap 工具</p>
+<ul>
+<li><p>修改 Ettercap 中 dns 的配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">┌──(root@kali)-[~]└─# vim /etc/ettercap/etter.dns</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>增加内容，讲 <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a> 域名的 IP 地址指向本机</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129012546.png" alt="image-20211129012545882"></p>
+</li>
+<li><p>开启本机 apache2 服务（如果有其他网站服务器也可以将上述域名和 IP 的对应关系指向其他网站服务器，这里使用本机作为网站服务器）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">┌──(root@kali)-[~]└─# service apache2 start</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 Ettercap 开始进行 dns_spoof（也可以直接开启图形化界面操作）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">┌──(root@kali)-[~]└─# ettercap -i eth0 -Tq -M arp:remote -P dns_spoof /192.168.31.250// /192.168.31.1//# -i 指定网络接口# -Tq 使用文本但不显示数据包内容# -M 进行mitm攻击（arp是属于Ettercap中的mitm攻击）# -P 启动这个&lt;plugin&gt;（使用此工具集中的 dns_spoof,可以有多个）# /192.168.31.250//    客户机IP# /192.168.31.1/    网关IP</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>此时再使用 Windows 10 访问 <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a> 就可以看到访问的是 kali Linux系统上的网站</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129014919.png" alt="image-20211129014918997"></p>
+</li>
+</ul>
+<h5 id="3、分析流量"><a href="#3、分析流量" class="headerlink" title="3、分析流量"></a>3、分析流量</h5><ul>
+<li><p>在进行网站访问时通过 wireshark 抓包工具进行流量抓取，从流量上未看出异常</p>
+<ul>
+<li><p>请求报文</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129015228.png" alt="image-20211129015228352"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129015431.png" alt="image-20211129015431031"></p>
+</li>
+</ul>
+</li>
+<li><p>在 Windows 10 客户机上进行 ARP 绑定，将网关的 IP 和 MAC 地址进行静态绑定（因为DNS欺骗是利用ARP欺骗攻击实现）</p>
+<ul>
+<li><p>查看网卡接口编号</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;netsh interface ipv4 show interfaceIdx     Met         MTU          状态                名称---  ----------  ----------  ------------  ---------------------------  1          75  4294967295  connected     Loopback Pseudo-Interface 1  6          25        1500  connected     Ethernet0  7          65        1500  disconnected  蓝牙网络连接</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将网关 IP 及 MAC 进行静态绑定</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;netsh -c &quot;i i&quot; add neighbors 6 192.168.31.1 3c-cd-57-52-e0-65C:\Users\Administrator&gt;arp -a接口: 192.168.31.250 --- 0x6  Internet 地址         物理地址              类型  192.168.31.1          3c-cd-57-52-e0-65     静态</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>再次进行抓包并访问 <a target="_blank" rel="noopener" href="http://www.woniuxy.com/">www.woniuxy.com</a> （这里也可以使用直接 ping <a target="_blank" rel="noopener" href="http://www.woniuxy.com)/">www.woniuxy.com）</a></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20211129022612.png" alt="image-20211129022612364"></p>
+</li>
+<li><p>可以看出，默认 DNS 服务器进行了两次响应，从分析可以得出，DNS报文是被劫持，并且触发了 ICMP 的不可达报文</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88dhcp%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="prev" title="流量攻击-应用层协议（dhcp协议）">
+      <i class="fa fa-chevron-left"></i> 流量攻击-应用层协议（dhcp协议）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E6%B5%81%E9%87%8F%E6%94%BB%E5%87%BB-%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE%EF%BC%88http%E5%8D%8F%E8%AE%AE%EF%BC%89/" rel="next" title="流量攻击-应用层协议（http协议）">
+      流量攻击-应用层协议（http协议） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81DNS%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">一、DNS服务</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81DNS%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">1、DNS概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%90%8D%E7%A7%B0%E7%A9%BA%E9%97%B4"><span class="nav-number">1.2.</span> <span class="nav-text">2、名称空间</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81DNS%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.</span> <span class="nav-text">二、DNS查询</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">1、查询过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%9F%A5%E8%AF%A2%E6%96%B9%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">2、查询方式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E9%83%A8%E7%BD%B2DNS%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">三、部署DNS服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81DNS%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">3.1.</span> <span class="nav-text">1、DNS服务器的分类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%83%A8%E7%BD%B2"><span class="nav-number">3.2.</span> <span class="nav-text">2、部署</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E9%85%8D%E7%BD%AEDNS%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">3.3.</span> <span class="nav-text">3、配置DNS服务器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81DNS%E8%AE%B0%E5%BD%95"><span class="nav-number">3.4.</span> <span class="nav-text">4、DNS记录</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%88%86%E6%9E%90DNS%E6%B5%81%E9%87%8F"><span class="nav-number">4.</span> <span class="nav-text">四、分析DNS流量</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E9%80%9A%E8%BF%87wireshark%E6%8A%93%E5%8F%96DNS%E6%8A%A5%E6%96%87"><span class="nav-number">4.1.</span> <span class="nav-text">1、通过wireshark抓取DNS报文</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81DNS%E6%8A%A5%E6%96%87%E5%AD%97%E6%AE%B5"><span class="nav-number">4.2.</span> <span class="nav-text">2、DNS报文字段</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%AE%9E%E6%96%BDDNS-%E6%AC%BA%E9%AA%97%E6%94%BB%E5%87%BB"><span class="nav-number">5.</span> <span class="nav-text">五、实施DNS 欺骗攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%AE%9E%E9%AA%8C%E7%8E%AF%E5%A2%83"><span class="nav-number">5.1.</span> <span class="nav-text">1、实验环境</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%AE%9E%E9%AA%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">5.2.</span> <span class="nav-text">2、实验步骤</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E5%88%86%E6%9E%90%E6%B5%81%E9%87%8F"><span class="nav-number">5.3.</span> <span class="nav-text">3、分析流量</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

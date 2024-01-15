@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、结构语句1、控制结构 运算符  算数运算符：算术运算符计算数字值，加法运算符 (+) 和乘法运算符 (*) 也操作字符串、数组和哈希表，加法运算符用于连接输入，乘法运算符返回输入的多个副本 1+    #添加整数;各个字符串、数组和哈希表-    #两个值相减*    #数字或复制字符串相乘和数组指定的数字&#x2F;    #两个值相除%    #取模-返回剩余的  赋值运算符：赋值运算符将一个或多个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="windiws操作-进阶版（powershell结构语句）">
+<meta property="og:url" content="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E7%BB%93%E6%9E%84%E8%AF%AD%E5%8F%A5%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、结构语句1、控制结构 运算符  算数运算符：算术运算符计算数字值，加法运算符 (+) 和乘法运算符 (*) 也操作字符串、数组和哈希表，加法运算符用于连接输入，乘法运算符返回输入的多个副本 1+    #添加整数;各个字符串、数组和哈希表-    #两个值相减*    #数字或复制字符串相乘和数组指定的数字&#x2F;    #两个值相除%    #取模-返回剩余的  赋值运算符：赋值运算符将一个或多个">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T14:08:53.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:25:09.459Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E7%BB%93%E6%9E%84%E8%AF%AD%E5%8F%A5%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>windiws操作-进阶版（powershell结构语句） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E7%BB%93%E6%9E%84%E8%AF%AD%E5%8F%A5%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          windiws操作-进阶版（powershell结构语句）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:08:53 / 修改时间：22:25:09" itemprop="dateCreated datePublished" datetime="2023-10-22T22:08:53+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、结构语句"><a href="#一、结构语句" class="headerlink" title="一、结构语句"></a>一、结构语句</h4><h5 id="1、控制结构"><a href="#1、控制结构" class="headerlink" title="1、控制结构"></a>1、控制结构</h5><ul>
+<li><p>运算符</p>
+<ul>
+<li><p>算数运算符：算术运算符计算数字值，加法运算符 (<code>+</code>) 和乘法运算符 (<code>*</code>) 也操作字符串、数组和哈希表，加法运算符用于连接输入，乘法运算符返回输入的多个副本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+    #添加整数;各个字符串、数组和哈希表-    #两个值相减*    #数字或复制字符串相乘和数组指定的数字/    #两个值相除%    #取模-返回剩余的</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>赋值运算符：赋值运算符将一个或多个值分配给变量，可以将算术运算符与赋值结合使用，将算术运算的结果分配给变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">=        #将变量的值设置为指定值+=        #将变量的值增加指定的值，或将指定值追加到现有值-=        #将变量的值降低指定的值*=        #将变量的值乘以指定的值，或将指定值追加到现有值/=        #将变量的值除以指定值%=        #将变量的值除以指定的值并然后，将余数 (取模) 赋给该变量++        #增加变量、可赋值属性的值，或数组元素1--        #减小变量、可赋值属性的值，或数组元素1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>比较运算符：比较运算符可以比较两个值，也可以根据输入值筛选集合的元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-eq        #equals等于-ne        #不等于-gt        #大于-ge        #大于或等于-lt        #小于-le        #小于或等于-like    #字符串匹配通配符模式-notlike        #字符串与通配符模式不匹配-match            #字符串匹配正则表达式模式-notmatch        #字符串与正则表达式模式不匹配-replace        #替换与正则表达式模式匹配的字符串-contains        #集合包含值-notcontains    #集合不包含值-in                #值在集合中-notin            #值不在集合中-is                #两个对象都是同一类型-isnot            #对象不是同一类型</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>逻辑运算符：连接表达式和语句，允许使用单个表达式测试多个条件，使用逻辑运算符的语句将返回布尔值 (TRUE 或 FALSE) 值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-AND        #逻辑 AND，当两者同时为 TRUE 时语句为 TRUE-OR            #逻辑 OR，如果任一情况，为 TRUE语句为 TRUE-xor        #逻辑排他 OR，如果都为TRUE，则为fales，只有一个语句为 TRUE，则为 TRUE-NOT        #逻辑上不是。 对语句求反!            #与 -not 相同</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>控制台输入和输出指令</p>
+<ul>
+<li><p>控制台输入</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">read-host &quot;请输入文字&quot;请输入文字: 123123</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>控制台输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Write-Host    #控制台直接输出，不会将数据传入管道中，可以使用 -ForegroundColor 和 -BackgroundColor 来设置字体颜色及背景颜色$a=1+2 | Write-Host -BackgroundColor Blue -ForegroundColor Red3Get-Variable aName                           Value                                           ----                           -----                                           a  Write-Host &quot;hello&quot; | Where-Object&#123;$_.length -gt 10&#125;hello</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Write-Output    #可以将对象发送给管道$a=1+2 | Write-OutputGet-Variable aName                           Value                                           ----                           -----                                           a                              3  Write-Output &quot;hello&quot; | Where-Object&#123;$_.length -gt 10&#125;        #无返回结果</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>if&#x2F;else&#x2F;if：用于根据一个或多个条件测试的结果运行语句列表的语言命令</p>
+<ul>
+<li><p>语法结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if (&lt;test1&gt;)    &#123;&lt;statement list 1&gt;&#125;[elseif (&lt;test2&gt;)    &#123;&lt;statement list 2&gt;&#125;][else    &#123;&lt;statement list 3&gt;&#125;]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：查询计算机中的服务，并根据状态进行排序，使用升序方式，并判断如果服务为 running 显示为绿色，如果服务状态为 stopped显示为红色，并打印服务名称和状态</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-Service |Sort-Object status -Descending |foreach &#123;    if ($_.Status -eq &quot;stopped&quot;)&#123;        Write-Host $_.Name $_.Status -ForegroundColor Red    &#125;    elseif($_.Status -eq &quot;running&quot;)&#123;        Write-Host $_.Name $_.Status -ForegroundColor Green    &#125;    else&#123;        Write-Host $_.Name $_.Status -ForegroundColor Yellow        &#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[int]$a=Read-Host &quot;请输入小明的成绩&quot;if($a -gt 90)&#123;    Write-Host (&quot;优秀&quot;)&#125;elseif($a -gt 80)&#123;    Write-Host (&quot;良好&quot;)&#125;elseif($a -gt 60)&#123;    Write-Host (&quot;及格&quot;)&#125;else&#123;    Write-Host (&quot;不及格&quot;)&#125;请输入小明的成绩: 95优秀</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>switch：针对检查多个条件，使用<code>switch</code>会更加简单<code>switch</code>语句列出每个条件和一个可选操作</p>
+<ul>
+<li><p>语法结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">switch [-regex | -wildcard | -exact] [-casesensitive] (&lt;test-expression&gt;)&#123;    &quot;string&quot; | number | variable | &#123; &lt;value-scriptblock&gt; &#125; &#123; &lt;action-scriptblock&gt; &#125;    default &#123; &lt;action-scriptblock&gt; &#125;                                 # 可选的&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：遍历数组中的内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$var=1,3,5,7Switch($var)&#123;    default &#123;$_&#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：Switch条件判断</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$a=Read-Host &quot;请输入成绩&quot;switch ($a)&#123;    &#123;$_ -ge 90&#125;&#123;&quot;大于90，优秀&quot;;break&#125;    &#123;$_ -ge 80&#125;&#123;&quot;大于80，良好&quot;;break&#125;    &#123;$_ -ge 60&#125;&#123;&quot;大于60，及格&quot;;break&#125;    &#123;$_ -lt 60&#125;&#123;&quot;小于于60，不及格&quot;&#125;&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h5 id="2、循环结构"><a href="#2、循环结构" class="headerlink" title="2、循环结构"></a>2、循环结构</h5><ul>
+<li><p>for：用于根据条件测试运行语句的语言命令，创建在指定条件的计算结果为 <code>$true</code> 时在命令块中运行命令的循环</p>
+<ul>
+<li><p>语法结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for (&lt;Init&gt;; &lt;Condition&gt;; &lt;Repeat&gt;)        &#123;    &lt;Statement list&gt;&#125;#Init         表示在循环开始之前运行的一个或多个命令。 通常使用语句的 Init 部分来创建和初始化具有起始值的变量#Condition    条件，如果语句返回为 $true，则允许命令块，循环重复，直到该条件变为 $false#Repeat        重复，表示一个或多个以逗号分隔的命令，这些命令在每次循环重复时执行。 通常，这用于修改在语句的 条件 部分内测试的变量#Statement list        表示在每次输入或重复循环时运行的一个或多个命令集</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：求1到100的和</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$sum=0for($a=1;$a -le 100;$a++)&#123;    $sum+=$a&#125;$sum</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：打印99乘法表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">for($a=1;$a -le 9;$a++)&#123;   for($b=1;$b -le $a;$b++)&#123;   Write-Host $(&quot;&#123;0&#125;*&#123;1&#125;=&#123;2&#125;`t&quot; -f $b,$a,($a*$b)) -NoNewline        #-f 格式化输出 -NoNewline 不进行换行   &#125;   Write-Host&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：查询本地TCP&#x2F;IP参数中的DHCP服务器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$a = ipconfig /allSwitch -Wildcard ($a)&#123;    &quot;*DHCP 服务器*&quot; &#123; Write-Host $switch.current&#125;&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>foreach：用于 (循环访问) 项集合中的一系列值，要遍历的最简单且最典型的集合类型是数组</p>
+<ul>
+<li><p>语法结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">foreach ($&lt;item&gt; in $&lt;collection&gt;)&#123;    &lt;statement list&gt;    &lt;statement list&gt;    ···········&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：循环遍历数组中的元素</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$letterArray = &quot;a&quot;,&quot;b&quot;,&quot;c&quot;,&quot;d&quot;foreach ($letter in $letterArray)&#123;  Write-Host $letter&#125;#结合if来进行判断，从而限制返回结果foreach ($file in Get-ChildItem)&#123;  if ($file.length -gt 100KB)  &#123;    Write-Host $file  &#125;&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>foreach-object：针对输入对象集合中的每个项执行操作，属于一个 cmdlet 命令</p>
+<ul>
+<li><p>使用脚本块来指定操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-Process | ForEach-Object &#123;$_.ProcessName&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>直接使用操作语句来执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-Process | ForEach-Object ProcessName</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：统计$PSHOME目录下所有文件的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Get-ChildItem $PSHOME | ForEach-Object -Process &#123;    if(!$_.PSIsContainer)&#123;        $_.Name        Write-Host ([int]($_.Length / 1024))&quot;KB&quot;        &quot; &quot;    &#125;&#125;#PSIsContainer属性，表示是一个容器</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>while：用于创建一个循环，只要条件测试计算结果为 <code>true</code>，该循环在命令块中运行命令。 语句 <code>while</code> 比 <code>For</code>语句更易于构造，因为它的语法不太复杂，比<code>foreach</code>语句更灵活，在语句中指定条件测试来控制循环运行次数</p>
+<ul>
+<li><p>语法结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">while (&lt;condition&gt;)&#123;&lt;statement list&gt;&#125;#&lt;condition&gt;    计算语句部分#&lt;statement list&gt;    执行语句部分，只有计算语句部分条件满足才会执行</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：打印0-10的数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$va1=0while($va1 -le 10)&#123;    Write-Host $va1    $va1++&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：计算1-100的和</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$va1=1$sum=0while($va1 -le 100)&#123;    $sum+=$va1    $va1++&#125;Write-Host $sum</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>do&#x2F;while：循环始终在计算条件之前至少运行一次，再进行条件判断，条件为<code>true</code>时，脚本块重复</p>
+<ul>
+<li><p>语法结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">do &#123;&lt;statement list&gt;&#125; while (&lt;condition&gt;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>案例：打印100以内7或7的倍数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$a=1do&#123;    if($a%7 -eq 0)&#123;        Write-Host $a    &#125;    $a++&#125;while($a -le 100)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>break：用于立即退出 foreach、for、do-while、switch、while语句，在循环中使用，表示立即退出<strong>当前</strong>循环</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$i=0$varB = 10,20,30,40foreach ($val in $varB) &#123;  if ($val -eq 30) &#123;    break  &#125;  $i++&#125;Write-Host &quot;30 所在位置的下标为 $i&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>continue：提供一种退出当前控制块但继续执行的方法，而不是完全退出，在循环中使用，表示退出<strong>当次</strong>循环</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">while ($ctr -lt 10)&#123;    $ctr += 1    if ($ctr -eq 5)    &#123;        continue    &#125;    Write-Host -Object $ctr&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E6%95%B0%E7%BB%84%E4%B8%8E%E5%93%88%E5%B8%8C%E8%A1%A8%EF%BC%89/" rel="prev" title="windiws操作-进阶版（powershell数组与哈希表）">
+      <i class="fa fa-chevron-left"></i> windiws操作-进阶版（powershell数组与哈希表）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E5%87%BD%E6%95%B0%EF%BC%89/" rel="next" title="windiws操作-进阶版（powershell函数）">
+      windiws操作-进阶版（powershell函数） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%BB%93%E6%9E%84%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.</span> <span class="nav-text">一、结构语句</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%8E%A7%E5%88%B6%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">1、控制结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%BE%AA%E7%8E%AF%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">2、循环结构</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

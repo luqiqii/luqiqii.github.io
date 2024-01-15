@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、IP 伪装和端口转发1、IP 地址伪装 地址伪装（masquerade）：通过地址伪装，NAT 设备将经过设备的包转发到指定接收方，同时将通过的数据包的源地址更改为其自己的接口地址。当返回的数据包到达时，会将目的地址修改为原始主机的地址并做路由。地址伪装可以实现局域网多个地址共享单一公网地址上网。类似于 NAT 技术中的端口多路复用（PAT）。IP 地址伪装仅支持 IPv4，不支持 IPv6。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux防火墙基础-firewalld富规则">
+<meta property="og:url" content="http://example.com/2023/10/22/linux%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80-firewalld%E5%AF%8C%E8%A7%84%E5%88%99/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、IP 伪装和端口转发1、IP 地址伪装 地址伪装（masquerade）：通过地址伪装，NAT 设备将经过设备的包转发到指定接收方，同时将通过的数据包的源地址更改为其自己的接口地址。当返回的数据包到达时，会将目的地址修改为原始主机的地址并做路由。地址伪装可以实现局域网多个地址共享单一公网地址上网。类似于 NAT 技术中的端口多路复用（PAT）。IP 地址伪装仅支持 IPv4，不支持 IPv6。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T14:37:18.000Z">
+<meta property="article:modified_time" content="2023-10-22T15:23:20.142Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/linux%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80-firewalld%E5%AF%8C%E8%A7%84%E5%88%99/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>linux防火墙基础-firewalld富规则 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/linux%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80-firewalld%E5%AF%8C%E8%A7%84%E5%88%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux防火墙基础-firewalld富规则
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:37:18 / 修改时间：23:23:20" itemprop="dateCreated datePublished" datetime="2023-10-22T22:37:18+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、IP-伪装和端口转发"><a href="#一、IP-伪装和端口转发" class="headerlink" title="一、IP 伪装和端口转发"></a>一、IP 伪装和端口转发</h4><h5 id="1、IP-地址伪装"><a href="#1、IP-地址伪装" class="headerlink" title="1、IP 地址伪装"></a>1、IP 地址伪装</h5><ul>
+<li>地址伪装（masquerade）：通过地址伪装，NAT 设备将经过设备的包转发到指定接收方，同时将通过的数据包的源地址更改为其自己的接口地址。当返回的数据包到达时，会将目的地址修改为原始主机的地址并做路由。地址伪装可以实现局域网多个地址共享单一公网地址上网。类似于 NAT 技术中的端口多路复用（PAT）。IP 地址伪装仅支持 IPv4，不支持 IPv6。</li>
+</ul>
+<h5 id="2、端口转发"><a href="#2、端口转发" class="headerlink" title="2、端口转发"></a>2、端口转发</h5><ul>
+<li>端口转发（Forward-port）：也称为目的地址转换或端口映射。通过端口转发，将指定IP 地址及端口的流量转发到相同计算机上的不同端口，或不同计算机上的端口。企业内网的服务器一般都采用私网地址，可以通过端口转发将使用私网地址的服务器发布到公网，以便让互联网用户访问。例如，当接收互联网用户的 HTTP 请求时，网关服务器判断数据包的目标地址与目标端口，一旦匹配指定规则，则将其目标地址修改为内网真正的服务器地址，从而建立有效连接。</li>
+</ul>
+<h4 id="二、地址伪装和端口转发配置"><a href="#二、地址伪装和端口转发配置" class="headerlink" title="二、地址伪装和端口转发配置"></a>二、地址伪装和端口转发配置</h4><h5 id="1、地址伪装"><a href="#1、地址伪装" class="headerlink" title="1、地址伪装"></a>1、地址伪装</h5><ul>
+<li><p>为指定区域增加地址伪装功能</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--permanent] [--zone=zone] --add-masquerade [--timeout=seconds]#--timeout=seconds：在一段时间后自动删除该功能</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为指定区域删除地址伪装功能</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--permanent] [--zone=zone] --remove-masquerade</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询指定区域是否开启地址伪装功能</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--permanent] [--zone=zone] --query-masquerade</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、端口转发-1"><a href="#2、端口转发-1" class="headerlink" title="2、端口转发"></a>2、端口转发</h5><ul>
+<li><p>列出端口转发配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--permanent] [--zone=zone] --list-forward-ports</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加端口转发规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--permanent] [--zone=zone] --add-forward-port=port=portid[portid]:proto=protocol[:toport=portid[-portid]][:toaddr=address[/mask]][--timeout=seconds]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除端口转发规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--permanent] [--zone=zone] --remove-forward-port=port=portid[portid]:proto=protocol[:toport=portid[-portid]][:toaddr=address[/mask]]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询端口转发规则</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd [--permanent] [--zone=zone] --query-forward-port=port=portid[portid]:proto=protocol[:toport=portid[-portid]][:toaddr=address[/mask]]</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="三、Firewalld-直接规则"><a href="#三、Firewalld-直接规则" class="headerlink" title="三、Firewalld 直接规则"></a>三、Firewalld 直接规则</h4><ul>
+<li>firewalld提供了“direct interface（直接接口），它允许管理员手动 ” 编写的iptables、ip6tables 和 ebtables 规则插入 firewalld 管理的区域中，适用于应用程序，而不是用户。如果对 iptables 不太熟，不建议使用直接接口，可能会无意中导致防火墙被入侵。firewalld保持对所增加项目的追踪，所以它还能质询 firewalld 和发现使用直接端口模式的程序造成的更改。直接端口通过 firewall-cmd 命令中的<code>--direct</code> 选项实现。除非将直接规则显式插入 firewalld 管理的区域，否则将首先解析直接规则，然后解析其他 firewalld 规则。执行以下命令即可添加一些直接规则以将某个 IP 范围列入黑名单。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# firewall-cmd --direct --permanent --add-chain ipv4 raw blacklistsuccess[root@localhost ~]# firewall-cmd --direct --permanent --add-rule ipv4 raw PREROUTING 0 -s 192.168.0.0/24 -j blacklistsuccess[root@localhost ~]# firewall-cmd --direct --permanent --add-rule ipv4 raw blacklist 0 -m limit --limit 1/min -j LOG --log-prefix &quot;blacklisted&quot;success[root@localhost ~]# firewall-cmd --direct --permanent --add-rule ipv4 raw blacklist 1 -j DROPsuccess</span><br></pre></td></tr></table></figure>
+
+<h4 id="四、Firewalld-富语言规则"><a href="#四、Firewalld-富语言规则" class="headerlink" title="四、Firewalld 富语言规则"></a>四、Firewalld 富语言规则</h4><ul>
+<li>firewalld 的富语言（rich language）提供了一种不需要了解 iptables 语法的通过高级语言配置复杂 IPv4 和 IPv6 防火墙规则的机制，为管理员提供了一种表达性语言，通过这种语言可以表达 firewalld 的基本语法中未涵盖的自定义防火墙规则。例如，仅允许从单个 IP 地址（而非通过某个区域路由的所有 IP 地址）连接到服务。</li>
+<li>富规则可用于表达基本的允许&#x2F;拒绝规则，也可以用于配置记录（面向 syslog 和 auditd），以及端口转发、伪装和速率限制</li>
+</ul>
+<h5 id="1、基本语法"><a href="#1、基本语法" class="headerlink" title="1、基本语法"></a>1、基本语法</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rule [family=&quot;&lt;rule family&gt;&quot;]  [ source address=&quot;&lt;address&gt;&quot; [invert=&quot;True&quot;] ]  [ destination address=&quot;&lt;address&gt;&quot; [invert=&quot;True&quot;] ]  [ &lt;element&gt; ]  [ log [prefix=&quot;&lt;prefix text&gt;&quot;] [level=&quot;&lt;log level&gt;&quot;] [limit value=&quot;rate/ duration&quot;] ]  [ audit ]  [ accept|reject|drop ]#规则的每个单一元素都能够以 option=value 的形式来采用附加参数</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>规则排序<ul>
+<li>一旦向某个区域（一般是指防火墙）中添加了多个规则，规则的排序会在很大程度上影响防火墙的行为。对于所有的区域，区域内的规则的基本排序是相同的。 如果区域中的任何规则与包均不匹配，通常会拒绝该包，但是区域可能具有不同的默认值。例如，可信区域（trusted）将接收任何不匹配的包。此外，在匹配某个记录规则后，将继续正常处理包。</li>
+<li>直接规则是个例外。大部分直接规则将首先进行解析，然后由 firewalld 进行其他处理，但是直接规则语法允许管理员在任何区域中的任何位置插入任何规则。</li>
+</ul>
+</li>
+<li>测试和调试<ul>
+<li>为了便于测试和调试，几乎所有规则都可以与超时一起添加到运行时配置。当包含超时的规则添加到防火墙时，计时器便针对该规则开始倒计时，一旦规则的计时器达到 0 秒，便从运行时配置中删除该规则。在使用远程防火墙时，使用超时会是一种极其有用的工具，特别是在测试更复杂的规则集时。如果规则有效，则管理员可以再次添加该规则；如果规则没有按照预期运行，甚至可能将管理员锁定而使其无法进入系统，那么规则将被自动删除，以允许管理员可以继续工作。</li>
+<li>通过在启用规则的 firewall-cmd 命令的结尾追加选项<code>--timeout=&lt;TIMEINSECONDS&gt;</code>,可向运行时规则中添加超时。</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、富语言规则命令"><a href="#2、富语言规则命令" class="headerlink" title="2、富语言规则命令"></a>2、富语言规则命令</h5><table>
+<thead>
+<tr>
+<th align="left">选项</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">—add-rich-rule&#x3D;’RULE’</td>
+<td align="left">向指定区域中添加 RULE，如果没有指定区域，则为默认区域</td>
+</tr>
+<tr>
+<td align="left">—remove-rich-rule&#x3D;’RULE’</td>
+<td align="left">从指定区域中删除 RULE，如果没有指定区域，则为默认区域</td>
+</tr>
+<tr>
+<td align="left">—query-rich-rule&#x3D;’RULE’</td>
+<td align="left">查询 RULE 是否已添加到指定区域，如果未指定区域，则为默认区域。规则存在，则返回 0，否则返回 1</td>
+</tr>
+<tr>
+<td align="left">—list-rich-rules</td>
+<td align="left">输出指定区域的所有富规则，如果未指定区域，则为默认区域</td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>任 何 已 配 置 的 富 规 则 都 会 显示在 firewall-cmd —list-all 和 firewall-cmd —list-all-zones 的输出结果中</p>
+<ul>
+<li><p>source：限制源 IP 地址，源地址可以是一个 IPv4、IPv6 地址或者一个网络地址段。</p>
+</li>
+<li><p>destination：限制目标地址，目标地址使用跟源地址相同的语法。</p>
+</li>
+<li><p>element：要素，该项只能是以下几种要素类型之一：service、port 、protocol、icmp-block、masquerade 和 forward-port</p>
+<ul>
+<li><p>service：服务名称是 firewalld 提供的其中一种服务。要获得支持的服务列表，输入以下命令： firewall-cmd —get-services 。如果一个服务提供了一个目标地址，它和规则中的目标地址冲突，则会导致一个错误。命令格式为：service name&#x3D;service_name。</p>
+</li>
+<li><p>port：端口可以是一个独立端口数字，或者是端口范围，如 5060～5062。协议为 TCP或 UDP 。命令格式为：port port&#x3D;number_or_range protocol&#x3D;protocol。</p>
+</li>
+<li><p>protocol：协议，可以是一个协议 ID 号，或者一个协议名。查询可用协议，请查阅&#x2F;etc&#x2F;protocols。命令格式为：protocol value&#x3D;protocol_name_or_ID。</p>
+</li>
+<li><p>icmp-block：阻断一个或多个 ICMP 类型。要获得支持的 ICMP 类型列表，输入firewall-cmd —get-icmptypes 命 令 即 可 查 看 。 命 令 格式为 ： icmp-block name&#x3D;icmptype_name。</p>
+</li>
+<li><p>masquerade：规则里的 IP 伪装。用源地址而不是目的地址来把伪装限制在一个范围内</p>
+</li>
+<li><p>forward-port：将指定的 TCP 或 UDP 协议的数据包转发到本机的其他端口，或另一台机器，或另一台机器上的其他端口。 port 和 to-port 可以是一个单独的端口数字，或一个端口范围。而目的地址是一个简单的 IP 地址。命令格式为：</p>
+<p>forward-port port&#x3D;number_or_range protocol&#x3D;protocol to-port&#x3D;number_or_range to-addr&#x3D;address</p>
+</li>
+</ul>
+</li>
+<li><p>log：注册有内核日志的连接请求到规则中，如系统日志。可以定义一个前缀文本把日志信息作为前缀加入。日志等级可以是emerg、alert、crit、error、warning、notice、info 或者 debug 中的一个。可以选择日志的用法，按以下方式限制日志：</p>
+<p>log [prefix&#x3D;prefix text] [level&#x3D;log level] limit value&#x3D;rate&#x2F;duration。持续时间的单位为 s、 m、 h、 d。 s 表示秒， m 表示分钟， h 表示小时， d 表示天。最大限定值是 1&#x2F;d（每天最多有一条日志进入）。</p>
+</li>
+<li><p>audit：审核，审核类型可以是 accept、reject 或 drop 中的一种，但不能在 audit 命令后指定，因为审核类型将会从规则动作中自动收集。审核不包含自身参数，但可以选择性地增加限制。审核的使用是可选择的</p>
+</li>
+<li><p>accept|reject|drop：可以是 accept、reject 或 drop 中的一个行为。命令格式为：accept | reject [type&#x3D;reject type] | drop。指定 accept 时，所有新的连接请求都将被允许。指定 reject 时，连接将被拒绝，发起端将接到一个拒绝信息。指定 drop时，所有数据包会被丢弃，并且不会向发起端发送任何信息</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="3、语法案例"><a href="#3、语法案例" class="headerlink" title="3、语法案例"></a>3、语法案例</h5><ul>
+<li><p>为认证报头协议 AH 使用新的 IPv4 和 IPv6 连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --add-rich-rule=&#x27;rule protocol value=ah accept&#x27; success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>允许新的 IPv4 和 IPv6 连接 FTP，并使用审核每分钟记录一次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --add-rich-rule=&#x27;rule service name=ftp log limit value=1/m audit accept&#x27;success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>允许来自 192.168.0.0&#x2F;24 地址的 TFTP 协议的 IPv4 连接，并且使用系统日志每分钟记录一次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --add-rich-rule=&#x27;rule family=&quot;ipv4&quot; source address=&quot;192.168.0.0/24&quot; service name=&quot;tftp&quot; log prefix=&quot;tftp&quot; level=&quot;info&quot; limit value=&quot;1/m&quot; accept&#x27; success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>为 RADIUS协议拒绝所有来自1∶2∶3∶4∶6∶∶的新IPv6连接，日志前缀为“dns”，级别为“info”，并每分钟最多记录 3 次。接受来自其他发起端新的 IPv6 连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --add-rich-rule=&#x27;rule family=&quot;ipv6&quot; source address=&quot;136::&quot; service name=&quot;radius&quot; log prefix=&quot;dns&quot; level=&quot;info&quot; limit value=&quot;3/m&quot; reject&#x27; success[root@gateway-server ~]# firewall-cmd --add-rich-rule=&#x27;rule family=&quot;ipv6&quot; service name=&quot;radius&quot; accept&#x27; success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将源 192.168.2.2 地址加入白名单，以允许来自这个源地址的所有连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --add-rich-rule=&#x27;rule family=&quot;ipv4&quot; source address=&quot;192.168.2.2&quot; accept&#x27; success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>拒绝来自 public 区域中 IP 地址 192.168.0.11 的所有流量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --zone=public --add-rich-rule=&#x27;rule family=ipv4 source address=192.168.0.11/32 reject&#x27;success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>丢弃来自默认区域中任何位置的所有传入的 ipsec esp 协议包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --add-rich-rule=&#x27;rule protocol value= &quot;esp&quot; drop&#x27; success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在 192.168.1.0&#x2F;24 子网的 dmz 区域中，接收端口 7900～7905 的所有 TCP 包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --zone=dmz --add-rich-rule=&#x27;rule family= ipv4 source address=192.168.1.0/24 port port=7900-7905 protocol=tcp accept&#x27;success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接收从 work 区域到 SSH 的新连接，以 notice 级别且每分钟最多三条消息的方式将新连接记录到 syslog</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --zone=work --add-rich-rule=&#x27;rule service name=ssh log prefix=&quot;ssh&quot; level=&quot;notice&quot; limit value=&quot;3/m&quot; accept&#x27; success</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在接下来的 5min 内，拒绝从默认区域中的子网 192.168.2.0&#x2F;24 到 DNS 的新连接，并且拒绝的连接将记录到 audit 系统，且每小时最多一条消息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@gateway-server ~]# firewall-cmd --add-rich-rule=&#x27;rule family=ipv4 source address=192.168.2.0/24 service name=dns audit limit value=&quot;1/h&quot; reject&#x27; --timeout=300 success</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80-firewalld%E6%A0%87%E5%87%86%E8%A7%84%E5%88%99/" rel="prev" title="linux防火墙基础-firewalld标准规则">
+      <i class="fa fa-chevron-left"></i> linux防火墙基础-firewalld标准规则
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E9%98%B2%E7%81%AB%E5%A2%99%E5%9F%BA%E7%A1%80-firewalld%E5%AE%9E%E6%88%98/" rel="next" title="linux防火墙基础-firewalld实战">
+      linux防火墙基础-firewalld实战 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81IP-%E4%BC%AA%E8%A3%85%E5%92%8C%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-number">1.</span> <span class="nav-text">一、IP 伪装和端口转发</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81IP-%E5%9C%B0%E5%9D%80%E4%BC%AA%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">1、IP 地址伪装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91"><span class="nav-number">1.2.</span> <span class="nav-text">2、端口转发</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%9C%B0%E5%9D%80%E4%BC%AA%E8%A3%85%E5%92%8C%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">二、地址伪装和端口转发配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%9C%B0%E5%9D%80%E4%BC%AA%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">1、地址伪装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91-1"><span class="nav-number">2.2.</span> <span class="nav-text">2、端口转发</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81Firewalld-%E7%9B%B4%E6%8E%A5%E8%A7%84%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">三、Firewalld 直接规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81Firewalld-%E5%AF%8C%E8%AF%AD%E8%A8%80%E8%A7%84%E5%88%99"><span class="nav-number">4.</span> <span class="nav-text">四、Firewalld 富语言规则</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">4.1.</span> <span class="nav-text">1、基本语法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%AF%8C%E8%AF%AD%E8%A8%80%E8%A7%84%E5%88%99%E5%91%BD%E4%BB%A4"><span class="nav-number">4.2.</span> <span class="nav-text">2、富语言规则命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E8%AF%AD%E6%B3%95%E6%A1%88%E4%BE%8B"><span class="nav-number">4.3.</span> <span class="nav-text">3、语法案例</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

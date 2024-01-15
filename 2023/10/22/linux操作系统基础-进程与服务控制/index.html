@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、查看和控制进程1、查看进程 ps 命令（查看静态的进程统计信息（Processes Statistic））有一部分选项是不带 “ - ” 前缀的 1a：显示当前终端下的所有进程信息，包括其他用户的进程。与“x”选项结合时将显示系统中所有的进程信息。u：使用以用户为主的格式输出进程信息。x：显示当前用户在所有终端下的进程信息。-e：显示系统内的所有进程信息。-l：使用长（Long）格式显示进程信">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux操作系统基础-进程与服务控制">
+<meta property="og:url" content="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E6%9C%8D%E5%8A%A1%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、查看和控制进程1、查看进程 ps 命令（查看静态的进程统计信息（Processes Statistic））有一部分选项是不带 “ - ” 前缀的 1a：显示当前终端下的所有进程信息，包括其他用户的进程。与“x”选项结合时将显示系统中所有的进程信息。u：使用以用户为主的格式输出进程信息。x：显示当前用户在所有终端下的进程信息。-e：显示系统内的所有进程信息。-l：使用长（Long）格式显示进程信">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112211954589.png">
+<meta property="article:published_time" content="2023-10-22T14:35:14.000Z">
+<meta property="article:modified_time" content="2023-10-22T15:20:48.292Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112211954589.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E6%9C%8D%E5%8A%A1%E6%8E%A7%E5%88%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>linux操作系统基础-进程与服务控制 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E6%9C%8D%E5%8A%A1%E6%8E%A7%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux操作系统基础-进程与服务控制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:35:14 / 修改时间：23:20:48" itemprop="dateCreated datePublished" datetime="2023-10-22T22:35:14+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、查看和控制进程"><a href="#一、查看和控制进程" class="headerlink" title="一、查看和控制进程"></a>一、查看和控制进程</h4><h5 id="1、查看进程"><a href="#1、查看进程" class="headerlink" title="1、查看进程"></a>1、查看进程</h5><ul>
+<li><p>ps 命令（查看静态的进程统计信息（Processes Statistic））有一部分选项是不带 “ - ” 前缀的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a：显示当前终端下的所有进程信息，包括其他用户的进程。与“x”选项结合时将显示系统中所有的进程信息。u：使用以用户为主的格式输出进程信息。x：显示当前用户在所有终端下的进程信息。-e：显示系统内的所有进程信息。-l：使用长（Long）格式显示进程信息。-f：使用完整的（Full）格式显示进程信息。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# ps auxUSER        PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMANDroot          1  0.0  0.6 128104  6680 ?        Ss   16:20   0:02 /usr/lib/systemd/systemd --switcheroot          2  0.0  0.0      0     0 ?        S    16:20   0:00 [kthreadd]root          4  0.0  0.0      0     0 ?        S&lt;   16:20   0:00 [kworker/0:0H]root          6  0.0  0.0      0     0 ?        S    16:20   0:00 [ksoftirqd/0]root          7  0.0  0.0      0     0 ?        S    16:20   0:00 [migration/0]root          8  0.0  0.0      0     0 ?        S    16:20   0:00 [rcu_bh]root          9  0.0  0.0      0     0 ?        R    16:20   0:01 [rcu_sched]root         10  0.0  0.0      0     0 ?        S&lt;   16:20   0:00 [lru-add-drain]..................................................................................</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>USER：启动该进程的用户账号的名称。</li>
+<li>PID：该进程在系统中的数字 ID 号，在当前系统中是唯一的。</li>
+<li>%CPU：CPU 占用的百分比。</li>
+<li>%MEM：内存占用的百分比。</li>
+<li>VSZ：占用虚拟内存（swap 空间）的大小。</li>
+<li>RSS：占用常驻内存（物理内存）的大小。</li>
+<li>TTY：表明该进程在哪个终端上运行。“?”表示未知或不需要终端。</li>
+<li>STAT：显示进程当前的状态，如 S（休眠）、R（运行）、Z（僵死）、&lt;（高优先级）、N（低优先级）、s（父进程）、＋（前台进程）。对处于僵死状态的进程应该予以手动终止。</li>
+<li>START：启动该进程的时间。</li>
+<li>TIME：该进程占用的 CPU 时间。</li>
+<li>COMMAND：启动该进程的命令的名称。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# ps -elfF S UID         PID   PPID  C PRI  NI ADDR SZ WCHAN  STIME TTY          TIME CMD4 S root          1      0  0  80   0 - 32026 ep_pol 16:20 ?        00:00:02 /usr/lib/systemd/system1 S root          2      0  0  80   0 -     0 kthrea 16:20 ?        00:00:00 [kthreadd]1 S root          4      2  0  60 -20 -     0 worker 16:20 ?        00:00:00 [kworker/0:0H]1 S root          6      2  0  80   0 -     0 smpboo 16:20 ?        00:00:00 [ksoftirqd/0]1 S root          7      2  0 -40   - -     0 smpboo 16:20 ?        00:00:00 [migration/0]1 S root          8      2  0  80   0 -     0 rcu_gp 16:20 ?        00:00:00 [rcu_bh]1 R root          9      2  0  80   0 -     0 -      16:20 ?        00:00:01 [rcu_sched].............................................................................................</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>PPID：表示对应进程的父进程的 PID 号</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#只显示当前用户会话中打开的进程[root@localhost ~]# ps   PID TTY          TIME CMD  2125 pts/0    00:00:00 bash  2142 pts/0    00:00:00 ps</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>top 命令（查看进程动态信息）默认情况下每三秒刷新一次</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112211954589.png" alt="image-20211221195433502"></p>
+<ul>
+<li>开头的部分显示了系统任务（Tasks）、CPU 占用、内存占用（Mem）、交换空间（Swap）等汇总信息<ul>
+<li>系统任务（Tasks）信息：total，总进程数；running，正在运行的进程数；sleeping，休眠的进程数；stopped，中止的进程数；zombie，僵死无响应的进程数。</li>
+<li>CPU 占用信息：us，用户占用；sy，内核占用；ni，优先级调度占用；id，空闲 CPU；wa，I&#x2F;O 等待占用；hi，硬件中断占用；si，软件中断占用；st，虚拟化占用。要了解空闲的 CPU 百分比，主要看%id 部分。</li>
+<li>内存占用（Mem）信息：total，总内存空间；free，空闲内存；used，已用内存；buff&#x2F;cache，物理内存和交换内存的缓冲区总和。</li>
+<li>交换空间（Swap）占用：total，总交换空间；free，空闲交换空间；used，已用交换空间；avail Mem，可用物理空间。</li>
+</ul>
+</li>
+<li>top命令是全屏操作界面<ul>
+<li>按 P 键根据 CPU 占用情况对进程列表进行排序</li>
+<li>按 M 键根据内存占用情况进行排序</li>
+<li>按 N 键根据启动时间进行排序</li>
+<li>按 h 键可以获得 top程序的在线帮助信息</li>
+<li>按 q 键可以正常地退出 top 程序</li>
+<li>按 k 键后输入PID号后可以直接中止进程</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>pgrep 命令（查询进程信息）使用 “ -l ” 选项输出对应的进程名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-l：输出对应的进程名-U：查询特定用户的进程-t：查询在特定终端运行的进程</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# pgrep -l &quot;log&quot;416 xfs-log/dm-0597 xfs-log/sda1665 xfs-log/dm-2721 systemd-logind1100 rsyslogd</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# pgrep -U zhangsan -l 2216 sshd2217 bash</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、控制进程"><a href="#2、控制进程" class="headerlink" title="2、控制进程"></a>2、控制进程</h5><ul>
+<li><p>启动进程后台运行（在后面加上 “ &amp; ” 符号）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cp /dev/cdrom mycd.iso &amp;[1] 10619</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>挂起当前的进程（使用 Ctrl+z 组合键）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cp /dev/cdrom mycd.iso^Z[1]+  已停止               cp -i /dev/cdrom mycd.iso</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看后台进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# jobs -l[1]+ 10273 停止                  cp -i /dev/cdrom mycd.iso</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>恢复后台进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# jobs -l[1]- 10273 停止                  cp -i /dev/cdrom mycd.iso[2]+ 10275 停止                  curl -o ./Firefox-latest-x86_64.tar.bz2 https://download-ssl.firefox.com.cn/releases/firefox/esr/91.4/zh-CN/Firefox-latest-x86_64.tar.bz2[root@localhost ~]# fg 2curl -o ./Firefox-latest-x86_64.tar.bz2 https://download-ssl.firefox.com.cn/releases/firefox/esr/91.4/zh-CN/Firefox-latest-x86_64.tar.bz2 31 73.5M   31 23.0M    0     0   853k      0  028  027  001  807k</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>中止进程</p>
+<ul>
+<li><p>当前正在运行的进程可以直接使用 “ Ctrl+c ” 组合键进行中止</p>
+</li>
+<li><p>kill命令，使用PID号作为参数，使用 “ -9 ” 选项强制中止</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# jobs -l[1]- 10273 停止                  cp -i /dev/cdrom mycd.iso[root@localhost ~]# kill -9 10273[root@localhost ~]# jobs -l[1]- 10273 已杀死               cp -i /dev/cdrom mycd.iso</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>killall命令，通过进程名称来终止进程，同样有 “-9” 选项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# yum -y install psmisc[root@localhost ~]# pgrep -l &quot;httpd&quot;10401 httpd10402 httpd10403 httpd10404 httpd10405 httpd10406 httpd[root@localhost ~]# killall &quot;httpd&quot;[root@localhost ~]# pgrep -l &quot;httpd&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>pkill命令，可以根据进程的名称、运行该进程的用户、进程所在的终端等多种属性终止特定的进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-U：指定用户-t：指定终端</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# pgrep -l -U &quot;zhangsan&quot;10296 sshd10297 bash[root@localhost ~]# pkill -U &quot;zhangsan&quot;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h4 id="二、系统服务控制"><a href="#二、系统服务控制" class="headerlink" title="二、系统服务控制"></a>二、系统服务控制</h4><p>在 CentOS 系统中，各种系统服务的控制脚本默认放在&#x2F;usr&#x2F;lib&#x2F;systemd 目录下。CentOS 7以后版本通过systemctl 命令工具可以实现对指定系统服务的控制，CentOS 7之前版本使用 service 来进行控制，目前其他分支Linux还是在采用 service 方式</p>
+<h5 id="1、语法"><a href="#1、语法" class="headerlink" title="1、语法"></a>1、语法</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#CentOS 7以后版本systemctl 控制类型 服务名称#其他分支及之前版本service 服务名称 控制类型</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、控制类型"><a href="#2、控制类型" class="headerlink" title="2、控制类型"></a>2、控制类型</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">start（启动）：运行指定的系统服务程序，实现服务功能。stop（停止）：终止指定的系统服务程序，关闭相应的功能。restart（重启）：先退出，再重新运行指定的系统服务程序。reload（重载）：不退出服务程序，只是刷新配置。在某些服务中与 restart 的操作相同。status（查看状态）：查看指定的系统服务的运行状态及相关信息。enable：设置开机自启动disable：设置开机自关闭is-disabled：查看开机时的状态</span><br><span class="line">[root@localhost ~]# service network restartRestarting network (via systemctl):                        [  确定  ]</span><br><span class="line">[root@localhost ~]# systemctl restart network</span><br><span class="line">#设置httpd开机自关闭[root@localhost ~]# systemctl disable httpd</span><br><span class="line">#设置httpd开机自启动[root@localhost ~]# systemctl enable httpd</span><br><span class="line">#查看系统启动时httpd服务服务的状态[root@localhost ~]# systemctl is-enabled httpddisabled</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E8%B4%A6%E5%8F%B7%E5%92%8C%E6%9D%83%E9%99%90/" rel="prev" title="linux操作系统基础-账号和权限">
+      <i class="fa fa-chevron-left"></i> linux操作系统基础-账号和权限
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/" rel="next" title="linux操作系统基础-网络相关命令">
+      linux操作系统基础-网络相关命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%9F%A5%E7%9C%8B%E5%92%8C%E6%8E%A7%E5%88%B6%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">一、查看和控制进程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1、查看进程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%8E%A7%E5%88%B6%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">2、控制进程</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E6%8E%A7%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">二、系统服务控制</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E8%AF%AD%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">1、语法</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%8E%A7%E5%88%B6%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.2.</span> <span class="nav-text">2、控制类型</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

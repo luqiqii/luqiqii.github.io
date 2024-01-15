@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、Linux应用程序1、应用程序组成 普通的可执行程序文件：一般保存在&#x2F;usr&#x2F;bin 目录中，普通用户即可执行。 服务器程序、管理程序文件：一般保存在&#x2F;usr&#x2F;sbin 目录中，只有管理员能执行。 配置文件：一般保存在&#x2F;etc 目录中，配置文件较多时会建立相应的子目录。 日志文件：一般保存在&#x2F;var&#x2F;log 目录中。 关于应">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux操作系统基础-安装以及管理应用程序">
+<meta property="og:url" content="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、Linux应用程序1、应用程序组成 普通的可执行程序文件：一般保存在&#x2F;usr&#x2F;bin 目录中，普通用户即可执行。 服务器程序、管理程序文件：一般保存在&#x2F;usr&#x2F;sbin 目录中，只有管理员能执行。 配置文件：一般保存在&#x2F;etc 目录中，配置文件较多时会建立相应的子目录。 日志文件：一般保存在&#x2F;var&#x2F;log 目录中。 关于应">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112210425929.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112210443573.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112210448903.png">
+<meta property="article:published_time" content="2023-10-22T14:34:51.000Z">
+<meta property="article:modified_time" content="2023-10-22T15:19:56.319Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112210425929.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>linux操作系统基础-安装以及管理应用程序 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E5%AE%89%E8%A3%85%E4%BB%A5%E5%8F%8A%E7%AE%A1%E7%90%86%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux操作系统基础-安装以及管理应用程序
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:34:51 / 修改时间：23:19:56" itemprop="dateCreated datePublished" datetime="2023-10-22T22:34:51+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、Linux应用程序"><a href="#一、Linux应用程序" class="headerlink" title="一、Linux应用程序"></a>一、Linux应用程序</h4><h5 id="1、应用程序组成"><a href="#1、应用程序组成" class="headerlink" title="1、应用程序组成"></a>1、应用程序组成</h5><ul>
+<li>普通的可执行程序文件：一般保存在&#x2F;usr&#x2F;bin 目录中，普通用户即可执行。</li>
+<li>服务器程序、管理程序文件：一般保存在&#x2F;usr&#x2F;sbin 目录中，只有管理员能执行。</li>
+<li>配置文件：一般保存在&#x2F;etc 目录中，配置文件较多时会建立相应的子目录。</li>
+<li>日志文件：一般保存在&#x2F;var&#x2F;log 目录中。</li>
+<li>关于应用程序的参考文档等数据：一般保存在&#x2F;usr&#x2F;share&#x2F;doc&#x2F;目录中。</li>
+<li>执行文件及配置文件的 man 手册页：一般保存在&#x2F;usr&#x2F;share&#x2F;man&#x2F;目录中。</li>
+</ul>
+<h5 id="2、软件包的封装类型"><a href="#2、软件包的封装类型" class="headerlink" title="2、软件包的封装类型"></a>2、软件包的封装类型</h5><ul>
+<li>RPM 软件包：这种软件包文件的扩展名为“.rpm”，只能在使用 RPM（RPM Package Manager，RPM 软件包管理器）机制的 Linux 操作系统中安装，如 RHEL、Fedora、CentOS 等。RPM 软件包一般针对特定版本的操作系统量身定制，因此依赖性较强。安装 RPM 软件包需要使用操作系统中的 rpm 命令。</li>
+<li>DEB软件包：这种软件包文件的扩展名为“.deb”，只能在使用DPKG（Debian Package，Debian 包管理器）机制的 Linux 操作系统中进行安装，如 Debian、Ubuntu 等。安装 DEB 软件包需要使用操作系统中的 dpkg 命令。</li>
+<li>源代码软件包：这种软件包是程序员开发完成的原始代码，一般被制作成“.tar.gz”或“.tar.bz2”等格式的压缩包文件，因多数使用 tar 命令打包而成，所以经常被称为“TarBall”。安装源代码软件包需要使用相应的编译工具，如 Linux 中的 C语言编译器 gcc。因此，在安装操作系统的时候尽量勾选“开发工具”一项来安装基本的编译环境。</li>
+<li>附带安装程序的软件包：这种软件包的扩展名不一，但仍以 TarBall 格式的居多。软件包中会提供用于安装的可执行程序或脚本文件，如 install.sh、setup 等，有时候会以“.bin”格式的单个安装文件形式出现。安装时只需运行安装文件就可以根据向导程序的提示完成安装操作。</li>
+</ul>
+<h4 id="二、RPM软件包管理"><a href="#二、RPM软件包管理" class="headerlink" title="二、RPM软件包管理"></a>二、RPM软件包管理</h4><p>RPM 软件包管理机制最早由 Red Hat 公司提出，后来随着版本的升级逐渐融入更多的优秀 特 性 ， 成 为 众 多 Linux 发 行 版 中 公 认 的 软 件 包 管 理 标 准 。 在 其 官 方 站 点<a target="_blank" rel="noopener" href="http://www.rpm.org/">http://www.rpm.org</a> 中，可以了解到关于 RPM 包管理机制的详细资料。</p>
+<h5 id="1、RPM命令"><a href="#1、RPM命令" class="headerlink" title="1、RPM命令"></a>1、RPM命令</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看RPM手册页[root@localhost ~]# man rpm</span><br></pre></td></tr></table></figure>
+
+<h5 id="2、查询-RPM-软件包信息"><a href="#2、查询-RPM-软件包信息" class="headerlink" title="2、查询 RPM 软件包信息"></a>2、查询 RPM 软件包信息</h5><ul>
+<li><p>查询已安装的 RPM 软件包信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-qa：显示当前系统中以 RPM 方式安装的所有软件列表。-qi：查看指定软件包的名称、版本、许可协议、用途描述等详细信息（--info）。-ql：显示指定的软件包在当前系统中安装的所有目录、文件列表（--list）。-qf：查看指定的文件或目录是由哪个软件包所安装的（--file）。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看系统中安装的所有rpm软件包[root@localhost ~]# rpm -qa</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#检索某个软件包是否有安装[root@localhost ~]# rpm -q samba未安装软件包 samba [root@localhost ~]# rpm -qa | grep -i samba</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查询某个已安装的软件包的摘要信息[root@localhost ~]# rpm -qi python</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看某个软件包安装的目录和文件清单[root@localhost ~]# rpm -ql python</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#系统中的某个文件是由哪一个软件包生成的[root@localhost ~]# which vim/usr/bin/vim[root@localhost ~]# rpm -qf /usr/bin/vimvim-enhanced-7.4.629-8.el7_9.x86_64</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询 RPM 软件包文件中的相关信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-qpi：查看指定软件包的名称、版本、许可协议、用途描述等详细信息。-qpl：查看该软件包准备要安装的所有目标目录、文件列表。</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="3、安装、升级、卸载-RPM-软件包"><a href="#3、安装、升级、卸载-RPM-软件包" class="headerlink" title="3、安装、升级、卸载 RPM 软件包"></a>3、安装、升级、卸载 RPM 软件包</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-i：在当前系统中安装（Install）一个新的 RPM 软件包。-e：卸载指定名称的软件包。-U：检查并升级系统中的某个软件包，若该软件包原来并未安装，则等同于“-i”选项。-F：检查并更新系统中的某个软件包，若该软件包原来并未安装，则放弃安装。-h：在安装或升级软件包的过程中，以“#”号显示安装进度。-v：显示软件安装过程中的详细信息。--force：强制安装某个软件包，当需要替换已安装的软件包及文件，或者安装一个比当前使用的软件版本更旧的软件时，可以使用此选项。--nodeps：在安装或升级、卸载一个软件包时，不检查与其他软件包的依赖关系。</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>安装、升级软件包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#安装[root@localhost ~]# rpm -ivh /mnt/Packages/net-tools-2.0-0.25.20131004git.el7.x86_64.rpm[root@localhost ~]# rpm -Uvh /mnt/Packages/net-tools-2.0-0.25.20131004git.el7.x86_64.rpm#更新，软件包必须已经安装才可更新[root@localhost ~]# rpm -Fvh /mnt/Packages/net-tools-2.0-0.25.20131004git.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>卸载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# rpm -e net-tools#可以结合 --nodeps 忽略依赖</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="三、源码编译安装"><a href="#三、源码编译安装" class="headerlink" title="三、源码编译安装"></a>三、源码编译安装</h4><h5 id="1、编译安装过程"><a href="#1、编译安装过程" class="headerlink" title="1、编译安装过程"></a>1、编译安装过程</h5><p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112210425929.png" alt="image-20211221042545852"></p>
+<h5 id="2、校验源码包"><a href="#2、校验源码包" class="headerlink" title="2、校验源码包"></a>2、校验源码包</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#使用MD5校验[root@localhost ~]# md5sum apache-tomcat-8.5.16.tar.gz ed752991f01e270ccfc7b4e8686f4f3c  apache-tomcat-8.5.16.tar.gz#使用sha256校验[root@localhost ~]# sha256sum apache-tomcat-8.5.16.tar.gz 939fb7c9fae3298dd0ccb4724b9c943c524e8af287531c8f3bbec0707e5780f1  apache-tomcat-8.5.16.tar.gz</span><br></pre></td></tr></table></figure>
+
+<h5 id="4、编译安装案例"><a href="#4、编译安装案例" class="headerlink" title="4、编译安装案例"></a>4、编译安装案例</h5><ul>
+<li><p>检查编译环境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# gcc --versiongcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-39)Copyright © 2015 Free Software Foundation, Inc.本程序是自由软件；请参看源代码的版权声明。本软件没有任何担保；包括没有适销性和某一专用目的下的适用性担保。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# make --versionGNU Make 3.82Built for x86_64-redhat-linux-gnuCopyright (C) 2010  Free Software Foundation, Inc.License GPLv3+: GNU GPL version 3 or later &lt;http://gnu.org/licenses/gpl.html&gt;This is free software: you are free to change and redistribute it.There is NO WARRANTY, to the extent permitted by law.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载源码包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# ls -l httpd-2.4.25.tar.gz -rw-r--r--. 1 root root 8460433 12月 21 04:30 httpd-2.4.25.tar.gz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装依赖软件（在编译过程中可以根据报错信息来进行安装依赖软件）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install pcre-devel apr-devel expat-devel libdb-devel cyrus-sasl-devel openldap-devel apr-util-devel</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# tar zxf httpd-2.4.25.tar.gz -C /usr/src/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cd /usr/src/httpd-2.4.25/ [root@localhost httpd-2.4.25]# ./configure --prefix=/usr/local/apache        #--prefix表示指定安装目录</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>编译</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost httpd-2.4.25]# make</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost httpd-2.4.25]# make install</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置软件并使用</p>
+<ul>
+<li><p>修改配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost httpd-2.4.25]# vim /usr/local/apache/conf/httpd.conf</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>在195行增加内容</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112210443573.png" alt="image-20211221044352534"></p>
+</li>
+</ul>
+</li>
+<li><p>启动服务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost httpd-2.4.25]# /usr/local/apache/bin/apachectl start</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>访问</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112210448903.png" alt="image-20211221044804855"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="四、使用yum源"><a href="#四、使用yum源" class="headerlink" title="四、使用yum源"></a>四、使用yum源</h4><h5 id="1、yum命令"><a href="#1、yum命令" class="headerlink" title="1、yum命令"></a>1、yum命令</h5><ul>
+<li><p>查询软件包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum list  [软件名]...yum info  [软件名]...yum search  &lt;关键词&gt;...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询软件包组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum grouplist  &lt;包组名&gt;...yum groupinfo  &lt;包组名&gt;...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装软件（可以使用 -y 选项表示不提醒）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install  &lt;软件名&gt;...yum groupinstall  &lt;包组名&gt;...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>升级软件（可以使用 -y 选项表示不提醒）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update &lt;软件名&gt;...yum groupupdate &lt;包组名&gt;...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>卸载软件（可以使用 -y 选项表示不提醒）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum remove &lt;软件名&gt;...yum groupremove &lt;包组名&gt;...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成缓存和清空缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum makecacheyum clean all</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、yum的配置文件"><a href="#2、yum的配置文件" class="headerlink" title="2、yum的配置文件"></a>2、yum的配置文件</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">基本设置：/etc/yum.conf仓库设置：/etc/yum.repos.d/*.repo日志文件：/var/log/yum.log</span><br></pre></td></tr></table></figure>
+
+<h5 id="3、本地yum源"><a href="#3、本地yum源" class="headerlink" title="3、本地yum源"></a>3、本地yum源</h5><p>使用本地ISO文件作为yum仓库</p>
+<ul>
+<li><p>挂载ISO文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# mount /dev/cdrom /mntmount: /dev/sr0 写保护，将以只读方式挂载</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>永久性挂载修改 &#x2F;etc&#x2F;fstab 文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# vi /etc/fstab## /etc/fstab# Created by anaconda on Mon Dec 20 04:33:06 2021## Accessible filesystems, by reference, are maintained under &#x27;/dev/disk&#x27;# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info#/dev/mapper/centos-root /                       xfs     defaults        0 0UUID=92113f6c-eec5-41d0-9361-c54e226ad116 /boot                   xfs     defaults        0 0/dev/mapper/centos-home /home                   xfs     defaults        0 0/dev/mapper/centos-swap swap                    swap    defaults        0 0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/dev/mapper/centos-root        #分区/                            #挂载点xfs                            #文件系统类型defaults                    #挂载参数0                            #表示文件系统是否需要dump备份（dump是一个备份工具），一般设为1时表示需要，设为0时将被dump所忽略0                            #该数字用于决定在系统启动时进行磁盘检查的顺序，0不进行检查，1优先，2其次。对于根分区应设为1，其它分区设为2</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>修改仓库文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# cd /etc/yum.repos.d/[root@localhost yum.repos.d]# vim CentOS-Media.repo    [c7-media]    name=CentOS-$releasever - Media    baseurl=file:///mnt/    gpgcheck=1    enabled=1    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重命名网络源文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost yum.repos.d]# mv CentOS-Base.repo CentOS-Base.repo.bak</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost yum.repos.d]# yum makecache已加载插件：fastestmirrorLoading mirror speeds from cached hostfilec7-media                                                                                         | 3.6 kB  00:00:00     元数据缓存已建立</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="4、网络yum源"><a href="#4、网络yum源" class="headerlink" title="4、网络yum源"></a>4、网络yum源</h5><ul>
+<li><p>需要联网</p>
+</li>
+<li><p>备份源文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>下载新的源文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# wget -O /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo或者[root@localhost ~]# curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>生成缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# yum makecache已加载插件：fastestmirrorLoading mirror speeds from cached hostfile * base: mirrors.aliyun.com * extras: mirrors.aliyun.com * updates: mirrors.aliyun.combase                                                                                             | 3.6 kB  00:00:00     extras                                                                                           | 2.9 kB  00:00:00     updates                                                                                          | 2.9 kB  00:00:00     元数据缓存已建立</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-vi%E7%BC%96%E8%BE%91%E5%99%A8/" rel="prev" title="linux操作系统基础-vi编辑器">
+      <i class="fa fa-chevron-left"></i> linux操作系统基础-vi编辑器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E8%B4%A6%E5%8F%B7%E5%92%8C%E6%9D%83%E9%99%90/" rel="next" title="linux操作系统基础-账号和权限">
+      linux操作系统基础-账号和权限 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81Linux%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">一、Linux应用程序</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E7%BB%84%E6%88%90"><span class="nav-number">1.1.</span> <span class="nav-text">1、应用程序组成</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E8%BD%AF%E4%BB%B6%E5%8C%85%E7%9A%84%E5%B0%81%E8%A3%85%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.2.</span> <span class="nav-text">2、软件包的封装类型</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81RPM%E8%BD%AF%E4%BB%B6%E5%8C%85%E7%AE%A1%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">二、RPM软件包管理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81RPM%E5%91%BD%E4%BB%A4"><span class="nav-number">2.1.</span> <span class="nav-text">1、RPM命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%9F%A5%E8%AF%A2-RPM-%E8%BD%AF%E4%BB%B6%E5%8C%85%E4%BF%A1%E6%81%AF"><span class="nav-number">2.2.</span> <span class="nav-text">2、查询 RPM 软件包信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E5%AE%89%E8%A3%85%E3%80%81%E5%8D%87%E7%BA%A7%E3%80%81%E5%8D%B8%E8%BD%BD-RPM-%E8%BD%AF%E4%BB%B6%E5%8C%85"><span class="nav-number">2.3.</span> <span class="nav-text">3、安装、升级、卸载 RPM 软件包</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%BA%90%E7%A0%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">三、源码编译安装</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E8%BF%87%E7%A8%8B"><span class="nav-number">3.1.</span> <span class="nav-text">1、编译安装过程</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%A0%A1%E9%AA%8C%E6%BA%90%E7%A0%81%E5%8C%85"><span class="nav-number">3.2.</span> <span class="nav-text">2、校验源码包</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85%E6%A1%88%E4%BE%8B"><span class="nav-number">3.3.</span> <span class="nav-text">4、编译安装案例</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%BD%BF%E7%94%A8yum%E6%BA%90"><span class="nav-number">4.</span> <span class="nav-text">四、使用yum源</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81yum%E5%91%BD%E4%BB%A4"><span class="nav-number">4.1.</span> <span class="nav-text">1、yum命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81yum%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">4.2.</span> <span class="nav-text">2、yum的配置文件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%9C%AC%E5%9C%B0yum%E6%BA%90"><span class="nav-number">4.3.</span> <span class="nav-text">3、本地yum源</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E7%BD%91%E7%BB%9Cyum%E6%BA%90"><span class="nav-number">4.4.</span> <span class="nav-text">4、网络yum源</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

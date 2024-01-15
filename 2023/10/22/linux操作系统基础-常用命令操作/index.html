@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="[root@localhost ~]# help pwd 123- 使用 “ —help ” 选项 [root@localhost ~]# ls --help 123- 使用man手册页 [root@localhost ~]# man file 123##### 4、管道和重定向案例 [root@localhost ~]# man ls | col -b &gt; lshelp.txt#col">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux操作系统基础-常用命令操作">
+<meta property="og:url" content="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="[root@localhost ~]# help pwd 123- 使用 “ —help ” 选项 [root@localhost ~]# ls --help 123- 使用man手册页 [root@localhost ~]# man file 123##### 4、管道和重定向案例 [root@localhost ~]# man ls | col -b &gt; lshelp.txt#col">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T14:34:09.000Z">
+<meta property="article:modified_time" content="2023-10-22T15:18:43.755Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>linux操作系统基础-常用命令操作 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux操作系统基础-常用命令操作
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:34:09 / 修改时间：23:18:43" itemprop="dateCreated datePublished" datetime="2023-10-22T22:34:09+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li><pre><code>[root@localhost ~]# help pwd
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 使用 “ —help ” 选项</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# ls --help
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 使用man手册页</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# man file
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">##### 4、管道和重定向案例</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# man ls | col -b &gt; lshelp.txt#col -b 过滤控制字符
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 管道：用竖杠符号“|”表示，用于将前面命令的屏幕输出结果作为后面命令的操作对象（输入）。就好像一根管道一样，从这头塞入内容，从另一头出来</span><br><span class="line">- 重定向输出：用大于符号“&gt;”表示，前面的命令成功执行以后，其屏幕输出结果将保存到“&gt;”号后边指定的文件中，而不是直接输出到屏幕，因此称为重定向。</span><br><span class="line"></span><br><span class="line">#### 二、目录和文件基本操作</span><br><span class="line"></span><br><span class="line">##### 1、查看及切换目录</span><br><span class="line"></span><br><span class="line">- pwd命令（查看当前的工作目录（Print Working Directory））</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# pwd/root
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- cd 命令（切换工作目录（Change Directory））</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# cd /boot/grub[root@localhost grub]# pwd/boot/grub
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 绝对路径：这种方式以根目录“/”作为起点，如“/boot/grub”表示根目录下 boot子目录中的 grub 目录</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+  [root@localhost ~]# cd /boot/grub
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 相对路径：这种方式一般以当前工作目录作为起点，在开头不使用“/”符号，因此使用的时候更加简短、便捷</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+  [root@localhost apache-tomcat-8.5.16]# cd conf/[root@localhost conf]# pwd/usr/local/apache-tomcat-8.5.16/conf
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+  [root@localhost conf]# cd ../../[root@localhost local]# pwd/usr/local
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+  [root@localhost ~]# cd ~zhangsan[root@localhost zhangsan]# pwd/home/zhangsan
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- ls 命令（列表（List）显示目录内容）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+-l 选项：以长格式（Long）显示文件和目录的列表，包括权限、大小、最后更新时间等详细信息。-a 选项：显示所有（All）子目录和文件的信息，包括名称以点号“.”开头的隐藏目录和隐藏文件。-A 选项：与-a 选项的作用基本类似，但有两个特殊隐藏目录不会显示，即表示当前目录的“.”和表示父目录的“..”。-d 选项：显示目录（Directory）本身的属性，而不是显示目录中的内容。-h 选项：以更人性化（Human）的方式显示目录或文件的大小，默认的大小单位为字节（B），使用-h 选项后将显示为 KB、MB 等单位。此选项需要结合-l 选项一起使用。-R 选项：以递归（Recursive）的方式显示指定目录及其子目录中的所有内容。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost grub]# lssplash.xpm.gz
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# ls -lddr-xr-x---. 2 root root 186 12月 20 19:47 .
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# ls -lh /etc/yum.conf /boot/vmlinuz-3.10.0-1062.el7.x86_64 -rwxr-xr-x. 1 root root 6.5M 8月   8 2019 /boot/vmlinuz-3.10.0-1062.el7.x86_64-rw-r--r--. 1 root root  970 8月   8 2019 /etc/yum.conf
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# ls -lh /etc/ns*.conf-rw-r--r--. 1 root root 2.0K 12月 20 04:33 /etc/nsswitch.conf
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- du 命令（统计目录及文件的空间占用情况（Disk Usage））</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+-a：统计磁盘空间占用时包括所有的文件，而不仅仅只统计目录。-h：以更人性化的方式（默认以 KB 计数，但不显示单位）显示出统计结果，使用-h选项后将显示出 KB、MB 等单位。-s：只统计每个参数所占用空间总的（Summary）大小，而不是统计每个子目录、文件的大小。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# du -sh /var/log3.3M    /var/log
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# du -ah /root/4.0K    /root/.bash_logout4.0K    /root/.bash_profile4.0K    /root/.bashrc4.0K    /root/.cshrc4.0K    /root/.tcshrc4.0K    /root/anaconda-ks.cfg9.0M    /root/apache-tomcat-8.5.16.tar.gz4.0K    /root/.bash_history8.0K    /root/.viminfo9.1M    /root/
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">##### 2、创建目录及文件</span><br><span class="line"></span><br><span class="line">- mkdir 命令（创建新的目录（Make Directory））</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# mkdir public_html[root@localhost ~]# ls -d public_html/public_html/
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+#一次创建多级目录使用 -p 选项[root@localhost ~]# mkdir -p /woniuxy/wangan/10期[root@localhost ~]# ls -R /woniuxy//woniuxy/:wangan/woniuxy/wangan:10期/woniuxy/wangan/10期:
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- touch 命令（创建空文件）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# cd /woniuxy/wangan/10期/[root@localhost ~]# touch linux基础命令.md[root@localhost 10期]# ls -lh总用量 0-rw-r--r--. 1 root root 0 12月 20 23:52 linux基础命令.md
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- ln 命令（创建链接（Link）文件）</span><br><span class="line"></span><br><span class="line">  - 软链接：又称为符号链接，删除原始文件后，软链接将失效，软链接适用于文件或目录，软链接与原始文件可以位于不同的文件系统中，使用 “ -s ”选项</span><br><span class="line">  - 硬链接：默认创建硬链接，删除原始文件后，硬链接仍然可用，硬链接只可用于文件，硬链接必须与原始文件在同一个文件系统（如一个Linux 分区）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost 10期]# ln -s linux基础命令.md /[root@localhost 10期]# ls -lhd /linux基础命令.md lrwxrwxrwx. 1 root root 20 12月 20 23:59 /linux基础命令.md -&gt; linux基础命令.md
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">##### 3、复制、删除、移动目录和文件</span><br><span class="line"></span><br><span class="line">- cp 命令（复制（Copy）文件或目录）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+-f：覆盖目标同名文件或目录时不进行提醒，而直接强制（Force）复制。-i：覆盖目标同名文件或目录时提醒用户确认（Interactive，交互式）。-p：复制时保持（Preserve）源文件的权限、属主及时间标记等属性不变。-r：复制目录时必须使用此选项，表示递归复制所有文件及子目录。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# cp /bin/touch /mytouch
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# cp -r /boot/grub/ /etc/host.conf /woniuxy/
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# ls -ld /home/zhangsan/zhangsan.txt -rw-rw-r--. 1 zhangsan zhangsan 0 12月 21 00:04 /home/zhangsan/zhangsan.txt[root@localhost ~]# cp -p /home/zhangsan/zhangsan.txt /root/[root@localhost ~]# ls -ld zhangsan.txt -rw-rw-r--. 1 zhangsan zhangsan 0 12月 21 00:04 zhangsan.txt
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- rm 命令（删除（Remove）文件或目录）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+-f：删除文件或目录时不进行提醒，而直接强制删除。-i：删除文件或目录时提醒用户确认。-r：删除目录时必须使用此选项，表示递归删除整个目录树（应谨慎使用）。
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# rm -rf public_html/[root@localhost ~]# rm -rf /*
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- mv 命令（移动（Move）文件或目录）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# mv /woniu.txt /woniuxy.txt
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# mv /woniuxy.txt /root/[root@localhost ~]# ls -ld /root/woniuxy.txt -rw-r--r--. 1 root root 16 12月 20 17:20 /root/woniuxy.txt
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">##### 4、查找目录和文件</span><br><span class="line"></span><br><span class="line">- which 命令（查找用户所执行的命令文件存放的目录）</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# which  lsalias ls=&#39;ls --color=auto&#39;    /usr/bin/ls
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+#当查找内部命令时就会出现无法搜索到命令文件目录[root@localhost ~]# which history/usr/bin/which: no history in (/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin)
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- find 命令（查找文件或目录）</span><br><span class="line"></span><br><span class="line">  - 按名称查找：关键字为“-name”，根据目标文件的名称进行查找，允许使用 “ * ”及 “ ? ”通配符。</span><br><span class="line">  - 按文件大小查找：关键字为“-size”，根据目标文件的大小进行查找，一般使用“＋”和“-”号设置超过或小于指定的大小作为查找条件。常用的容量单位包括 kB（注意 k 是小写）、MB、GB。</span><br><span class="line">  - 按文件属主查找：关键字为“-user”，根据文件是否属于目标用户进行查找。</span><br><span class="line">  - 按文件类型查找：关键字为“-type”，根据文件的类型进行查找，这里的类型指的是普通文件（f）、目录（d）、块设备文件（b）、字符设备文件（c）等。块设备指的是成块读取数据的设备（如硬盘、内存等），而字符设备指的是按单个字符读取数据的设备（如键盘、鼠标等）。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# find /etc –name &quot;resol*.conf&quot;/etc/resolv.conf
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# find /boot/ -type d/boot//boot/efi/boot/efi/EFI/boot/efi/EFI/centos/boot/grub2/boot/grub2/i386-pc/boot/grub2/locale/boot/grub2/fonts/boot/grub
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#### 三、Linux的关机与重启</span><br><span class="line"></span><br><span class="line">##### 1、关机</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# poweroff[root@localhost ~]# shutdown -h now[root@localhost ~]# shutdown -h +10[root@localhost ~]# shutdown -r 23:30[root@localhost ~]# init 0
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">##### 2、重启</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# reboot[root@localhost ~]# shutdown -r now[root@localhost ~]# shutdown -r +10[root@localhost ~]# shutdown -r 23:30[root@localhost ~]# init 6
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">##### 3、取消定时关机或重启</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+[root@localhost ~]# shutdown -cBroadcast message from root@localhost.localdomain (Tue 2021-12-21 00:35:36 CST):The system shutdown has been cancelled at Tue 2021-12-21 00:36:36 CST!
+</code></pre>
+</li>
+</ul>
+<pre><code>
+</code></pre>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-cenos%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86/" rel="prev" title="linux操作系统基础-cenos远程管理">
+      <i class="fa fa-chevron-left"></i> linux操作系统基础-cenos远程管理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/linux%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%9F%BA%E7%A1%80-%E7%9B%AE%E5%BD%95%E5%92%8C%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" rel="next" title="linux操作系统基础-目录和文件管理">
+      linux操作系统基础-目录和文件管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="windows基础命令操作一、目录与文件应用操作1、cd 命令 用于改变当前提示符盘符路径或提示符目录路径  用法： 1CD [&#x2F;D] [drive:][path]  举例： 1#切换目录到 E 盘C:\Users\Administrator&gt;E:或者C:\Users\Administrator&gt;cd &#x2F;d E:#如果需要进入某个文件夹就必须使用 cd 命令进行切换C:\Users\A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网工基础-windows基础（基础命令操作）">
+<meta property="og:url" content="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="windows基础命令操作一、目录与文件应用操作1、cd 命令 用于改变当前提示符盘符路径或提示符目录路径  用法： 1CD [&#x2F;D] [drive:][path]  举例： 1#切换目录到 E 盘C:\Users\Administrator&gt;E:或者C:\Users\Administrator&gt;cd &#x2F;d E:#如果需要进入某个文件夹就必须使用 cd 命令进行切换C:\Users\A">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-10-22T13:29:56.000Z">
+<meta property="article:modified_time" content="2023-10-22T13:37:34.039Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>网工基础-windows基础（基础命令操作） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网工基础-windows基础（基础命令操作）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 21:29:56 / 修改时间：21:37:34" itemprop="dateCreated datePublished" datetime="2023-10-22T21:29:56+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="windows基础命令操作"><a href="#windows基础命令操作" class="headerlink" title="windows基础命令操作"></a>windows基础命令操作</h1><h4 id="一、目录与文件应用操作"><a href="#一、目录与文件应用操作" class="headerlink" title="一、目录与文件应用操作"></a>一、目录与文件应用操作</h4><h5 id="1、cd-命令"><a href="#1、cd-命令" class="headerlink" title="1、cd 命令"></a>1、cd 命令</h5><ul>
+<li><p>用于改变当前提示符盘符路径或提示符目录路径</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CD [/D] [drive:][path]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#切换目录到 E 盘C:\Users\Administrator&gt;E:或者C:\Users\Administrator&gt;cd /d E:#如果需要进入某个文件夹就必须使用 cd 命令进行切换C:\Users\Administrator&gt;cd c:/windows#退回上一级目录c:\Windows&gt;cd ..    #这里 . 代表当前目录，.. 代表上一级目录#如果是退回上一级的上一级目录使用如下命令c:\Windows&gt;cd ../..</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、dir-命令"><a href="#2、dir-命令" class="headerlink" title="2、dir 命令"></a>2、dir 命令</h5><ul>
+<li><p>用于显示某个磁盘或目录上的全部或部分文件目录</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DIR [drive:][path][filename] [/A[[:]attributes]] [/B] [/C] [/D] [/L] [/N]  [/O[[:]sortorder]] [/P] [/Q] [/R] [/S] [/T[[:]timefield]] [/W] [/X] [/4]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看目录下的目录名和文件名c:\&gt;dir /w 驱动器 C 中的卷没有标签。 卷的序列号是 1666-AC2F c:\ 的目录1.txt                 [PerfLogs]            [Program Files]       [Program Files (x86)] [Users][Windows]               1 个文件              0 字节               5 个目录 41,526,591,488 可用字节c:\&gt;dir /d或c:\&gt;dir /b</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看目录下的隐藏文件和目录c:\&gt;dir /a:h 驱动器 C 中的卷没有标签。 卷的序列号是 1666-AC2F c:\ 的目录2020/10/25  14:10    &lt;DIR&gt;          $Recycle.Bin2016/12/14  18:39           389,408 bootmgr2016/07/16  21:18                 1 BOOTNXT2020/10/25  14:05    &lt;JUNCTION&gt;     Documents and Settings [C:\Users]2021/08/25  09:17     1,207,959,552 pagefile.sys2020/10/25  16:00    &lt;DIR&gt;          ProgramData2020/10/25  14:05    &lt;DIR&gt;          Recovery2021/08/24  10:44    &lt;DIR&gt;          System Volume Information               3 个文件  1,208,348,961 字节               5 个目录 41,536,897,024 可用字节</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看目录下的文件和目录按名称逆字母顺序（A到Z）排序c:\&gt;dir /o:-n 驱动器 C 中的卷没有标签。 卷的序列号是 1666-AC2F c:\ 的目录2020/10/25  14:10    &lt;DIR&gt;          Windows2020/10/25  14:10    &lt;DIR&gt;          Users2016/07/16  21:23    &lt;DIR&gt;          Program Files (x86)2020/10/25  16:00    &lt;DIR&gt;          Program Files2016/07/16  21:23    &lt;DIR&gt;          PerfLogs2021/08/24  14:13                 0 1.txt               1 个文件              0 字节               5 个目录 41,536,897,024 可用字节</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看目录下的文件和目录的创建时间c:\&gt;dir /t:c 驱动器 C 中的卷没有标签。 卷的序列号是 1666-AC2F c:\ 的目录2021/08/24  14:13                 0 1.txt2016/07/16  21:23    &lt;DIR&gt;          PerfLogs2016/07/16  14:04    &lt;DIR&gt;          Program Files2016/07/16  14:04    &lt;DIR&gt;          Program Files (x86)2016/07/16  14:04    &lt;DIR&gt;          Users2016/07/16  14:04    &lt;DIR&gt;          Windows               1 个文件              0 字节               5 个目录 41,536,270,336 可用字节</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="3、md-命令"><a href="#3、md-命令" class="headerlink" title="3、md 命令"></a>3、md 命令</h5><ul>
+<li><p>用于创建目录或多级子目录</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MKDIR [drive:]pathMD [drive:]path</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#在 D 盘创建公司文件夹，使用绝对路径c:\&gt;md d:\公司文件夹c:\&gt;dir d:\ 驱动器 D 中的卷没有标签。 卷的序列号是 DE64-FF0E d:\ 的目录2021/08/25  10:39    &lt;DIR&gt;          公司文件夹               0 个文件              0 字节               1 个目录 32,129,843,200 可用字节</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#在 D 盘创建财务文件夹，使用相对路径c:\&gt;d:D:\&gt;md 财务文件夹D:\&gt;dir 驱动器 D 中的卷没有标签。 卷的序列号是 DE64-FF0E D:\ 的目录2021/08/25  10:39    &lt;DIR&gt;          公司文件夹2021/08/25  10:41    &lt;DIR&gt;          财务文件夹               0 个文件              0 字节               2 个目录 32,129,843,200 可用字节</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="4、rd-命令"><a href="#4、rd-命令" class="headerlink" title="4、rd 命令"></a>4、rd 命令</h5><ul>
+<li><p>用于删除目录</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RMDIR [/S] [/Q] [drive:]pathRD [/S] [/Q] [drive:]path</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#删除 公司文件夹 目录，包括所有子目录，不提醒D:\&gt;rd 公司文件夹 /s/q</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="5、move-命令"><a href="#5、move-命令" class="headerlink" title="5、move 命令"></a>5、move 命令</h5><ul>
+<li><p>用于重命名文件或目录，并可以移动到指定位置</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">要移动至少一个文件:MOVE [/Y | /-Y] [drive:][path]filename1[,...] destination要重命名一个目录:MOVE [/Y | /-Y] [drive:][path]dirname1 dirname2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#对当前目录下的 财务文件夹 修改为 技术文档D:\&gt;move 财务文件夹 技术文档移动了　        1 个目录。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#将 C 盘目录下的 1.txt 文件移动到 D 盘目录下，并改名为 2.txtD:\&gt;move c:\1.txt d:\2.txt移动了         1 个文件。</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="6、copy-命令"><a href="#6、copy-命令" class="headerlink" title="6、copy 命令"></a>6、copy 命令</h5><ul>
+<li><p>将一份或多份文件复制到另一个位置</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">COPY [/D] [/V] [/N] [/Y | /-Y] [/Z] [/L] [/A | /B ] source [/A | /B]     [+ source [/A | /B] [+ ...]] [destination [/A | /B]]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#将 C 盘目录下的所有 .txt 文件复制到 D 盘的 公司文件 目录下，前提是 D 盘的 公司文件 目录需要存在D:\&gt;copy c:\*.txt d:\公司文件c:\人事数据.txtc:\技术文档.txtc:\财务数据.txt已复制         3 个文件。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#合并多个文本文件，将 C 盘目录下的 人事数据 技术文档 财务数据合并成一个文件c:\&gt;copy 人事数据.txt+技术文档.txt+财务数据.txt 公司文件.txt人事数据.txt技术文档.txt财务数据.txt已复制         1 个文件。c:\&gt;type 公司文件.txt杨文财，网安讲师路由器规格，支持 HSRP、ACL等5月收入5000，支出3500</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>使用 copy 巧妙伪装隐藏保护重要文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#将 密码文件.txt 附加到 phone.jpg 中生成新的文件 phoneplus.jpg，从而隐藏了密码文件内容c:\&gt;copy phone.jpg /b+密码文件.txt /a phoneplus.jpgphone.jpg密码文件.txt已复制         1 个文件。</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h5 id="7、xcopy-命令"><a href="#7、xcopy-命令" class="headerlink" title="7、xcopy 命令"></a>7、xcopy 命令</h5><ul>
+<li><p>复制指定文件或复制目录下的所有文件和子目录，并且会自动创建目标目录</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XCOPY source [destination] [/A | /M] [/D[:date]] [/P] [/S [/E]] [/V] [/W]                           [/C] [/I] [/Q] [/F] [/L] [/G] [/H] [/R] [/T] [/U]                           [/K] [/N] [/O] [/X] [/Y] [/-Y] [/Z] [/B] [/J]                           [/EXCLUDE:file1[+file2][+file3]...] [/COMPRESS]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#将当前目录下所有的文件以及子目录复制到“e:\databack”目录中c:\&gt;xcopy *.* e:\databack /s</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="8、rename-命令"><a href="#8、rename-命令" class="headerlink" title="8、rename 命令"></a>8、rename 命令</h5><ul>
+<li><p>重命名文件</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RENAME [drive:][path]filename1 filename2.REN [drive:][path]filename1 filename2.</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#将C盘目录下的迅雷下载文件夹修改为腾讯下载C:\Users\Administrator&gt;ren c:\迅雷下载 腾讯下载</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="9、del-命令"><a href="#9、del-命令" class="headerlink" title="9、del 命令"></a>9、del 命令</h5><ul>
+<li><p>删除一个或多个文件</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DEL [/P] [/F] [/S] [/Q] [/A[[:]attributes]] namesERASE [/P] [/F] [/S] [/Q] [/A[[:]attributes]] names</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#删除当前目录下的 密码文件.txt，默认就是不提醒c:\&gt;del 密码文件.txt</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="二、文本处理"><a href="#二、文本处理" class="headerlink" title="二、文本处理"></a>二、文本处理</h4><h5 id="1、type-命令"><a href="#1、type-命令" class="headerlink" title="1、type 命令"></a>1、type 命令</h5><ul>
+<li><p>显示文本文件的内容</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TYPE [drive:][path]filename</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看 密码文件.txt 文件的内容c:\&gt;type 密码文件.txtusername：woniupassword：woniu123</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、重定向-gt"><a href="#2、重定向-gt" class="headerlink" title="2、重定向 &gt;"></a>2、重定向 &gt;</h5><ul>
+<li><p>将前面命令执行结果写入到后面文件中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c:\&gt;ipconfig &gt; ip.txt    //这里的 &gt; 符号标识重定向，将前面命令执行的结果写入到后面文件中</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="3、findstr-命令"><a href="#3、findstr-命令" class="headerlink" title="3、findstr 命令"></a>3、findstr 命令</h5><ul>
+<li><p>检索文件内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c:\&gt;findstr 192 ip.txt   本地链接 IPv6 地址. . . . . . . . : fe80:b05ce93e%5   IPv4 地址 . . . . . . . . . . . . : 192.168.10.1   默认网关. . . . . . . . . . . . . : 192.168.10.254</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>反向检索使用 &#x2F;v 选项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c:\&gt;findstr /v ip ip.txtWindows IP 配置以太网适配器 Ethernet0:   连接特定的 DNS 后缀 . . . . . . . :   本地链接 IPv6 地址. . . . . . . . : fe80:b05ce93e%5   IPv4 地址 . . . . . . . . . . . . : 192.168.10.1   子网掩码  . . . . . . . . . . . . : 255.255.255.0   默认网关. . . . . . . . . . . . . : 192.168.10.254隧道适配器 isatap.&#123;8F0BFA1A-4A30-46E8-83A2-0BE19EFD1513&#125;:   媒体状态  . . . . . . . . . . . . : 媒体已断开连接   连接特定的 DNS 后缀 . . . . . . . :</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="三、网络相关操作"><a href="#三、网络相关操作" class="headerlink" title="三、网络相关操作"></a>三、网络相关操作</h4><h5 id="1、网络配置"><a href="#1、网络配置" class="headerlink" title="1、网络配置"></a>1、网络配置</h5><ul>
+<li><p>静态配置 IP 地址及网关</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;netsh interface ip set address &quot;Ethernet0&quot; static 192.168.10.1 255.255.255.0 192.168.10.254</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>动态获取 IP 地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;netsh interface ip set address &quot;Ethernet0&quot; dhcp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>静态配置 DNS 服务器地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;netsh interface ip set dnsserver &quot;Ethernet0&quot; static 202.98.96.68</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>添加 DNS 服务器地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\Administrator&gt;netsh interface ip add dnsserver &quot;Ethernet0&quot; 61.139.2.69 index=2        ////为 DNS 服务器地址指定索引</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、ipconfig-命令"><a href="#2、ipconfig-命令" class="headerlink" title="2、ipconfig 命令"></a>2、ipconfig 命令</h5><ul>
+<li><p>查看计算机中所有适配器的 TCP&#x2F;IP 配置信息</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipconfig [/allcompartments] [/? | /all |                             /renew [adapter] | /release [adapter] |                             /renew6 [adapter] | /release6 [adapter] |                             /flushdns | /displaydns | /registerdns |                             /showclassid adapter |                             /setclassid adapter [classid] |                             /showclassid6 adapter |                             /setclassid6 adapter [classid] ]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看计算机中所有适配器的 TCP/IP 配置信息（只包含IP、子网、网关）c:\&gt;ipconfigWindows IP 配置以太网适配器 VirtualBox Host-Only Network:   连接特定的 DNS 后缀 . . . . . . . :   本地链接 IPv6 地址. . . . . . . . : fe80:a1554ab3%8   IPv4 地址 . . . . . . . . . . . . : 192.168.56.1   子网掩码  . . . . . . . . . . . . : 255.255.255.0   默认网关. . . . . . . . . . . . . :无线局域网适配器 WLAN:   连接特定的 DNS 后缀 . . . . . . . :   本地链接 IPv6 地址. . . . . . . . : fe80:3f7e3aea%19   IPv4 地址 . . . . . . . . . . . . : 192.168.18.22   子网掩码  . . . . . . . . . . . . : 255.255.255.0   默认网关. . . . . . . . . . . . . : 192.168.18.1</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看查看计算机中所有适配器的 TCP/IP 配置信息（包括计算机主机名，适配器mac、dns、dhcp等信息）c:\&gt;ipconfig /allWindows IP 配置   主机名  . . . . . . . . . . . . . : DESKTOP-2QB60R2   主 DNS 后缀 . . . . . . . . . . . :   节点类型  . . . . . . . . . . . . : 混合   IP 路由已启用 . . . . . . . . . . : 否   WINS 代理已启用 . . . . . . . . . : 否以太网适配器 VirtualBox Host-Only Network:   连接特定的 DNS 后缀 . . . . . . . :   描述. . . . . . . . . . . . . . . : VirtualBox Host-Only Ethernet Adapter   物理地址. . . . . . . . . . . . . : 0A-00-27-00-00-08   DHCP 已启用 . . . . . . . . . . . : 否   自动配置已启用. . . . . . . . . . : 是   本地链接 IPv6 地址. . . . . . . . : fe80:a1554ab3%8(首选)   IPv4 地址 . . . . . . . . . . . . : 192.168.56.1(首选)   子网掩码  . . . . . . . . . . . . : 255.255.255.0   默认网关. . . . . . . . . . . . . :   DHCPv6 IAID . . . . . . . . . . . : 571080743   DHCPv6 客户端 DUID  . . . . . . . : 00-01-00-01-28-5C-7A-DB-34-41-5D-B5-D6-19   DNS 服务器  . . . . . . . . . . . : fec00:1%1                                       fec00:2%1                                       fec00:3%1   TCPIP 上的 NetBIOS  . . . . . . . : 已启用无线局域网适配器 WLAN:   连接特定的 DNS 后缀 . . . . . . . :   描述. . . . . . . . . . . . . . . : Intel(R) Dual Band Wireless-AC 8265   物理地址. . . . . . . . . . . . . : 34-41-5D-B5-D6-19   DHCP 已启用 . . . . . . . . . . . : 是   自动配置已启用. . . . . . . . . . : 是   本地链接 IPv6 地址. . . . . . . . : fe80:3f7e3aea%19(首选)   IPv4 地址 . . . . . . . . . . . . : 192.168.18.22(首选)   子网掩码  . . . . . . . . . . . . : 255.255.255.0   获得租约的时间  . . . . . . . . . : 2021年10月29日 919   租约过期的时间  . . . . . . . . . : 2021年10月29日 14:59:58   默认网关. . . . . . . . . . . . . : 192.168.18.1   DHCP 服务器 . . . . . . . . . . . : 192.168.18.1   DHCPv6 IAID . . . . . . . . . . . : 104087901   DHCPv6 客户端 DUID  . . . . . . . : 00-01-00-01-28-5C-7A-DB-34-41-5D-B5-D6-19   DNS 服务器  . . . . . . . . . . . : 202.98.96.68                                       61.139.2.69   TCPIP 上的 NetBIOS  . . . . . . . : 已启用</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#刷新DNS缓存c:\&gt;ipconfig /flushdnsWindows IP 配置已成功刷新 DNS 解析缓存。</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#释放适配器的 IPv4 地址c:\&gt;ipconfig /release#更新适配器的 IPv4 地址c:\&gt;ipconfig /renew</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="3、ping-命令"><a href="#3、ping-命令" class="headerlink" title="3、ping 命令"></a>3、ping 命令</h5><ul>
+<li><p>测试 TCP&#x2F;IP 配置是否正确</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping [-t] [-a] [-n count] [-l size] [-f] [-i TTL] [-v TOS]            [-r count] [-s count] [[-j host-list] | [-k host-list]]            [-w timeout] [-R] [-S srcaddr] [-c compartment] [-p]            [-4] [-6] target_name</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c:\&gt;ping www.baidu.com正在 Ping www.a.shifen.com [39.156.66.18] 具有 32 字节的数据:来自 39.156.66.18 的回复: 字节=32 时间=40ms TTL=128来自 39.156.66.18 的回复: 字节=32 时间=43ms TTL=128来自 39.156.66.18 的回复: 字节=32 时间=39ms TTL=128来自 39.156.66.18 的回复: 字节=32 时间=40ms TTL=12839.156.66.18 的 Ping 统计信息:    数据包: 已发送 = 4，已接收 = 4，丢失 = 0 (0% 丢失)，往返行程的估计时间(以毫秒为单位):    最短 = 39ms，最长 = 43ms，平均 = 40msc:\&gt;ping 192.168.10.1正在 Ping 192.168.10.1 具有 32 字节的数据:请求超时。请求超时。192.168.10.1 的 Ping 统计信息:    数据包: 已发送 = 2，已接收 = 0，丢失 = 2 (100% 丢失)，</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#一直不停的ping，使用 -t 选项，使用 ctrl+c 中止c:\&gt;ping www.baidu.com -t</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#指定ping 包的个数，使用 -n 选项c:\&gt;ping -n 2 www.baidu.com正在 Ping www.a.shifen.com [39.156.66.14] 具有 32 字节的数据:来自 39.156.66.14 的回复: 字节=32 时间=40ms TTL=128来自 39.156.66.14 的回复: 字节=32 时间=41ms TTL=12839.156.66.14 的 Ping 统计信息:    数据包: 已发送 = 2，已接收 = 2，丢失 = 0 (0% 丢失)，往返行程的估计时间(以毫秒为单位):    最短 = 40ms，最长 = 41ms，平均 = 40ms</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#指定ping包的大小，使用 -l 选项c:\&gt;ping -l 1000 -n 2 www.baidu.com正在 Ping www.a.shifen.com [39.156.66.18] 具有 1000 字节的数据:来自 39.156.66.18 的回复: 字节=1000 时间=45ms TTL=128来自 39.156.66.18 的回复: 字节=1000 时间=47ms TTL=12839.156.66.18 的 Ping 统计信息:    数据包: 已发送 = 2，已接收 = 2，丢失 = 0 (0% 丢失)，往返行程的估计时间(以毫秒为单位):    最短 = 45ms，最长 = 47ms，平均 = 46ms</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#解析主机名，使用 -a 选项c:\&gt;ping -a 192.168.31.131正在 Ping DESKTOP-2QB60R2 [192.168.31.131] 具有 32 字节的数据:来自 192.168.31.131 的回复: 字节=32 时间&lt;1ms TTL=128来自 192.168.31.131 的回复: 字节=32 时间&lt;1ms TTL=128来自 192.168.31.131 的回复: 字节=32 时间=1ms TTL=128来自 192.168.31.131 的回复: 字节=32 时间=1ms TTL=128192.168.31.131 的 Ping 统计信息:    数据包: 已发送 = 4，已接收 = 4，丢失 = 0 (0% 丢失)，往返行程的估计时间(以毫秒为单位):    最短 = 0ms，最长 = 1ms，平均 = 0ms</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>4、tracert 命令</p>
+<ul>
+<li><p>路由跟踪</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tracert [-d] [-h maximum_hops] [-j host-list] [-w timeout]               [-R] [-S srcaddr] [-4] [-6] target_name</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c:\&gt;tracert www.baidu.com通过最多 30 个跃点跟踪到 www.a.shifen.com [39.156.66.18] 的路由:  1    &lt;1 毫秒   &lt;1 毫秒   &lt;1 毫秒 192.168.188.2  2    17 ms     4 ms     1 ms  XiaoQiang [192.168.31.1]  3     4 ms     2 ms     2 ms  192.168.1.1  4     5 ms     5 ms     5 ms  100.74.0.1  5     7 ms     4 ms     4 ms  221.182.104.37  6     6 ms     6 ms     7 ms  223.87.25.97  7     8 ms     9 ms    14 ms  221.183.47.105  8    39 ms    44 ms    41 ms  221.183.37.153  9     *        *        *     请求超时。 10    40 ms    43 ms    58 ms  39.156.27.5 11    58 ms    44 ms    42 ms  39.156.67.49 12     *        *        *     请求超时。 13     *        *        *     请求超时。 14     *        *        *     请求超时。 15    40 ms    39 ms    43 ms  39.156.66.18跟踪完成。</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="5、netstat-命令"><a href="#5、netstat-命令" class="headerlink" title="5、netstat 命令"></a>5、netstat 命令</h5><ul>
+<li><p>显示协议统计信息和当前 TCP&#x2F;IP 网络连接</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NETSTAT [-a] [-b] [-e] [-f] [-n] [-o] [-p proto] [-r] [-s] [-t] [-x] [-y] [interval]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看路由表c:\&gt;netstat -r</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#查看指定协议的所有连接和侦听端口，显示进程号并查找“80”字段c:\&gt;netstat -anop tcp | findstr &quot;80&quot;  TCP    0.0.0.0:80             0.0.0.0:0              LISTENING       5176  TCP    0.0.0.0:7680           0.0.0.0:0              LISTENING       10676  TCP    0.0.0.0:8680           0.0.0.0:0              LISTENING       5548  TCP    0.0.0.0:49667          0.0.0.0:0              LISTENING       1804  TCP    127.0.0.1:4709         0.0.0.0:0              LISTENING       14800  TCP    127.0.0.1:55380        127.0.0.1:55379        TIME_WAIT       0  TCP    192.168.18.22:54745    110.43.89.215:80       CLOSE_WAIT      13620</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="6、arp-命令"><a href="#6、arp-命令" class="headerlink" title="6、arp 命令"></a>6、arp 命令</h5><ul>
+<li><p>显示和修改地址解析协议(ARP)使用的“IP 到物理”地址转换表</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ARP -s inet_addr eth_addr [if_addr]ARP -d inet_addr [if_addr]ARP -a [inet_addr] [-N if_addr] [-v]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#显示 ARP 缓存表c:\&gt;arp -a#清除 ARP 缓存表c:\&gt;arp -d#添加静态项c:\&gt;arp -s 157.55.85.212   00-aa-00-62-c6-09</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="7、route-命令"><a href="#7、route-命令" class="headerlink" title="7、route 命令"></a>7、route 命令</h5><ul>
+<li><p>操作网络路由表</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROUTE [-f] [-p] [-4|-6] command [destination]                  [MASK netmask]  [gateway] [METRIC metric]  [IF interface]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#打印 ipv4 路由表c:\&gt;route -4 print===========================================================================接口列表 19...34 41 5d b5 d6 19 ......Intel(R) Dual Band Wireless-AC 8265  1...........................Software Loopback Interface 1===========================================================================IPv4 路由表===========================================================================活动路由:网络目标        网络掩码          网关       接口   跃点数          0.0.0.0          0.0.0.0     192.168.18.1    192.168.18.22     40        127.0.0.0        255.0.0.0            在链路上         127.0.0.1    331        127.0.0.1  255.255.255.255            在链路上         127.0.0.1    331  127.255.255.255  255.255.255.255            在链路上         127.0.0.1    331     192.168.18.0    255.255.255.0            在链路上     192.168.18.22    296    192.168.18.22  255.255.255.255            在链路上     192.168.18.22    296   192.168.18.255  255.255.255.255            在链路上     192.168.18.22    296        224.0.0.0        240.0.0.0            在链路上         127.0.0.1    331        224.0.0.0        240.0.0.0            在链路上     192.168.18.22    296  255.255.255.255  255.255.255.255            在链路上         127.0.0.1    331  255.255.255.255  255.255.255.255            在链路上     192.168.18.22    296===========================================================================永久路由:  无</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#添加路由条目c:\&gt;route add 192.168.100.0/24 192.168.88.1 操作完成!#删除路由条目c:\&gt;route delete 192.168.100.0 操作完成!</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="8、nslookup-命令"><a href="#8、nslookup-命令" class="headerlink" title="8、nslookup 命令"></a>8、nslookup 命令</h5><ul>
+<li><p>显示可用于诊断域名系统 (DNS) 基础结构的信息。 使用此工具之前，应熟悉 DNS 的工作原理。 只有安装了</p>
+<p>TCP&#x2F;IP 协议，才能使用 nslookup 命令行工具</p>
+</li>
+<li><p>用法：</p>
+<ul>
+<li><p>交互模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c:\&gt;nslookup www.baidu.com 114.114.114.114服务器:  public1.114dns.comAddress:  114.114.114.114非权威应答:名称:    www.a.shifen.com    Addresses:  180.101.49.11          180.101.49.12Aliases:  www.baidu.com</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>非交互模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c:\&gt;nslookup默认服务器:  ns.sccdppt.net.cnAddress:  202.98.96.68&gt; server 8.8.8.8默认服务器:  dns.googleAddress:  8.8.8.8&gt; www.baidu.com服务器:  dns.googleAddress:  8.8.8.8非权威应答:名称:    www.a.shifen.comAddresses:  14.215.177.38          14.215.177.39Aliases:  www.baidu.com</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h5 id="9、telnet-命令"><a href="#9、telnet-命令" class="headerlink" title="9、telnet 命令"></a>9、telnet 命令</h5><ul>
+<li><p>与运行 telnet 服务器服务的计算机通信，运行此命令需安装 telnet 客户端</p>
+</li>
+<li><p>用法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet [-a][-e escape char][-f log file][-l user][-t term][host [port]]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>举例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#使用 telnet 远程登录某台设备c:/&gt;telnet 192.168.18.26</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#检测服务器的 80 端口是否开启c:/&gt;telnet 192.168.18.26 80</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-wireshark/" rel="prev" title="网工基础-wireshark">
+      <i class="fa fa-chevron-left"></i> 网工基础-wireshark
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%EF%BC%89/" rel="next" title="网工基础-windows基础（用户管理）">
+      网工基础-windows基础（用户管理） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#windows%E5%9F%BA%E7%A1%80%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">windows基础命令操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%9B%AE%E5%BD%95%E4%B8%8E%E6%96%87%E4%BB%B6%E5%BA%94%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">一、目录与文件应用操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81cd-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.1.</span> <span class="nav-text">1、cd 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81dir-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.2.</span> <span class="nav-text">2、dir 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81md-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.3.</span> <span class="nav-text">3、md 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81rd-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.4.</span> <span class="nav-text">4、rd 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81move-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.5.</span> <span class="nav-text">5、move 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6%E3%80%81copy-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.6.</span> <span class="nav-text">6、copy 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7%E3%80%81xcopy-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.7.</span> <span class="nav-text">7、xcopy 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8%E3%80%81rename-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.8.</span> <span class="nav-text">8、rename 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9%E3%80%81del-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.1.9.</span> <span class="nav-text">9、del 命令</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">二、文本处理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81type-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.2.1.</span> <span class="nav-text">1、type 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%87%8D%E5%AE%9A%E5%90%91-gt"><span class="nav-number">1.0.0.2.2.</span> <span class="nav-text">2、重定向 &gt;</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81findstr-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.2.3.</span> <span class="nav-text">3、findstr 命令</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">三、网络相关操作</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%BD%91%E7%BB%9C%E9%85%8D%E7%BD%AE"><span class="nav-number">1.0.0.3.1.</span> <span class="nav-text">1、网络配置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81ipconfig-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.3.2.</span> <span class="nav-text">2、ipconfig 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81ping-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.3.3.</span> <span class="nav-text">3、ping 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5%E3%80%81netstat-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.3.4.</span> <span class="nav-text">5、netstat 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6%E3%80%81arp-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.3.5.</span> <span class="nav-text">6、arp 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7%E3%80%81route-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.3.6.</span> <span class="nav-text">7、route 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8%E3%80%81nslookup-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.3.7.</span> <span class="nav-text">8、nslookup 命令</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9%E3%80%81telnet-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.0.3.8.</span> <span class="nav-text">9、telnet 命令</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

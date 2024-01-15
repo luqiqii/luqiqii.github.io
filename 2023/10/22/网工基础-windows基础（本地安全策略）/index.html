@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="windows本地安全策略一、本地安全策略1、概述 对登陆到计算机上的账号定义一些安全设置，在没有活动目录集中管理的情况下，本地管理员必须为计算机进行设置以确保其安全。 影响本地计算机的安全设置。  2、打开方式 点击开始菜单→Windows管理工具→本地安全策略  使用命令打开 1#在 Windows 运行窗口输入命令secpol.msc    也可以在本地组策略中查看（本地组策略包含本地安全策">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网工基础-windows基础（本地安全策略）">
+<meta property="og:url" content="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E6%9C%AC%E5%9C%B0%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%EF%BC%89/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="windows本地安全策略一、本地安全策略1、概述 对登陆到计算机上的账号定义一些安全设置，在没有活动目录集中管理的情况下，本地管理员必须为计算机进行设置以确保其安全。 影响本地计算机的安全设置。  2、打开方式 点击开始菜单→Windows管理工具→本地安全策略  使用命令打开 1#在 Windows 运行窗口输入命令secpol.msc    也可以在本地组策略中查看（本地组策略包含本地安全策">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113138.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113226.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113513.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113540.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113607.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113635.png">
+<meta property="article:published_time" content="2023-10-22T13:32:09.000Z">
+<meta property="article:modified_time" content="2023-10-22T13:40:41.622Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113138.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E6%9C%AC%E5%9C%B0%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%EF%BC%89/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>网工基础-windows基础（本地安全策略） | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E6%9C%AC%E5%9C%B0%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网工基础-windows基础（本地安全策略）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 21:32:09 / 修改时间：21:40:41" itemprop="dateCreated datePublished" datetime="2023-10-22T21:32:09+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="windows本地安全策略"><a href="#windows本地安全策略" class="headerlink" title="windows本地安全策略"></a>windows本地安全策略</h1><h4 id="一、本地安全策略"><a href="#一、本地安全策略" class="headerlink" title="一、本地安全策略"></a>一、本地安全策略</h4><h5 id="1、概述"><a href="#1、概述" class="headerlink" title="1、概述"></a>1、概述</h5><ul>
+<li>对登陆到计算机上的账号定义一些安全设置，在没有活动目录集中管理的情况下，本地管理员必须为计算机进行设置以确保其安全。</li>
+<li>影响本地计算机的安全设置。</li>
+</ul>
+<h5 id="2、打开方式"><a href="#2、打开方式" class="headerlink" title="2、打开方式"></a>2、打开方式</h5><ul>
+<li><p>点击开始菜单→Windows管理工具→本地安全策略</p>
+</li>
+<li><p>使用命令打开</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#在 Windows 运行窗口输入命令secpol.msc</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113138.png" alt="image-20210706160231035"></p>
+</li>
+<li><p>也可以在本地组策略中查看（本地组策略包含本地安全策略）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#在 Windows 运行窗口输入命令gpedit.msc</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113226.png" alt="image-20210712185903211"></p>
+</li>
+</ul>
+<h4 id="二、帐户策略"><a href="#二、帐户策略" class="headerlink" title="二、帐户策略"></a>二、帐户策略</h4><h5 id="1、密码策略"><a href="#1、密码策略" class="headerlink" title="1、密码策略"></a>1、密码策略</h5><ul>
+<li>密码必须符合复杂性要求：对于Windows server操作系统，默认是启用状态<ul>
+<li>不能包含用户的帐户名，不能包含用户姓名中超过两个连续字符的部分</li>
+<li>至少有六个字符长</li>
+<li>包含以下四类字符中的三类字符:<ul>
+<li>英文大写字母(A 到 Z)</li>
+<li>英文小写字母(a 到 z)</li>
+<li>10 个基本数字(0 到 9)</li>
+<li>非字母字符(例如 !、$、#、%)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>密码长度最小值：设置密码的长度，默认为0表示不需要密码，设置的区间是1~14，当开启了复杂性要求，此设置如果小于6将不再有意义</li>
+<li>密码最短使用期限：密码最短使用的时间，默认为0，允许立即更改密码</li>
+<li>密码最长使用期限：密码最长使用的时间，默认为42，当到期后，系统会自动提醒更改密码</li>
+<li>强制密码历史：设置确定再次使用某个旧密码之前必须与某个用户帐户关联的唯一新密码数。该值必须介于 0 个和 24 个密码之间</li>
+</ul>
+<h5 id="2、帐户锁定策略"><a href="#2、帐户锁定策略" class="headerlink" title="2、帐户锁定策略"></a>2、帐户锁定策略</h5><ul>
+<li>帐户锁定时间<ul>
+<li>此安全设置确定锁定帐户在自动解锁之前保持锁定的分钟数。可用范围从 0 到 99,999 分钟。如果将帐户锁定时间设置为 0，帐户将一直被锁定直到管理员明确解除对它的锁定。</li>
+<li>如果定义了帐户锁定阈值，则帐户锁定时间必须大于或等于重置时间</li>
+</ul>
+</li>
+<li>帐户锁定阈值<ul>
+<li>此安全设置确定导致用户帐户被锁定的登录尝试失败的次数。在管理员重置锁定帐户或帐户锁定时间期满之前，无法使用该锁定帐户。可以将登录尝试失败次数设置为介于 0 和 999 之间的值。如果将值设置为 0，则永远不会锁定帐户</li>
+</ul>
+</li>
+<li>重置帐户锁定计数器<ul>
+<li>此安全设置确定在某次登录尝试失败之后将登录尝试失败计数器重置为 0 次错误登录尝试之前需要的时间。可用范围是 1 到 99,999 分钟。</li>
+<li>如果定义了帐户锁定阈值，此重置时间必须小于或等于帐户锁定时间。</li>
+</ul>
+</li>
+</ul>
+<h4 id="三、本地策略"><a href="#三、本地策略" class="headerlink" title="三、本地策略"></a>三、本地策略</h4><h5 id="1、审核策略"><a href="#1、审核策略" class="headerlink" title="1、审核策略"></a>1、审核策略</h5><ul>
+<li>描述了如何设置应用于审核的各种设置。本模块还提供了由几个常见任务创建的审核事件示例。每当用户执行了指定的某些操作，审核日志就会记录一个审核项。您可以审核操作中的成功尝试和失败尝试。安全审核对于任何企业系统来说都极其重要，因为只能使用审核日志来说明是否发生了违反安全的事件。如果通过其他某种方式检测到入侵，正确的审核设置所生成的审核日志将包含有关此次入侵的重要信息</li>
+</ul>
+<h5 id="2、用户权限分配"><a href="#2、用户权限分配" class="headerlink" title="2、用户权限分配"></a>2、用户权限分配</h5><ul>
+<li>通过用户权限分配，可以为某些用户和组授予或拒绝一些特殊的权限，如更改系统时间，拒绝本地登录等</li>
+</ul>
+<h5 id="3、安全选项"><a href="#3、安全选项" class="headerlink" title="3、安全选项"></a>3、安全选项</h5><ul>
+<li>通过本地策略中的安全选项，可以控制一些和操作系统安全相关的设置，安全选项中的策略</li>
+</ul>
+<h4 id="四、本地安全策略应用"><a href="#四、本地安全策略应用" class="headerlink" title="四、本地安全策略应用"></a>四、本地安全策略应用</h4><h5 id="1、案例一"><a href="#1、案例一" class="headerlink" title="1、案例一"></a>1、案例一</h5><ul>
+<li><p>设置帐户策略（计算机账户密码长度最少要有8个字符，用户连续3次输错密码，该账户会被锁定）</p>
+<ul>
+<li><p>本地安全策略→帐户策略→密码策略→密码长度最小值设置为8</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113513.png" alt="image-20210712190550362"></p>
+</li>
+<li><p>本地安全策略→帐户策略→帐户锁定策略→帐户锁定阈值设置为3，设置了帐户锁定阈值，帐户锁定时间和重置帐户锁定计数器默认会开始，默认为30分钟，保持默认就OK</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113540.png" alt="image-20210712190842205"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、案例二"><a href="#2、案例二" class="headerlink" title="2、案例二"></a>2、案例二</h5><ul>
+<li><p>为了保证服务器资源的安全性，针对对象访问情况进行审计，并添加到日志中，作为后期找出问题的凭证</p>
+<ul>
+<li><p>本地安全策略→本地策略→审核策略→审核对象访问设置为成功、失败都进行审核，这样就可以看到哪些用户访问成功了哪些对象，哪些想要进行非法访问</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113607.png" alt="image-20210712191411282"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="3、案例三"><a href="#3、案例三" class="headerlink" title="3、案例三"></a>3、案例三</h5><ul>
+<li><p>为了保证服务器的安全性，一般服务器允许管理员本地进行登录，对于普通用户不允许进行本地登录，设置用户权限分配</p>
+<ul>
+<li><p>本地安全策略→本地策略→用户权限分配→拒绝本地登录，将users（普通用户组）添加进去</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/20210819113635.png" alt="image-20210712191922184"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="4、更新策略"><a href="#4、更新策略" class="headerlink" title="4、更新策略"></a>4、更新策略</h5><ul>
+<li><p>策略设置完成后需要更新策略才能生效</p>
+<ul>
+<li><p>重启计算机</p>
+</li>
+<li><p>使用命令进行更新</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#在 CMD 窗口输入命令进行刷新策略gpupdate    #当直接刷新不成功可以使用强制刷新命令gpupdate /force</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88NTFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9D%83%E9%99%90%EF%BC%89/" rel="prev" title="网工基础-windows基础（NTFS文件系统权限）">
+      <i class="fa fa-chevron-left"></i> 网工基础-windows基础（NTFS文件系统权限）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E7%BD%91%E5%B7%A5%E5%9F%BA%E7%A1%80-windows%E5%9F%BA%E7%A1%80%EF%BC%88%E6%9C%AC%E5%9C%B0%E7%BB%84%E7%AD%96%E7%95%A5%EF%BC%89/" rel="next" title="网工基础-windows基础（本地组策略）">
+      网工基础-windows基础（本地组策略） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#windows%E6%9C%AC%E5%9C%B0%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">windows本地安全策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%9C%AC%E5%9C%B0%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">一、本地安全策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%A6%82%E8%BF%B0"><span class="nav-number">1.0.0.1.1.</span> <span class="nav-text">1、概述</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%89%93%E5%BC%80%E6%96%B9%E5%BC%8F"><span class="nav-number">1.0.0.1.2.</span> <span class="nav-text">2、打开方式</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%B8%90%E6%88%B7%E7%AD%96%E7%95%A5"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">二、帐户策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%AF%86%E7%A0%81%E7%AD%96%E7%95%A5"><span class="nav-number">1.0.0.2.1.</span> <span class="nav-text">1、密码策略</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E5%B8%90%E6%88%B7%E9%94%81%E5%AE%9A%E7%AD%96%E7%95%A5"><span class="nav-number">1.0.0.2.2.</span> <span class="nav-text">2、帐户锁定策略</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%9C%AC%E5%9C%B0%E7%AD%96%E7%95%A5"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">三、本地策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E5%AE%A1%E6%A0%B8%E7%AD%96%E7%95%A5"><span class="nav-number">1.0.0.3.1.</span> <span class="nav-text">1、审核策略</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E7%94%A8%E6%88%B7%E6%9D%83%E9%99%90%E5%88%86%E9%85%8D"><span class="nav-number">1.0.0.3.2.</span> <span class="nav-text">2、用户权限分配</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E5%AE%89%E5%85%A8%E9%80%89%E9%A1%B9"><span class="nav-number">1.0.0.3.3.</span> <span class="nav-text">3、安全选项</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%9C%AC%E5%9C%B0%E5%AE%89%E5%85%A8%E7%AD%96%E7%95%A5%E5%BA%94%E7%94%A8"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">四、本地安全策略应用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E6%A1%88%E4%BE%8B%E4%B8%80"><span class="nav-number">1.0.0.4.1.</span> <span class="nav-text">1、案例一</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E6%A1%88%E4%BE%8B%E4%BA%8C"><span class="nav-number">1.0.0.4.2.</span> <span class="nav-text">2、案例二</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%A1%88%E4%BE%8B%E4%B8%89"><span class="nav-number">1.0.0.4.3.</span> <span class="nav-text">3、案例三</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4%E3%80%81%E6%9B%B4%E6%96%B0%E7%AD%96%E7%95%A5"><span class="nav-number">1.0.0.4.4.</span> <span class="nav-text">4、更新策略</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、思科ASA防火墙1、简介 防火墙技术是通过有机结合各类用于安全管理与筛选的软件和硬件设备，帮助计算机网络于其内、外网之间构建一道相对隔绝的保护屏障，以保护用户资料与信息安全性的一种技术  2、ASA安全设备 ASA5500系列 常见型号：5505、5510、5520、5540、5550、5580    3、ASA是状态防火墙 状态化防火墙维护一个关于用户信息的连接表，称为Conn表  Conn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安全设备基础-cisco防火墙应用">
+<meta property="og:url" content="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-cisco%E9%98%B2%E7%81%AB%E5%A2%99%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="鹿鹿祁">
+<meta property="og:description" content="一、思科ASA防火墙1、简介 防火墙技术是通过有机结合各类用于安全管理与筛选的软件和硬件设备，帮助计算机网络于其内、外网之间构建一道相对隔绝的保护屏障，以保护用户资料与信息安全性的一种技术  2、ASA安全设备 ASA5500系列 常见型号：5505、5510、5520、5540、5550、5580    3、ASA是状态防火墙 状态化防火墙维护一个关于用户信息的连接表，称为Conn表  Conn">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540496.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540451.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540518.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540592.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540557.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540465.png">
+<meta property="og:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540321.png">
+<meta property="article:published_time" content="2023-10-22T14:12:04.000Z">
+<meta property="article:modified_time" content="2023-10-22T14:14:21.016Z">
+<meta property="article:author" content="鹿祁">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540496.png">
+
+<link rel="canonical" href="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-cisco%E9%98%B2%E7%81%AB%E5%A2%99%E5%BA%94%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>安全设备基础-cisco防火墙应用 | 鹿鹿祁</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">鹿鹿祁</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-schedule">
+
+    <a href="/schedule/" rel="section"><i class="fa fa-calendar fa-fw"></i>日程表</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-cisco%E9%98%B2%E7%81%AB%E5%A2%99%E5%BA%94%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="鹿祁">
+      <meta itemprop="description" content="心有希冀，目有繁星，追光而遇，沐光而行">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鹿鹿祁">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          安全设备基础-cisco防火墙应用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-22 22:12:04 / 修改时间：22:14:21" itemprop="dateCreated datePublished" datetime="2023-10-22T22:12:04+08:00">2023-10-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="一、思科ASA防火墙"><a href="#一、思科ASA防火墙" class="headerlink" title="一、思科ASA防火墙"></a>一、思科ASA防火墙</h4><h5 id="1、简介"><a href="#1、简介" class="headerlink" title="1、简介"></a>1、简介</h5><ol>
+<li>防火墙技术是通过有机结合各类用于安全管理与筛选的软件和硬件设备，帮助计算机网络于其内、外网之间构建一道相对隔绝的保护屏障，以保护用户资料与信息安全性的一种技术</li>
+</ol>
+<h5 id="2、ASA安全设备"><a href="#2、ASA安全设备" class="headerlink" title="2、ASA安全设备"></a>2、ASA安全设备</h5><ol>
+<li>ASA5500系列<ul>
+<li>常见型号：5505、5510、5520、5540、5550、5580</li>
+</ul>
+</li>
+</ol>
+<h5 id="3、ASA是状态防火墙"><a href="#3、ASA是状态防火墙" class="headerlink" title="3、ASA是状态防火墙"></a>3、ASA是状态防火墙</h5><ol>
+<li><p>状态化防火墙维护一个关于用户信息的连接表，称为Conn表</p>
+<ul>
+<li>Conn表中的关键信息<ul>
+<li>源IP地址</li>
+<li>目的IP地址</li>
+<li>IP协议（例如TCP或UDP）</li>
+<li>IP协议信息（例如TCP&#x2F;UDP端口号，TCP序列号，TCP控制位）</li>
+</ul>
+</li>
+<li>默认情况下，ASA对TCP和UDP协议提供状态化连接，但ICMP协议是非状态化的（如果内网访问外网采用ICMP协议出去，回来也是回不来的）</li>
+</ul>
+</li>
+<li><p>状态化防火墙的处理过程</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540496.png" alt="image-20210726130718298"></p>
+</li>
+<li><p>ASA安全算法</p>
+<ul>
+<li>访问控制列表<ul>
+<li>基于特定的网络、主机和服务（TCP&#x2F;UDP端口号）控制网络访问</li>
+</ul>
+</li>
+<li>连接表<ul>
+<li>维护每个连接的状态信息</li>
+<li>安全算法使用此信息在已建立的连接中有效转发流量</li>
+</ul>
+</li>
+<li>检测引擎<ul>
+<li>执行状态检测和应用层检测</li>
+<li>检测规则集是预先定义的，验证应用是否遵从每个RFC和其他标准</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>数据报文穿越ASA的过程</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540451.png" alt="image-20210726131131592"></p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540518.png" alt="image-20210726132143774"></p>
+</li>
+</ol>
+<h4 id="二、ASA的接口"><a href="#二、ASA的接口" class="headerlink" title="二、ASA的接口"></a>二、ASA的接口</h4><h5 id="1、物理接口"><a href="#1、物理接口" class="headerlink" title="1、物理接口"></a>1、物理接口</h5><h5 id="2、逻辑接口"><a href="#2、逻辑接口" class="headerlink" title="2、逻辑接口"></a>2、逻辑接口</h5><ul>
+<li><p>用来描述安全区域，例如inside、outside、DMZ</p>
+</li>
+<li><p>接口的安全级别</p>
+<ul>
+<li>inside（内网区域）：默认安全级别为100</li>
+<li>outside（外网区域）：默认安全级别为0</li>
+<li>DMZ（非军事化区域、隔离区、服务器区域）：默认安全级别为50</li>
+</ul>
+</li>
+<li><p>不同安全级别的接口之间访问时，遵从的默认规则</p>
+<ul>
+<li><p>允许出站（outbound）连接：inside访问outside或DMZ访问outside，高安全级别访问低安全级别</p>
+</li>
+<li><p>禁止入站（inbound）连接：outside访问inside或outside访问DMZ，低安全级别不能访问高安全级别</p>
+</li>
+<li><p>禁止相同安全级别的接口之间通信：当安全级别一致时，禁止通信</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540592.png" alt="image-20210726153409617"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="3、接口配置"><a href="#3、接口配置" class="headerlink" title="3、接口配置"></a>3、接口配置</h5><ul>
+<li><p>配置接口名称</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#配置为内网区域（ASA5505设备不支持，只能配置再VLAN接口上）asa(config-if)#nameif inside</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置接口的安全级别</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#配置内网接口安全级别为100asa(config-if)#security-level 100#内网接口安全级别默认为100，范围0~100</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看conn表（状态化连接表）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa#show conn detail</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="三、ASA应用ACL"><a href="#三、ASA应用ACL" class="headerlink" title="三、ASA应用ACL"></a>三、ASA应用ACL</h4><h5 id="1、作用"><a href="#1、作用" class="headerlink" title="1、作用"></a>1、作用</h5><ul>
+<li>允许入站连接</li>
+<li>控制出站连接的流量</li>
+</ul>
+<h5 id="2、配置"><a href="#2、配置" class="headerlink" title="2、配置"></a>2、配置</h5><ul>
+<li><p>标准ACL</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#允许1.0网段主机流量通过，这里使用的是正常的掩码asa(config)#access-list out_to_in permit 192.168.1.0 255.255.255.0#out_to_in  ACL表名</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>扩展ACL</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#允许主机1.2访问3.1的http服务asa(config)#access-list out_to_DMZ extended permit tcp host 192.168.3.1 host 192.168.1.2 eq 80</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将ACL应用到接口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#将表名为out_to_DMZ的ACL应用在outside接口，流量为入口asa(config)#access-group out_to_DMZ in interface outside</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="四、ASA其他配置"><a href="#四、ASA其他配置" class="headerlink" title="四、ASA其他配置"></a>四、ASA其他配置</h4><h5 id="1、配置路由"><a href="#1、配置路由" class="headerlink" title="1、配置路由"></a>1、配置路由</h5><ul>
+<li><p>ASA支持静态路由和动态路由</p>
+</li>
+<li><p>配置静态路由</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#从outside出去，目标为162.16.4.0网络，下一跳地址为172.16.2.2的路由asa(config)# route outside 172.16.4.0 255.255.255.0 172.16.2.2#outside 指定路由出接口#172.16.4.0 255.255.255.0 目标网络#172.16.2.2 下一跳地址</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="2、配置信息相关"><a href="#2、配置信息相关" class="headerlink" title="2、配置信息相关"></a>2、配置信息相关</h5><ul>
+<li><p>保存配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa# write memory或asa# copy running-config startup-config</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>清楚当前配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa(config)# clear config all</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除保存配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa# write erase</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h5 id="3、远程管理"><a href="#3、远程管理" class="headerlink" title="3、远程管理"></a>3、远程管理</h5><ul>
+<li><p>telnet（ASA不允许从outside接口通过telnet方式管理）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa(config)# telnet 192.168.0.0 255.255.255.0 inside    //允许192.168.0.0网段的所有主机从inside接口telnetasa(config)# telnet 0 0 inside        //允许所有网段的主机从inside接口telnet</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ssh</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa(config)# host asa802asa802(config)# domain-name asadomain.comasa802(config)# crypto key generate rsa modulus 1024    //生成RSA密钥对，密钥的长度默认是1024位asa802(config)# ssh 0 0 outside asa802(config)# ssh timeout 30asa802(config)# ssh version 2</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>asdm</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa802(config)# http server enable        //开启HTTP服务asa802(config)# http 0 0 outside        //允许从outside接口通过https管理asa802(config)# asdm image disk0:/asdm-602.bin        //提供客户端下载ASDM软件asa802(config)# username benet password cisco privilege 15    //配置管理员权限，15为最高</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="五、ASA应用NAT"><a href="#五、ASA应用NAT" class="headerlink" title="五、ASA应用NAT"></a>五、ASA应用NAT</h4><h5 id="1、4种NAT转换类型"><a href="#1、4种NAT转换类型" class="headerlink" title="1、4种NAT转换类型"></a>1、4种NAT转换类型</h5><ul>
+<li><p>静态NAT（将inside区域的内网地址192.168.1.1转换为外网地址60.35.12.65）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ASA(config)#static (inside,outside) 60.35.12.65 192.168.1.1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>静态PAT（将DMZ区域的2.1服务器上的http服务映射到外网地址60.35.12.65的80端口）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ASA(config)#static (DMZ,outside) tcp 60.35.12.65 80 192.168.2.1 80#还需要配置outside区域允许访问DMZ区域的ACLASA(config)#access-list out_to_DMZ extended permit tcp any host 60.35.12.65 eq 80ASA(config)#access-group out_to_DMZ in int outside</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>动态NAT</p>
+<ul>
+<li><p>定义内部地址池</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ASA(config)#nat (inside) 1 192.168.10.0 255.255.255.0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义全局地址池</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ASA(config)#global (outside) 1 172.16.1.50-172.16.1.100</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用inside区域主机访问outside区域主机，查看转换表如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ciscoasa# show xlate detail0 in use, 0 most usedciscoasa# show xlate detail1 in use, 1 most usedFlags: D - DNS, d - dump, I - identity, i - dynamic, n - no random,       r - portmap, s - staticNAT from inside:192.168.10.10 to outside:172.16.1.50 flags i</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>动态PAT</p>
+<ul>
+<li><p>定义内部地址池</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ASA(config)#nat (inside) 1 192.168.10.0 255.255.255.0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>定义全局地址池（全局地址池两种情况，外网单个IP或直接使用外网接口IP）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ASA(config)#global (outside) 1 &#123;interface | 172.16.1.100&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用inside区域主机访问outside区域主机，查看转换表如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ciscoasa# show xlate detail2 in use, 2 most usedFlags: D - DNS, d - dump, I - identity, i - dynamic, n - no random,       r - portmap, s - staticTCP PAT from inside:192.168.10.10/29831 to outside:172.16.1.1/1025 flags riTCP PAT from inside:192.168.10.10/21338 to outside:172.16.1.1/1024 flags ri</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h5 id="2、NAT控制与NAT豁免"><a href="#2、NAT控制与NAT豁免" class="headerlink" title="2、NAT控制与NAT豁免"></a>2、NAT控制与NAT豁免</h5><ul>
+<li><p>NAT控制</p>
+<ul>
+<li>ASA从7.0版本开始提供了一个NAT控制的开关，即nat-control命令</li>
+<li>默认是禁用NAT控制（no nat-control）</li>
+<li>在禁用NAT控制和启用NAT控制时的特性是不同的<ul>
+<li>在禁用NAT控制时，NAT规则并不是必须的（只要ACL允许并且有路由就可以访问）</li>
+<li>在启用NAT控制时，NAT规则是必须的（在配置了ACL允许后还需要有NAT规则）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>NAT豁免</p>
+<ul>
+<li><p>应用背景</p>
+<ul>
+<li>当启用NAT控制时，每个发起的连接都需要一个相应的NAT规则</li>
+<li>在某些应用场合（例如配置VPN）需要绕过NAT规则</li>
+</ul>
+</li>
+<li><p>NAT豁免允许双向通信</p>
+</li>
+<li><p>配置命令</p>
+<ul>
+<li><p>定义一个ACL，用于指定需要绕过NAT规则的流量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa(config)# nat (inside) 0  access-list  nonat#inside 内网接口名称#nonat  ACL名字</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>NAT控制及豁免配置案例</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540557.png" alt="image-20210727084530146"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">启用NAT控制并为网段10.1.1.0/24配置动态NAT asa(config)# nat-controlasa(config)# nat (inside) 1 10.1.1.0 255.255.255.0asa(config)# global (outside) 1 interface</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">为网段10.2.2.0/24配置NAT豁免asa(config)# access-list nonat extended permit ip 10.2.2.0 255.255.255.0 172.16.1.0  255.255.255.0asa(config)# nat (inside) 0 access-list nonat</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="六、ASA透明模式"><a href="#六、ASA透明模式" class="headerlink" title="六、ASA透明模式"></a>六、ASA透明模式</h4><h5 id="1、透明模式简介"><a href="#1、透明模式简介" class="headerlink" title="1、透明模式简介"></a>1、透明模式简介</h5><ul>
+<li>充当一个2层设备 ，基于目的MAC地址转发数据帧</li>
+<li>与交换机处理数据帧的不同<ul>
+<li>对于目的MAC地址未知的单播数据帧，ASA不会泛洪而是直接丢弃</li>
+<li>ASA不参与STP</li>
+</ul>
+</li>
+<li>工作过程<ul>
+<li>透明模式下默认允许的3层流量<ul>
+<li>允许IPv4流量自动从高级别接口到低级别接口</li>
+<li>允许ARP流量双向穿越</li>
+</ul>
+</li>
+<li>只支持2个区域</li>
+<li>不需要在接口上配置IP地址</li>
+</ul>
+</li>
+</ul>
+<h5 id="2、透明模式配置"><a href="#2、透明模式配置" class="headerlink" title="2、透明模式配置"></a>2、透明模式配置</h5><ul>
+<li><p>切换到透明模式（PT里面无法使用命令，使用GNS3）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">asa(config)# firewall transparent</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看当天工作模式</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ciscoasa(config)# show firewallFirewall mode: Transparent</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置管理IP</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ciscoasa(config)# ip address 192.168.1.100 255.255.255.0    //管理IP地址必须处于同一个连接子网</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查看MAC表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ciscoasa# show mac-address-table</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>禁止特定接口的MAC地址学习</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ciscoasa(config)# mac-learn inside disable</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>透明模式案例</p>
+<ul>
+<li><p>公司为了方便部署，将ASA配置为透明模式，管理IP地址配置为192.168.1.253&#x2F;24</p>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540465.png" alt="image-20210727174152732"></p>
+</li>
+<li><p>为了增强托管主机的安全，增加了一台ASA并将其配置为透明模式，管理IP地址配置为209.165.201.1&#x2F;28</p>
+</li>
+</ul>
+<p><img src="https://woniumd.oss-cn-hangzhou.aliyuncs.com/security/yangwencai/202112090540321.png" alt="image-20210727173818700"></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/10/22/windiws%E6%93%8D%E4%BD%9C-%E8%BF%9B%E9%98%B6%E7%89%88%EF%BC%88powershell%E5%87%BD%E6%95%B0%EF%BC%89/" rel="prev" title="windiws操作-进阶版（powershell函数）">
+      <i class="fa fa-chevron-left"></i> windiws操作-进阶版（powershell函数）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/22/%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87%E5%9F%BA%E7%A1%80-ipsec-vpn%E5%BA%94%E7%94%A8/" rel="next" title="安全设备基础-ipsec vpn应用">
+      安全设备基础-ipsec vpn应用 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%80%9D%E7%A7%91ASA%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">1.</span> <span class="nav-text">一、思科ASA防火墙</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1、简介</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81ASA%E5%AE%89%E5%85%A8%E8%AE%BE%E5%A4%87"><span class="nav-number">1.2.</span> <span class="nav-text">2、ASA安全设备</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81ASA%E6%98%AF%E7%8A%B6%E6%80%81%E9%98%B2%E7%81%AB%E5%A2%99"><span class="nav-number">1.3.</span> <span class="nav-text">3、ASA是状态防火墙</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81ASA%E7%9A%84%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.</span> <span class="nav-text">二、ASA的接口</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E7%89%A9%E7%90%86%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.1.</span> <span class="nav-text">1、物理接口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%80%BB%E8%BE%91%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.2.</span> <span class="nav-text">2、逻辑接口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E6%8E%A5%E5%8F%A3%E9%85%8D%E7%BD%AE"><span class="nav-number">2.3.</span> <span class="nav-text">3、接口配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81ASA%E5%BA%94%E7%94%A8ACL"><span class="nav-number">3.</span> <span class="nav-text">三、ASA应用ACL</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E4%BD%9C%E7%94%A8"><span class="nav-number">3.1.</span> <span class="nav-text">1、作用</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%85%8D%E7%BD%AE"><span class="nav-number">3.2.</span> <span class="nav-text">2、配置</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81ASA%E5%85%B6%E4%BB%96%E9%85%8D%E7%BD%AE"><span class="nav-number">4.</span> <span class="nav-text">四、ASA其他配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E9%85%8D%E7%BD%AE%E8%B7%AF%E7%94%B1"><span class="nav-number">4.1.</span> <span class="nav-text">1、配置路由</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E7%9B%B8%E5%85%B3"><span class="nav-number">4.2.</span> <span class="nav-text">2、配置信息相关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3%E3%80%81%E8%BF%9C%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">4.3.</span> <span class="nav-text">3、远程管理</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81ASA%E5%BA%94%E7%94%A8NAT"><span class="nav-number">5.</span> <span class="nav-text">五、ASA应用NAT</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%814%E7%A7%8DNAT%E8%BD%AC%E6%8D%A2%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.1.</span> <span class="nav-text">1、4种NAT转换类型</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81NAT%E6%8E%A7%E5%88%B6%E4%B8%8ENAT%E8%B1%81%E5%85%8D"><span class="nav-number">5.2.</span> <span class="nav-text">2、NAT控制与NAT豁免</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%AD%E3%80%81ASA%E9%80%8F%E6%98%8E%E6%A8%A1%E5%BC%8F"><span class="nav-number">6.</span> <span class="nav-text">六、ASA透明模式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1%E3%80%81%E9%80%8F%E6%98%8E%E6%A8%A1%E5%BC%8F%E7%AE%80%E4%BB%8B"><span class="nav-number">6.1.</span> <span class="nav-text">1、透明模式简介</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2%E3%80%81%E9%80%8F%E6%98%8E%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AE"><span class="nav-number">6.2.</span> <span class="nav-text">2、透明模式配置</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">鹿祁</p>
+  <div class="site-description" itemprop="description">心有希冀，目有繁星，追光而遇，沐光而行</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">219</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">鹿祁</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+  <script defer src="/lib/three/three.min.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
